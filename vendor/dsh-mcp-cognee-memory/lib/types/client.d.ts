@@ -1,11 +1,11 @@
 /** Managed Cognee MCP calls; no operation is registered as a model tool. */
 import { Client, type CallToolResult } from '@modelcontextprotocol/client';
 import type { CredentialProvider, CredentialRef } from '@deepseek-ai/dsh-credentials';
-declare const COGNEE_TOOL_NAMES: readonly ["get_guidance", "search_memory", "propose_memory"];
+declare const COGNEE_TOOL_NAMES: readonly ["get_guidance", "search_memory", "recall", "propose_memory"];
 /** One schema-validated Cognee read operation. */
 export interface CogneeRecallTool {
     /** Supported MCP operation name. */
-    readonly name: 'get_guidance' | 'search_memory';
+    readonly name: 'get_guidance' | 'search_memory' | 'recall';
     /** String field used to send the query. */
     readonly queryField: 'task' | 'query';
 }

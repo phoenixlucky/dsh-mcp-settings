@@ -2045,6 +2045,7 @@ const MAX_PROPOSAL_BYTES = 3 * 1024;
 const COGNEE_TOOL_NAMES = [
 	"get_guidance",
 	"search_memory",
+	"recall",
 	"propose_memory"
 ];
 /** Return the schema-compatible preferred recall tool.
@@ -2052,7 +2053,7 @@ const COGNEE_TOOL_NAMES = [
 * @returns A validated allow-listed recall tool, when available.
 */
 function resolveCogneeRecallTool(tools) {
-	for (const name of ["get_guidance", "search_memory"]) {
+	for (const name of ["get_guidance", "search_memory", "recall"]) {
 		const tool = tools.find((candidate) => candidate.name === name);
 		if (tool === void 0) continue;
 		const properties = schemaProperties(tool.inputSchema);
@@ -2083,7 +2084,7 @@ function resolveCogneeProposalTool(tools) {
 		"decision_principle",
 		"collaboration_practice",
 		"experience"
-	].find((value) => schemaAllowsEnum(properties[categoryField], value));
+	].find((value) => schemaAllowsEnum(properties[categoryField], value)) ?? (isRecord(properties[categoryField]) && properties[categoryField].type === "string" && properties[categoryField].enum === void 0 ? "experience" : void 0);
 	if (categoryValue === void 0) return void 0;
 	if (contentField !== "content" && contentField !== "text") return void 0;
 	if (categoryField !== "category" || sourceField !== "source" && sourceField !== "source_description") return void 0;

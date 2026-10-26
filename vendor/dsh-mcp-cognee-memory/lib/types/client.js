@@ -4,13 +4,13 @@ import { isIP } from 'node:net';
 const MAX_QUERY_BYTES = 1024;
 const MAX_RECALL_BYTES = 8 * 1024;
 const MAX_PROPOSAL_BYTES = 3 * 1024;
-const COGNEE_TOOL_NAMES = ['get_guidance', 'search_memory', 'propose_memory'];
+const COGNEE_TOOL_NAMES = ['get_guidance', 'search_memory', 'recall', 'propose_memory'];
 /** Return the schema-compatible preferred recall tool.
  * @param tools - MCP tool descriptors from the managed Cognee connection.
  * @returns A validated allow-listed recall tool, when available.
  */
 export function resolveCogneeRecallTool(tools) {
-    for (const name of ['get_guidance', 'search_memory']) {
+    for (const name of ['get_guidance', 'search_memory', 'recall']) {
         const tool = tools.find(candidate => candidate.name === name);
         if (tool === undefined)
             continue;
@@ -42,7 +42,8 @@ export function resolveCogneeProposalTool(tools) {
     if (!schemaAllowsEnum(properties[scopeField], 'private') || !schemaAllowsEnum(properties[scopeField], 'global'))
         return undefined;
     const categoryValue = ['adaptive_strategy', 'decision_principle', 'collaboration_practice', 'experience']
-        .find(value => schemaAllowsEnum(properties[categoryField], value));
+        .find(value => schemaAllowsEnum(properties[categoryField], value))
+        ?? (isRecord(properties[categoryField]) && properties[categoryField].type === 'string' && properties[categoryField].enum === undefined ? 'experience' : undefined);
     if (categoryValue === undefined)
         return undefined;
     if (contentField !== 'content' && contentField !== 'text')

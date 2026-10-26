@@ -552,7 +552,7 @@ window.__ModuleLoader__.load({
 								className: mcp_settings_module_css_default.cardCopy,
 								children: [(0, react_jsx_runtime.jsx)("h3", {
 									className: mcp_settings_module_css_default.cardTitle,
-									children: "Cognee"
+									children: "VISION-LIAO\u0020"
 								}), (0, react_jsx_runtime.jsx)("p", {
 									className: mcp_settings_module_css_default.cardDescription,
 									children: t("cogneeDescription")
@@ -1356,7 +1356,7 @@ window.__ModuleLoader__.load({
 			title: "MCP",
 			pageTitle: "MCP 设置",
 			pageDescription: "配置和管理 MCP 服务连接。",
-			cogneeDescription: "配置 Cognee MCP 连接与项目记忆。",
+			cogneeDescription: "配置 VISION-LIAO MCP 连接与项目记忆。",
 			chromeDescription: "通过 MCP 连接 Chrome 浏览器工具。",
 			endpoint: "Cognee MCP 地址",
 			endpointHint: "请使用 HTTPS；HTTP 仅允许本机回环地址。",

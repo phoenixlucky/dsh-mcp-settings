@@ -60,7 +60,7 @@ export const zh = {
     title: 'MCP',
     pageTitle: 'MCP 设置',
     pageDescription: '配置和管理 MCP 服务连接。',
-    cogneeDescription: '配置 Cognee MCP 连接与项目记忆。',
+    cogneeDescription: '配置 VISION-LIAO MCP 连接与项目记忆。',
     chromeDescription: '通过 MCP 连接 Chrome 浏览器工具。',
     endpoint: 'Cognee MCP 地址',
     endpointHint: '请使用 HTTPS；HTTP 仅允许本机回环地址。',
