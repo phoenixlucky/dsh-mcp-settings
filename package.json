@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "The MCP settings bundle: managed MCP servers, Chrome connection, Cognee memory, and the Settings UI entry",
-  "version": "0.2.1-rc.3",
+  "version": "1.0.1",
   "publishConfig": {
     "access": "public"
   },
