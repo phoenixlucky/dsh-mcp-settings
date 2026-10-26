@@ -1,0 +1,22 @@
+# MCP services and their Settings UI are grouped so profiles can opt in or out together.
+- insert:
+    - id: cognee-memory
+      name: '@deepseek-ai/dsh-mcp-cognee-memory'
+      config:
+        enabled: false
+
+    - id: mcp-chrome
+      name: '@deepseek-ai/dsh-mcp-client/chrome'
+
+    - id: mcp-server-manager
+      name: '@deepseek-ai/dsh-mcp-client/managed'
+      config:
+        servers:
+          - id: new-gold
+            serverName: new-gold
+            enabled: true
+            transport: streamable-http
+            url: http://127.0.0.1:12888/new-gold
+
+    - id: ui-settings-mcp
+      name: '@deepseek-ai/dsh-client-ui-settings-mcp'

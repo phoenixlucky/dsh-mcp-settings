@@ -1,0 +1,28 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/bundle/mcp-settings/README.md
+/:
+  en: c50faf97457be51c
+  zh: 6c774077faca83ce
+/deepseek-ai-dsh-mcp-settings:
+  en: 98f3baddea63f53f
+  zh: 909e62574653d3aa
+/deepseek-ai-dsh-mcp-settings/summary:
+  en: 2e1e5ecfa142218e
+  zh: 79189134c769676a
+/deepseek-ai-dsh-mcp-settings/use-this-package:
+  en: 7b93d0d71d62348c
+  zh: 60420566c77ebb9a
+/deepseek-ai-dsh-mcp-settings/understand-the-implementation:
+  en: a885cc178d0ef4b5
+  zh: 74fedf6e4e0e3b0b
+/deepseek-ai-dsh-mcp-settings/dev-note:
+  en: c9466196ffcf5735
+  zh: e2e8e149e9402a6d
+/deepseek-ai-dsh-mcp-settings/model-experience:
+  en: 5258031fe19fa4c0
+  zh: 69254d1355b12454
+/deepseek-ai-dsh-mcp-settings/known-limitations-and-deferred-work:
+  en: aa5ccb9cbe07f5af
+  zh: 03f13a2152d79ab4

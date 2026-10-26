@@ -1,0 +1,55 @@
+{
+  "name": "@deepseek-ai/dsh-mcp-settings",
+  "description": "The MCP settings bundle: managed MCP servers, Chrome connection, Cognee memory, and the Settings UI entry",
+  "version": "0.2.1-rc.3",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phoenixlucky/dsh-mcp.git"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "locale/*.json",
+    "lib/index.js",
+    "cordis.patch.yml",
+    "lib/types/**/*.d.ts",
+    "vendor/dsh-client-ui-settings-mcp/package.json",
+    "vendor/dsh-client-ui-settings-mcp/lib/index.js",
+    "vendor/dsh-client-ui-settings-mcp/lib/client.js",
+    "vendor/dsh-mcp-cognee-memory/package.json",
+    "vendor/dsh-mcp-cognee-memory/lib/index.js",
+    "vendor/dsh-mcp-cognee-memory/lib/typert.host.js",
+    "vendor/dsh-mcp-cognee-memory/lib/typert.remote-client.js",
+    "vendor/dsh-mcp-cognee-memory/lib/types/**/*.d.ts"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-client-ui-settings-mcp": "file:vendor/dsh-client-ui-settings-mcp",
+    "@deepseek-ai/dsh-mcp-client": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-mcp-cognee-memory": "file:vendor/dsh-mcp-cognee-memory"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.5"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.5"
+  }
+}
