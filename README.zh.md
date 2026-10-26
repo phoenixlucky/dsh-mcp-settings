@@ -33,4 +33,4 @@ kind: "package-bundle"
 
 ## 随仓库提供的依赖
 
-本仓库在 `vendor/` 中包含 MCP Settings UI 和 Cognee 包的编译副本。bundle 使用相对 `file:` 依赖，因此可以移动或克隆到其他目录。从仓库所在目录运行 `pnpm dsh plugin --profile <profile> add file:./dsh-mcp` 即可安装。
+本仓库在 `vendor/` 中包含 MCP Settings UI 和 Cognee 包的编译副本。bundle 使用相对 `file:` 依赖，因此可以移动或克隆到其他目录。从仓库所在目录运行 `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings` 即可安装。

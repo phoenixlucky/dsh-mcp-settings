@@ -33,4 +33,4 @@ MCP tools are available only when a configured MCP server connects successfully 
 
 ## Vendored packages
 
-This repository includes compiled copies of the MCP Settings UI and Cognee packages under `vendor/`. The bundle uses relative `file:` dependencies, so the checkout can be moved or cloned to another location. From the directory containing the checkout, install it with `pnpm dsh plugin --profile <profile> add file:./dsh-mcp`.
+This repository includes compiled copies of the MCP Settings UI and Cognee packages under `vendor/`. The bundle uses relative `file:` dependencies, so the checkout can be moved or cloned to another location. From the directory containing the checkout, install it with `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings`.
