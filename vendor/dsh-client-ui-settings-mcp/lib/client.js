@@ -4,10 +4,10 @@ window.__ModuleLoader__.load({
 		var module = { exports: {} };
 		var exports = module.exports;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-		let react_jsx_runtime = require("react/jsx-runtime");
 		let react = require("react");
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
-		//#region lib/types/client/mcpCardAppearance.js
+		let react_jsx_runtime = require("react/jsx-runtime");
+		//#region src/client/mcpCardAppearance.ts
 		/** Validate a server key before it is used to address presentation settings.
 		* @param value - Candidate MCP `serverName`.
 		* @returns Whether the key matches the stable server-name format.
@@ -38,8 +38,8 @@ window.__ModuleLoader__.load({
 			return Object.fromEntries(Object.entries(current).filter(([name]) => name !== serverName));
 		}
 		//#endregion
-		//#region \0dsh-css:C:\Users\Administrator\.codex\worktrees\mcp-settings-bundle\deepseek-harness\packages\client\ui-settings-mcp\src\client\mcp-settings.module.css.mjs
-		const css = ".zBwCUW_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 28%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:color-mix(in srgb, var(--dsw-static-amber-100) 48%, var(--dsw-alias-bg-layer-1));--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:none;margin-inline:auto;display:grid}.zBwCUW_pageHeader{align-items:center;gap:var(--mcp-space-3);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.zBwCUW_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.zBwCUW_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.zBwCUW_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.zBwCUW_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.zBwCUW_card{box-sizing:border-box;align-content:start;gap:var(--mcp-space-3);width:100%;min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:none;display:grid;container-type:inline-size}.zBwCUW_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding-inline:var(--mcp-space-1);display:flex}.zBwCUW_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.zBwCUW_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.zBwCUW_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.zBwCUW_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.zBwCUW_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.zBwCUW_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.zBwCUW_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.zBwCUW_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.zBwCUW_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);display:grid}.zBwCUW_fieldGroupTitle{clip:rect(0, 0, 0, 0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.zBwCUW_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.zBwCUW_field input,.zBwCUW_field textarea,.zBwCUW_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.zBwCUW_field textarea:focus-visible,.zBwCUW_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.zBwCUW_field textarea:disabled,.zBwCUW_field select:disabled{opacity:.6}.zBwCUW_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.zBwCUW_field input:disabled{opacity:.6}.zBwCUW_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.zBwCUW_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:.5px dashed var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.zBwCUW_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.zBwCUW_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.zBwCUW_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.zBwCUW_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.zBwCUW_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.zBwCUW_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.zBwCUW_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.zBwCUW_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;display:grid}.zBwCUW_serverCard strong{color:var(--dsw-alias-label-primary)}.zBwCUW_serverCard p{margin:0}.zBwCUW_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.zBwCUW_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);display:flex}.zBwCUW_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.zBwCUW_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.zBwCUW_serverState{width:fit-content;padding:2px var(--mcp-space-2);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;display:inline-flex}.zBwCUW_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.zBwCUW_serverCardEditing{grid-template-columns:minmax(0,1fr)}.zBwCUW_serverCardEditing>p{white-space:normal;border:0;padding:0}.zBwCUW_serverCardEditing>.zBwCUW_actions,.zBwCUW_serverCardEditing>section{grid-column:1/-1}.zBwCUW_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}@container (width<=48rem){.zBwCUW_serverCard:not(.zBwCUW_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.zBwCUW_serverCard:not(.zBwCUW_serverCardEditing)>.zBwCUW_serverHeading{grid-column:1/-1}.zBwCUW_serverCard:not(.zBwCUW_serverCardEditing)>p{white-space:normal;border:0;padding:0}.zBwCUW_serverCard:not(.zBwCUW_serverCardEditing)>.zBwCUW_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.zBwCUW_cardHeader{flex-wrap:wrap;align-items:flex-start}.zBwCUW_cardIdentity{flex:100%}.zBwCUW_enableControl{flex:auto;justify-content:space-between;max-width:100%}.zBwCUW_serverCard:not(.zBwCUW_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.zBwCUW_serverCard:not(.zBwCUW_serverCardEditing)>p{white-space:normal;border:0;padding:0}.zBwCUW_serverCard:not(.zBwCUW_serverCardEditing)>.zBwCUW_actions{justify-content:flex-start}}@container (width>=38rem){.zBwCUW_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.zBwCUW_field small{grid-column:2}.zBwCUW_secretRow .zBwCUW_field{grid-template-columns:minmax(0,1fr)}.zBwCUW_secretRow .zBwCUW_field small{grid-column:1}}@container (width<=32rem){.zBwCUW_card{padding:var(--mcp-space-3)}.zBwCUW_field{grid-template-columns:minmax(0,1fr)}.zBwCUW_field small{grid-column:1}.zBwCUW_cardFooter{grid-template-columns:minmax(0,1fr)}.zBwCUW_actions{justify-content:flex-start}.zBwCUW_secretRow{grid-template-columns:minmax(0,1fr)}.zBwCUW_serverHeading{flex-wrap:wrap;align-items:flex-start}.zBwCUW_serverCard>.zBwCUW_actions{justify-content:flex-start}.zBwCUW_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.zBwCUW_serverCard>p{white-space:normal;border:0;padding:0}}";
+		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
+		const css = ".oetn4G_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 28%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:color-mix(in srgb, var(--dsw-static-amber-100) 48%, var(--dsw-alias-bg-layer-1));--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:none;margin-inline:auto;display:grid}.oetn4G_pageHeader{align-items:center;gap:var(--mcp-space-3);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.oetn4G_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_card{align-content:start;gap:var(--mcp-space-3);width:100%;min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:none;display:grid;container-type:inline-size}.oetn4G_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding-inline:var(--mcp-space-1);display:flex}.oetn4G_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.oetn4G_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.oetn4G_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.oetn4G_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);display:grid}.oetn4G_fieldGroupTitle{clip:rect(0, 0, 0, 0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.oetn4G_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.oetn4G_field input,.oetn4G_field textarea,.oetn4G_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.oetn4G_field textarea:focus-visible,.oetn4G_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field textarea:disabled,.oetn4G_field select:disabled{opacity:.6}.oetn4G_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field input:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:.5px dashed var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.oetn4G_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.oetn4G_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.oetn4G_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.oetn4G_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.oetn4G_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;display:grid}.oetn4G_serverCard strong{color:var(--dsw-alias-label-primary)}.oetn4G_serverCard p{margin:0}.oetn4G_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.oetn4G_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);display:flex}.oetn4G_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_serverState{width:fit-content;padding:2px var(--mcp-space-2);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;display:inline-flex}.oetn4G_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_serverCardEditing{grid-template-columns:minmax(0,1fr)}.oetn4G_serverCardEditing>p{white-space:normal;border:0;padding:0}.oetn4G_serverCardEditing>.oetn4G_actions,.oetn4G_serverCardEditing>section{grid-column:1/-1}.oetn4G_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}@container (width<=48rem){.oetn4G_serverCard:not(.oetn4G_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_serverHeading{grid-column:1/-1}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.oetn4G_cardHeader{flex-wrap:wrap;align-items:flex-start}.oetn4G_cardIdentity{flex:100%}.oetn4G_enableControl{flex:auto;justify-content:space-between;max-width:100%}.oetn4G_serverCard:not(.oetn4G_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-start}}@container (width>=38rem){.oetn4G_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.oetn4G_field small{grid-column:2}.oetn4G_secretRow .oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_secretRow .oetn4G_field small{grid-column:1}}@container (width<=32rem){.oetn4G_card{padding:var(--mcp-space-3)}.oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_field small{grid-column:1}.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}.oetn4G_actions{justify-content:flex-start}.oetn4G_secretRow{grid-template-columns:minmax(0,1fr)}.oetn4G_serverHeading{flex-wrap:wrap;align-items:flex-start}.oetn4G_serverCard>.oetn4G_actions{justify-content:flex-start}.oetn4G_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard>p{white-space:normal;border:0;padding:0}}";
 		const tagId = "@deepseek-ai/dsh-client-ui-settings-mcp/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -49,39 +49,39 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var mcp_settings_module_css_default = {
-			"actions": "zBwCUW_actions",
-			"card": "zBwCUW_card",
-			"cardCopy": "zBwCUW_cardCopy",
-			"cardDescription": "zBwCUW_cardDescription",
-			"cardFooter": "zBwCUW_cardFooter",
-			"cardHeader": "zBwCUW_cardHeader",
-			"cardIcon": "zBwCUW_cardIcon",
-			"cardIdentity": "zBwCUW_cardIdentity",
-			"cardTitle": "zBwCUW_cardTitle",
-			"connections": "zBwCUW_connections",
-			"enableControl": "zBwCUW_enableControl",
-			"enableLabel": "zBwCUW_enableLabel",
-			"error": "zBwCUW_error",
-			"field": "zBwCUW_field",
-			"fieldGroup": "zBwCUW_fieldGroup",
-			"fieldGroupTitle": "zBwCUW_fieldGroupTitle",
-			"pageCopy": "zBwCUW_pageCopy",
-			"pageDescription": "zBwCUW_pageDescription",
-			"pageHeader": "zBwCUW_pageHeader",
-			"pageIcon": "zBwCUW_pageIcon",
-			"pageTitle": "zBwCUW_pageTitle",
-			"secretRow": "zBwCUW_secretRow",
-			"serverCard": "zBwCUW_serverCard",
-			"serverCardEditing": "zBwCUW_serverCardEditing",
-			"serverHeading": "zBwCUW_serverHeading",
-			"serverIcon": "zBwCUW_serverIcon",
-			"serverIdentity": "zBwCUW_serverIdentity",
-			"serverList": "zBwCUW_serverList",
-			"serverState": "zBwCUW_serverState",
-			"status": "zBwCUW_status"
+			"actions": "oetn4G_actions",
+			"card": "oetn4G_card",
+			"cardCopy": "oetn4G_cardCopy",
+			"cardDescription": "oetn4G_cardDescription",
+			"cardFooter": "oetn4G_cardFooter",
+			"cardHeader": "oetn4G_cardHeader",
+			"cardIcon": "oetn4G_cardIcon",
+			"cardIdentity": "oetn4G_cardIdentity",
+			"cardTitle": "oetn4G_cardTitle",
+			"connections": "oetn4G_connections",
+			"enableControl": "oetn4G_enableControl",
+			"enableLabel": "oetn4G_enableLabel",
+			"error": "oetn4G_error",
+			"field": "oetn4G_field",
+			"fieldGroup": "oetn4G_fieldGroup",
+			"fieldGroupTitle": "oetn4G_fieldGroupTitle",
+			"pageCopy": "oetn4G_pageCopy",
+			"pageDescription": "oetn4G_pageDescription",
+			"pageHeader": "oetn4G_pageHeader",
+			"pageIcon": "oetn4G_pageIcon",
+			"pageTitle": "oetn4G_pageTitle",
+			"secretRow": "oetn4G_secretRow",
+			"serverCard": "oetn4G_serverCard",
+			"serverCardEditing": "oetn4G_serverCardEditing",
+			"serverHeading": "oetn4G_serverHeading",
+			"serverIcon": "oetn4G_serverIcon",
+			"serverIdentity": "oetn4G_serverIdentity",
+			"serverList": "oetn4G_serverList",
+			"serverState": "oetn4G_serverState",
+			"status": "oetn4G_status"
 		};
 		//#endregion
-		//#region lib/types/client/McpCardSettings.js
+		//#region src/client/McpCardSettings.tsx
 		/** Configure display-only metadata without touching an MCP server declaration. */
 		function McpCardSettings({ form, remote, t }) {
 			const state = (0, react.useSyncExternalStore)((listener) => form.subscribe(listener), () => form.getSnapshot());
@@ -134,9 +134,9 @@ window.__ModuleLoader__.load({
 				setError(!await form.set("servers", withoutMcpCardAppearance(saved, serverName)));
 				setDraft({});
 			};
-			const field = (key, label) => (0, react_jsx_runtime.jsxs)("label", {
+			const field = (key, label) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 				className: mcp_settings_module_css_default.field,
-				children: [(0, react_jsx_runtime.jsx)("span", { children: label }), (0, react_jsx_runtime.jsx)("input", {
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: label }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 					value: draft[key] ?? "",
 					disabled: !state.writable,
 					onChange: (event) => {
@@ -147,9 +147,9 @@ window.__ModuleLoader__.load({
 					}
 				})]
 			});
-			const flag = (key, label) => (0, react_jsx_runtime.jsxs)("label", {
+			const flag = (key, label) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 				className: mcp_settings_module_css_default.switchRow,
-				children: [(0, react_jsx_runtime.jsx)("span", { children: label }), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: label }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 					checked: draft[key] ?? true,
 					label,
 					disabled: !state.writable,
@@ -161,46 +161,46 @@ window.__ModuleLoader__.load({
 					}
 				})]
 			});
-			return (0, react_jsx_runtime.jsxs)("section", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.card,
 				"aria-label": t("appearanceTitle"),
 				children: [
-					(0, react_jsx_runtime.jsx)("h3", { children: t("appearanceTitle") }),
-					(0, react_jsx_runtime.jsxs)("div", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", { children: t("appearanceTitle") }),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.serverList,
 						"aria-label": t("serverCards"),
 						children: [
-							(0, react_jsx_runtime.jsx)("h4", { children: t("serverCards") }),
-							servers.length === 0 && (0, react_jsx_runtime.jsx)("p", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: t("serverCards") }),
+							servers.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								role: "status",
 								children: t(statusAvailable ? "noServers" : "statusUnavailable")
 							}),
 							servers.map((server) => {
 								const appearance = saved[server.serverName] ?? {};
-								return (0, react_jsx_runtime.jsxs)("article", {
+								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 									className: mcp_settings_module_css_default.serverCard,
 									children: [
-										(0, react_jsx_runtime.jsxs)("strong", { children: [appearance.icon && (0, react_jsx_runtime.jsxs)("span", {
+										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("strong", { children: [appearance.icon && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 											"aria-hidden": "true",
 											children: [appearance.icon, " "]
 										}), appearance.displayName || server.serverName] }),
-										appearance.description && (0, react_jsx_runtime.jsx)("p", { children: appearance.description }),
-										appearance.showConnectionStatus !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.description && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: appearance.description }),
+										appearance.showConnectionStatus !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("connectionState"),
 											": ",
 											t(`connection.${server.state}`)
 										] }),
-										appearance.showToolCount !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.showToolCount !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("toolCount"),
 											": ",
 											server.toolCount
 										] }),
-										appearance.showTransport !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.showTransport !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("transport"),
 											": ",
 											t(`transport.${server.transport}`)
 										] }),
-										appearance.showSource !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.showSource !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("source"),
 											": ",
 											server.source
@@ -210,11 +210,11 @@ window.__ModuleLoader__.load({
 							})
 						]
 					}),
-					(0, react_jsx_runtime.jsxs)("label", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
 						children: [
-							(0, react_jsx_runtime.jsx)("span", { children: t("serverName") }),
-							(0, react_jsx_runtime.jsx)("input", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("serverName") }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 								value: serverName,
 								disabled: !state.writable,
 								onChange: (event) => {
@@ -222,7 +222,7 @@ window.__ModuleLoader__.load({
 									load(event.currentTarget.value);
 								}
 							}),
-							(0, react_jsx_runtime.jsx)("small", { children: t("serverNameHint") })
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("serverNameHint") })
 						]
 					}),
 					field("displayName", t("displayName")),
@@ -232,16 +232,16 @@ window.__ModuleLoader__.load({
 					flag("showToolCount", t("showToolCount")),
 					flag("showTransport", t("showTransport")),
 					flag("showSource", t("showSource")),
-					(0, react_jsx_runtime.jsxs)("div", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.actions,
-						children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 							variant: "primary",
 							disabled: !state.writable,
 							onClick: () => {
 								save();
 							},
 							children: t("saveAppearance")
-						}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 							variant: "outline",
 							disabled: !state.writable,
 							onClick: () => {
@@ -250,7 +250,7 @@ window.__ModuleLoader__.load({
 							children: t("resetAppearance")
 						})]
 					}),
-					error && (0, react_jsx_runtime.jsx)("p", {
+					error && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 						role: "alert",
 						children: t("invalidServerName")
 					})
@@ -258,7 +258,7 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
-		//#region lib/types/client/ChromeCard.js
+		//#region src/client/ChromeCard.tsx
 		const CREDENTIAL$1 = "DSH_CHROME_MCP_TOKEN";
 		/** Configure the managed Chrome MCP endpoint and its separately stored token. */
 		function ChromeCard({ form, remote, t }) {
@@ -358,34 +358,34 @@ window.__ModuleLoader__.load({
 				}
 			};
 			const tokenLabel = tokenWritable ? tokenConfigured ? "tokenSet" : "tokenUnset" : "credentialsUnavailable";
-			return (0, react_jsx_runtime.jsxs)("section", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.card,
 				"aria-label": t("chromeTitle"),
 				children: [
-					(0, react_jsx_runtime.jsxs)("header", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
 						className: mcp_settings_module_css_default.cardHeader,
-						children: [(0, react_jsx_runtime.jsxs)("div", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.cardIdentity,
-							children: [(0, react_jsx_runtime.jsx)("span", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: mcp_settings_module_css_default.cardIcon,
 								"aria-hidden": "true",
-								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGlobeOutlineRegular, { size: 24 })
-							}), (0, react_jsx_runtime.jsxs)("div", {
+								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGlobeOutlineRegular, { size: 24 })
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.cardCopy,
-								children: [(0, react_jsx_runtime.jsx)("h3", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
 									className: mcp_settings_module_css_default.cardTitle,
 									children: "Chrome MCP"
-								}), (0, react_jsx_runtime.jsx)("p", {
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 									className: mcp_settings_module_css_default.cardDescription,
 									children: t("chromeDescription")
 								})]
 							})]
-						}), (0, react_jsx_runtime.jsxs)("div", {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.enableControl,
-							children: [(0, react_jsx_runtime.jsx)("span", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: mcp_settings_module_css_default.enableLabel,
 								children: t("chromeEnabled")
-							}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 								checked: enabled,
 								label: t("chromeEnabled"),
 								disabled: busy || !form.getSnapshot().writable,
@@ -393,65 +393,65 @@ window.__ModuleLoader__.load({
 							})]
 						})]
 					}),
-					(0, react_jsx_runtime.jsxs)("section", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 						className: mcp_settings_module_css_default.fieldGroup,
 						"aria-labelledby": "chrome-connection-settings",
 						children: [
-							(0, react_jsx_runtime.jsx)("h4", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", {
 								className: mcp_settings_module_css_default.fieldGroupTitle,
 								id: "chrome-connection-settings",
 								children: t("connectionSettings")
 							}),
-							(0, react_jsx_runtime.jsxs)("label", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: mcp_settings_module_css_default.field,
 								children: [
-									(0, react_jsx_runtime.jsx)("span", { children: t("chromeEndpoint") }),
-									(0, react_jsx_runtime.jsx)("input", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("chromeEndpoint") }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 										type: "url",
 										value: url,
 										disabled: busy || !form.getSnapshot().writable,
 										onChange: (event) => setUrl(event.currentTarget.value)
 									}),
-									(0, react_jsx_runtime.jsx)("small", { children: t("chromeEndpointHint") })
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("chromeEndpointHint") })
 								]
 							}),
-							(0, react_jsx_runtime.jsxs)("label", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: mcp_settings_module_css_default.field,
 								children: [
-									(0, react_jsx_runtime.jsx)("span", { children: t("token") }),
-									(0, react_jsx_runtime.jsx)("input", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("token") }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 										type: "password",
 										autoComplete: "new-password",
 										value: token,
 										disabled: busy || !tokenWritable,
 										onChange: (event) => setToken(event.currentTarget.value)
 									}),
-									(0, react_jsx_runtime.jsx)("small", { children: t(tokenLabel) })
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t(tokenLabel) })
 								]
 							})
 						]
 					}),
-					(0, react_jsx_runtime.jsxs)("footer", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("footer", {
 						className: mcp_settings_module_css_default.cardFooter,
 						children: [
-							(0, react_jsx_runtime.jsxs)("p", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", {
 								className: mcp_settings_module_css_default.status,
 								role: "status",
-								children: [(0, react_jsx_runtime.jsx)("span", { children: t("status") }), (0, react_jsx_runtime.jsx)("strong", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("status") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", {
 									"data-state": status.state,
 									children: status.state === "ready" && status.toolCount !== void 0 ? t("chromeStatus.readyCount").replace("{count}", String(status.toolCount)) : t(`chromeStatus.${status.state}`)
 								})]
 							}),
-							(0, react_jsx_runtime.jsxs)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.actions,
-								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "primary",
 									disabled: busy || !form.getSnapshot().writable,
 									onClick: () => {
 										save();
 									},
 									children: t("save")
-								}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "outline",
 									disabled: busy,
 									onClick: () => {
@@ -460,7 +460,7 @@ window.__ModuleLoader__.load({
 									children: busy ? t("checking") : t("check")
 								})]
 							}),
-							failure !== void 0 && (0, react_jsx_runtime.jsx)("p", {
+							failure !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.error,
 								role: "alert",
 								children: t(`chromeError.${failure}`)
@@ -471,9 +471,9 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
-		//#region lib/types/client/CogneeCard.js
+		//#region src/client/CogneeCard.tsx
 		const CREDENTIAL = "DSH_COGNEE_MCP_TOKEN";
-		/** Settings screen for Cognee's endpoint, separate credential, and readiness. */
+		/** Settings screen for VISION-LIAO's endpoint, separate credential, and readiness. */
 		function CogneeCard({ form, remote, t }) {
 			const snapshot = form.getSnapshot();
 			const [enabled, setEnabled] = (0, react.useState)(snapshot.value?.enabled ?? false);
@@ -536,34 +536,34 @@ window.__ModuleLoader__.load({
 					setBusy(false);
 				}
 			};
-			return (0, react_jsx_runtime.jsxs)("section", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.card,
-				"aria-label": t("title"),
+				"aria-label": t("cogneeTitle"),
 				children: [
-					(0, react_jsx_runtime.jsxs)("header", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
 						className: mcp_settings_module_css_default.cardHeader,
-						children: [(0, react_jsx_runtime.jsxs)("div", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.cardIdentity,
-							children: [(0, react_jsx_runtime.jsx)("span", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: mcp_settings_module_css_default.cardIcon,
 								"aria-hidden": "true",
-								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDataOutlineRegular, { size: 24 })
-							}), (0, react_jsx_runtime.jsxs)("div", {
+								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDataOutlineRegular, { size: 24 })
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.cardCopy,
-								children: [(0, react_jsx_runtime.jsx)("h3", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
 									className: mcp_settings_module_css_default.cardTitle,
-									children: "VISION-LIAO\u0020"
-								}), (0, react_jsx_runtime.jsx)("p", {
+									children: t("cogneeTitle")
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 									className: mcp_settings_module_css_default.cardDescription,
 									children: t("cogneeDescription")
 								})]
 							})]
-						}), (0, react_jsx_runtime.jsxs)("div", {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.enableControl,
-							children: [(0, react_jsx_runtime.jsx)("span", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: mcp_settings_module_css_default.enableLabel,
 								children: t("enabled")
-							}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 								checked: enabled,
 								label: t("enabled"),
 								disabled: busy,
@@ -571,34 +571,34 @@ window.__ModuleLoader__.load({
 							})]
 						})]
 					}),
-					(0, react_jsx_runtime.jsxs)("section", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 						className: mcp_settings_module_css_default.fieldGroup,
-						"aria-labelledby": "cognee-connection-settings",
+						"aria-labelledby": "vision-liao-connection-settings",
 						children: [
-							(0, react_jsx_runtime.jsx)("h4", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", {
 								className: mcp_settings_module_css_default.fieldGroupTitle,
-								id: "cognee-connection-settings",
+								id: "vision-liao-connection-settings",
 								children: t("connectionSettings")
 							}),
-							(0, react_jsx_runtime.jsxs)("label", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: mcp_settings_module_css_default.field,
 								children: [
-									(0, react_jsx_runtime.jsx)("span", { children: t("endpoint") }),
-									(0, react_jsx_runtime.jsx)("input", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("endpoint") }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 										value: endpoint,
 										disabled: busy,
 										onChange: (event) => {
 											setEndpoint(event.currentTarget.value);
 										}
 									}),
-									(0, react_jsx_runtime.jsx)("small", { children: t("endpointHint") })
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("endpointHint") })
 								]
 							}),
-							(0, react_jsx_runtime.jsxs)("label", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: mcp_settings_module_css_default.field,
 								children: [
-									(0, react_jsx_runtime.jsx)("span", { children: t("token") }),
-									(0, react_jsx_runtime.jsx)("input", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("token") }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 										type: "password",
 										autoComplete: "new-password",
 										value: token,
@@ -607,32 +607,32 @@ window.__ModuleLoader__.load({
 											setToken(event.currentTarget.value);
 										}
 									}),
-									(0, react_jsx_runtime.jsx)("small", { children: t(tokenConfigured ? "tokenSet" : "tokenUnset") })
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t(tokenConfigured ? "tokenSet" : "tokenUnset") })
 								]
 							})
 						]
 					}),
-					(0, react_jsx_runtime.jsxs)("footer", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("footer", {
 						className: mcp_settings_module_css_default.cardFooter,
 						children: [
-							(0, react_jsx_runtime.jsxs)("p", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", {
 								className: mcp_settings_module_css_default.status,
 								role: "status",
-								children: [(0, react_jsx_runtime.jsx)("span", { children: t("status") }), (0, react_jsx_runtime.jsx)("strong", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("status") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", {
 									"data-state": status,
 									children: t(`status.${status}`)
 								})]
 							}),
-							(0, react_jsx_runtime.jsxs)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.actions,
-								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "primary",
 									disabled: busy || !form.getSnapshot().writable,
 									onClick: () => {
 										save();
 									},
 									children: t("save")
-								}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "outline",
 									disabled: busy,
 									onClick: () => {
@@ -641,7 +641,7 @@ window.__ModuleLoader__.load({
 									children: busy ? t("checking") : t("check")
 								})]
 							}),
-							failed && (0, react_jsx_runtime.jsx)("p", {
+							failed && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.error,
 								role: "alert",
 								children: t("error")
@@ -652,7 +652,7 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
-		//#region ../../util/crypto/lib/index.js
+		//#region ../../../deepseek-harness/packages/util/crypto/src/index.ts
 		/**
 		* Random v4 UUID, minted from `crypto.getRandomValues`.
 		* @returns the UUID string.
@@ -665,7 +665,7 @@ window.__ModuleLoader__.load({
 			return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 		}
 		//#endregion
-		//#region lib/types/client/ManagedMcpServers.js
+		//#region src/client/ManagedMcpServers.tsx
 		function emptyDraft() {
 			return {
 				id: randomUUID(),
@@ -846,17 +846,17 @@ window.__ModuleLoader__.load({
 			};
 			const statusFor = (server) => statuses.find((status) => status.serverName === server.serverName);
 			const isEditingExisting = servers.some((server) => server.id === draft.id);
-			const editor = (0, react_jsx_runtime.jsxs)("section", {
+			const editor = /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.fieldGroup,
 				"aria-label": t("managed.editor"),
 				children: [
-					(0, react_jsx_runtime.jsx)("h4", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", {
 						className: mcp_settings_module_css_default.fieldGroupTitle,
 						children: t("managed.editor")
 					}),
-					(0, react_jsx_runtime.jsxs)("label", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
-						children: [(0, react_jsx_runtime.jsx)("span", { children: t("serverName") }), (0, react_jsx_runtime.jsx)("input", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("serverName") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 							value: draft.serverName,
 							disabled: busy,
 							onChange: (event) => setDraft({
@@ -865,9 +865,9 @@ window.__ModuleLoader__.load({
 							})
 						})]
 					}),
-					(0, react_jsx_runtime.jsxs)("label", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
-						children: [(0, react_jsx_runtime.jsx)("span", { children: t("transport") }), (0, react_jsx_runtime.jsxs)("select", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("transport") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
 							value: draft.transport,
 							disabled: busy,
 							onChange: (event) => setDraft({
@@ -875,20 +875,20 @@ window.__ModuleLoader__.load({
 								transport: event.currentTarget.value,
 								secrets: []
 							}),
-							children: [(0, react_jsx_runtime.jsx)("option", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
 								value: "streamable-http",
 								children: t("transport.streamable-http")
-							}), (0, react_jsx_runtime.jsx)("option", {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
 								value: "stdio",
 								children: t("transport.stdio")
 							})]
 						})]
 					}),
-					draft.transport === "streamable-http" ? (0, react_jsx_runtime.jsxs)("label", {
+					draft.transport === "streamable-http" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
 						children: [
-							(0, react_jsx_runtime.jsx)("span", { children: t("managed.endpoint") }),
-							(0, react_jsx_runtime.jsx)("input", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.endpoint") }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 								type: "url",
 								value: draft.url,
 								disabled: busy,
@@ -897,12 +897,12 @@ window.__ModuleLoader__.load({
 									url: event.currentTarget.value
 								})
 							}),
-							(0, react_jsx_runtime.jsx)("small", { children: t("endpointHint") })
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("endpointHint") })
 						]
-					}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-						(0, react_jsx_runtime.jsxs)("label", {
+					}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 							className: mcp_settings_module_css_default.field,
-							children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.command") }), (0, react_jsx_runtime.jsx)("input", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.command") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 								value: draft.command,
 								disabled: busy,
 								onChange: (event) => setDraft({
@@ -911,9 +911,9 @@ window.__ModuleLoader__.load({
 								})
 							})]
 						}),
-						(0, react_jsx_runtime.jsxs)("label", {
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 							className: mcp_settings_module_css_default.field,
-							children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.args") }), (0, react_jsx_runtime.jsx)("textarea", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.args") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
 								rows: 3,
 								value: draft.args,
 								disabled: busy,
@@ -923,9 +923,9 @@ window.__ModuleLoader__.load({
 								})
 							})]
 						}),
-						(0, react_jsx_runtime.jsxs)("label", {
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 							className: mcp_settings_module_css_default.field,
-							children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.cwd") }), (0, react_jsx_runtime.jsx)("input", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.cwd") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 								value: draft.cwd,
 								disabled: busy,
 								onChange: (event) => setDraft({
@@ -935,16 +935,16 @@ window.__ModuleLoader__.load({
 							})]
 						})
 					] }),
-					(0, react_jsx_runtime.jsxs)("div", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.serverList,
 						children: [
-							(0, react_jsx_runtime.jsx)("h4", { children: draft.transport === "streamable-http" ? t("managed.headers") : t("managed.environment") }),
-							draft.secrets.map((row, index) => (0, react_jsx_runtime.jsxs)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: draft.transport === "streamable-http" ? t("managed.headers") : t("managed.environment") }),
+							draft.secrets.map((row, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.secretRow,
 								children: [
-									(0, react_jsx_runtime.jsxs)("label", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [(0, react_jsx_runtime.jsx)("span", { children: draft.transport === "streamable-http" ? t("managed.headerName") : t("managed.envName") }), (0, react_jsx_runtime.jsx)("input", {
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: draft.transport === "streamable-http" ? t("managed.headerName") : t("managed.envName") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 											value: row.name,
 											disabled: busy,
 											onChange: (event) => setDraft({
@@ -956,9 +956,9 @@ window.__ModuleLoader__.load({
 											})
 										})]
 									}),
-									(0, react_jsx_runtime.jsxs)("label", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.credentialRef") }), (0, react_jsx_runtime.jsx)("input", {
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.credentialRef") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 											value: row.ref,
 											disabled: busy,
 											onChange: (event) => setDraft({
@@ -970,9 +970,9 @@ window.__ModuleLoader__.load({
 											})
 										})]
 									}),
-									(0, react_jsx_runtime.jsxs)("label", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }), (0, react_jsx_runtime.jsx)("input", {
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 											type: "password",
 											autoComplete: "new-password",
 											value: row.value,
@@ -986,7 +986,7 @@ window.__ModuleLoader__.load({
 											})
 										})]
 									}),
-									(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 										variant: "outline",
 										disabled: busy,
 										onClick: () => setDraft({
@@ -997,7 +997,7 @@ window.__ModuleLoader__.load({
 									})
 								]
 							}, index)),
-							(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 								variant: "outline",
 								disabled: busy,
 								onClick: () => setDraft({
@@ -1012,19 +1012,19 @@ window.__ModuleLoader__.load({
 							})
 						]
 					}),
-					(0, react_jsx_runtime.jsxs)("footer", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("footer", {
 						className: mcp_settings_module_css_default.cardFooter,
 						children: [
-							(0, react_jsx_runtime.jsxs)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.actions,
-								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "primary",
 									disabled: busy || !snapshot.writable,
 									onClick: () => {
 										saveDraft();
 									},
 									children: t("save")
-								}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "outline",
 									disabled: busy,
 									onClick: () => {
@@ -1033,12 +1033,12 @@ window.__ModuleLoader__.load({
 									children: busy ? t("checking") : t("check")
 								})]
 							}),
-							checkState !== void 0 && (0, react_jsx_runtime.jsx)("p", {
+							checkState !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.status,
 								role: "status",
 								children: checkState
 							}),
-							failure !== void 0 && (0, react_jsx_runtime.jsx)("p", {
+							failure !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.error,
 								role: "alert",
 								children: managedFailureLabel(t, failure)
@@ -1047,28 +1047,28 @@ window.__ModuleLoader__.load({
 					})
 				]
 			});
-			return (0, react_jsx_runtime.jsxs)("section", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.card,
 				"aria-label": t("managed.title"),
-				children: [(0, react_jsx_runtime.jsxs)("header", {
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
 					className: mcp_settings_module_css_default.cardHeader,
-					children: [(0, react_jsx_runtime.jsxs)("div", {
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.cardIdentity,
-						children: [(0, react_jsx_runtime.jsx)("span", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 							className: mcp_settings_module_css_default.cardIcon,
 							"aria-hidden": "true",
-							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 24 })
-						}), (0, react_jsx_runtime.jsxs)("div", {
+							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 24 })
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.cardCopy,
-							children: [(0, react_jsx_runtime.jsx)("h3", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
 								className: mcp_settings_module_css_default.cardTitle,
 								children: t("managed.title")
-							}), (0, react_jsx_runtime.jsx)("p", {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.cardDescription,
 								children: t("managed.description")
 							})]
 						})]
-					}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 						variant: "primary",
 						disabled: busy || !snapshot.writable,
 						"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
@@ -1084,39 +1084,39 @@ window.__ModuleLoader__.load({
 						},
 						children: t("managed.add")
 					})]
-				}), (0, react_jsx_runtime.jsxs)("div", {
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: mcp_settings_module_css_default.serverList,
 					children: [
-						servers.length === 0 && activeEditorId !== draft.id && (0, react_jsx_runtime.jsx)("p", { children: t("managed.empty") }),
+						servers.length === 0 && activeEditorId !== draft.id && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.empty") }),
 						servers.map((server) => {
 							const status = statusFor(server);
 							const state = !server.enabled ? "disabled" : status?.state ?? "disconnected";
-							return (0, react_jsx_runtime.jsxs)("article", {
+							return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 								className: `${mcp_settings_module_css_default.serverCard} ${activeEditorId === server.id ? mcp_settings_module_css_default.serverCardEditing : ""}`,
 								children: [
-									(0, react_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: mcp_settings_module_css_default.serverHeading,
-										children: [(0, react_jsx_runtime.jsxs)("div", {
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 											className: mcp_settings_module_css_default.serverIdentity,
-											children: [(0, react_jsx_runtime.jsx)("span", {
+											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 												className: mcp_settings_module_css_default.serverIcon,
 												"aria-hidden": "true",
-												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 22 })
-											}), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("strong", { children: server.serverName }), (0, react_jsx_runtime.jsxs)("p", { children: [
+												children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 22 })
+											}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: server.serverName }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", { children: [
 												t(server.transport === "stdio" ? "transport.stdio" : "transport.streamable-http"),
 												" · ",
-												(0, react_jsx_runtime.jsx)("span", {
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 													className: mcp_settings_module_css_default.serverState,
 													"data-state": state,
 													children: managedStateLabel(t, state)
 												})
 											] })] })]
-										}), (0, react_jsx_runtime.jsxs)("div", {
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 											className: mcp_settings_module_css_default.enableControl,
-											children: [(0, react_jsx_runtime.jsx)("span", {
+											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 												className: mcp_settings_module_css_default.enableLabel,
 												children: t("managed.enabled")
-											}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
+											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 												checked: server.enabled,
 												label: t("managed.enabled"),
 												disabled: busy || !snapshot.writable,
@@ -1126,14 +1126,14 @@ window.__ModuleLoader__.load({
 											})]
 										})]
 									}),
-									(0, react_jsx_runtime.jsxs)("p", { children: [
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", { children: [
 										t("toolCount"),
 										": ",
 										status?.toolCount ?? 0
 									] }),
-									(0, react_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: mcp_settings_module_css_default.actions,
-										children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 											variant: "outline",
 											disabled: busy || !snapshot.writable,
 											"aria-expanded": activeEditorId === server.id,
@@ -1147,7 +1147,7 @@ window.__ModuleLoader__.load({
 												setCheckState(void 0);
 											},
 											children: t("managed.edit")
-										}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 											variant: "outline",
 											disabled: busy || !snapshot.writable,
 											onClick: () => {
@@ -1160,7 +1160,7 @@ window.__ModuleLoader__.load({
 								]
 							}, server.id);
 						}),
-						!isEditingExisting && activeEditorId === draft.id && (0, react_jsx_runtime.jsx)("article", {
+						!isEditingExisting && activeEditorId === draft.id && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("article", {
 							className: `${mcp_settings_module_css_default.serverCard} ${mcp_settings_module_css_default.serverCardEditing}`,
 							children: editor
 						})
@@ -1204,43 +1204,43 @@ window.__ModuleLoader__.load({
 			}
 		}
 		//#endregion
-		//#region lib/types/client/McpConnectionsPage.js
+		//#region src/client/McpConnectionsPage.tsx
 		/** Show each managed connection on the shared MCP settings page when served. */
 		function McpConnectionsPage({ cogneeForm, chromeForm, managedForm, remote, t }) {
 			const cognee = (0, react.useSyncExternalStore)(cogneeForm.subscribe.bind(cogneeForm), cogneeForm.getSnapshot.bind(cogneeForm));
 			const chrome = (0, react.useSyncExternalStore)(chromeForm.subscribe.bind(chromeForm), chromeForm.getSnapshot.bind(chromeForm));
 			const managed = (0, react.useSyncExternalStore)(managedForm.subscribe.bind(managedForm), managedForm.getSnapshot.bind(managedForm));
-			return (0, react_jsx_runtime.jsxs)("div", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: mcp_settings_module_css_default.connections,
 				children: [
-					(0, react_jsx_runtime.jsxs)("header", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
 						className: mcp_settings_module_css_default.pageHeader,
-						children: [(0, react_jsx_runtime.jsx)("span", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 							className: mcp_settings_module_css_default.pageIcon,
 							"aria-hidden": "true",
-							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSettingsOutlineMedium, { size: 24 })
-						}), (0, react_jsx_runtime.jsxs)("div", {
+							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSettingsOutlineMedium, { size: 24 })
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.pageCopy,
-							children: [(0, react_jsx_runtime.jsx)("h2", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h2", {
 								className: mcp_settings_module_css_default.pageTitle,
 								children: t("pageTitle")
-							}), (0, react_jsx_runtime.jsx)("p", {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.pageDescription,
 								children: t("pageDescription")
 							})]
 						})]
 					}),
-					cognee.status === "ready" && (0, react_jsx_runtime.jsx)(CogneeCard, {
+					cognee.status === "ready" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(CogneeCard, {
 						form: cogneeForm,
 						remote,
 						t
 					}),
-					chrome.status === "ready" && (0, react_jsx_runtime.jsx)(ChromeCard, {
+					chrome.status === "ready" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChromeCard, {
 						form: chromeForm,
 						remote,
 						t
 					}),
-					managed.status === "ready" && (0, react_jsx_runtime.jsx)(ManagedMcpServers, {
+					managed.status === "ready" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ManagedMcpServers, {
 						form: managedForm,
 						remote,
 						t
@@ -1249,17 +1249,18 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
-		//#region lib/types/client/locales.js
-		/** English strings for Cognee and MCP card settings. */
+		//#region src/client/locales.ts
+		/** English strings for VISION-LIAO and MCP card settings. */
 		const en = {
 			title: "MCP",
 			pageTitle: "MCP settings",
 			pageDescription: "Configure and manage MCP service connections.",
-			cogneeDescription: "Configure the Cognee MCP connection and project memory.",
+			cogneeTitle: "VISION-LIAO",
+			cogneeDescription: "Configure the VISION-LIAO MCP connection and project memory.",
 			chromeDescription: "Connect Chrome browser tools through MCP.",
-			endpoint: "Cognee MCP endpoint",
+			endpoint: "VISION-LIAO MCP endpoint",
 			endpointHint: "Use HTTPS, or HTTP on this computer only.",
-			enabled: "Use Cognee project memory",
+			enabled: "Use VISION-LIAO project memory",
 			token: "Bearer token",
 			tokenSet: "Token is configured",
 			tokenUnset: "Token is not configured",
@@ -1268,12 +1269,12 @@ window.__ModuleLoader__.load({
 			check: "Check connection",
 			checking: "Checking…",
 			status: "Connection status",
-			error: "Could not save or check the Cognee connection.",
+			error: "Could not save or check the VISION-LIAO connection.",
 			"status.not-configured": "Endpoint is not configured",
 			"status.disabled": "Disabled",
 			"status.authorization-required": "Authorization required",
 			"status.connection-failed": "Connection failed",
-			"status.incompatible-tools": "Cognee tools are incompatible",
+			"status.incompatible-tools": "VISION-LIAO tools are incompatible",
 			"status.ready": "Connected; required tools are available",
 			connectionSettings: "Connection settings",
 			chromeTitle: "Chrome MCP",
@@ -1351,16 +1352,17 @@ window.__ModuleLoader__.load({
 			"managed.error.check": "Could not check this MCP server.",
 			"managed.error.invalid": "Complete the required fields and use unique names."
 		};
-		/** Simplified Chinese strings for Cognee and MCP card settings. */
+		/** Simplified Chinese strings for VISION-LIAO and MCP card settings. */
 		const zh = {
 			title: "MCP",
 			pageTitle: "MCP 设置",
 			pageDescription: "配置和管理 MCP 服务连接。",
+			cogneeTitle: "VISION-LIAO",
 			cogneeDescription: "配置 VISION-LIAO MCP 连接与项目记忆。",
 			chromeDescription: "通过 MCP 连接 Chrome 浏览器工具。",
-			endpoint: "Cognee MCP 地址",
+			endpoint: "VISION-LIAO MCP 地址",
 			endpointHint: "请使用 HTTPS；HTTP 仅允许本机回环地址。",
-			enabled: "启用 Cognee 项目记忆",
+			enabled: "启用 VISION-LIAO 项目记忆",
 			token: "Bearer 令牌",
 			tokenSet: "已配置令牌",
 			tokenUnset: "尚未配置令牌",
@@ -1369,12 +1371,12 @@ window.__ModuleLoader__.load({
 			check: "检查连接",
 			checking: "正在检查…",
 			status: "连接状态",
-			error: "无法保存或检查 Cognee 连接。",
+			error: "无法保存或检查 VISION-LIAO 连接。",
 			"status.not-configured": "尚未配置地址",
 			"status.disabled": "已停用",
 			"status.authorization-required": "需要授权",
 			"status.connection-failed": "连接失败",
-			"status.incompatible-tools": "Cognee 工具不兼容",
+			"status.incompatible-tools": "VISION-LIAO 工具不兼容",
 			"status.ready": "已连接，所需工具可用",
 			connectionSettings: "连接设置",
 			chromeTitle: "Chrome MCP",
@@ -1453,7 +1455,7 @@ window.__ModuleLoader__.load({
 			"managed.error.invalid": "请填写必填项，并确保名称唯一。"
 		};
 		//#endregion
-		//#region lib/types/client/index.js
+		//#region src/client/index.ts
 		const inject = [
 			"slots",
 			"locale",

@@ -1,4 +1,3 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState } from 'react';
 import { Button, IconGlobeOutlineRegular, Switch } from '@deepseek-ai/dsh-client-ui-primitives';
 import css from './mcp-settings.module.css';
@@ -98,6 +97,27 @@ export function ChromeCard({ form, remote, t }) {
         }
     };
     const tokenLabel = tokenWritable ? tokenConfigured ? 'tokenSet' : 'tokenUnset' : 'credentialsUnavailable';
-    return _jsxs("section", { className: css.card, "aria-label": t('chromeTitle'), children: [_jsxs("header", { className: css.cardHeader, children: [_jsxs("div", { className: css.cardIdentity, children: [_jsx("span", { className: css.cardIcon, "aria-hidden": "true", children: _jsx(IconGlobeOutlineRegular, { size: 24 }) }), _jsxs("div", { className: css.cardCopy, children: [_jsx("h3", { className: css.cardTitle, children: "Chrome MCP" }), _jsx("p", { className: css.cardDescription, children: t('chromeDescription') })] })] }), _jsxs("div", { className: css.enableControl, children: [_jsx("span", { className: css.enableLabel, children: t('chromeEnabled') }), _jsx(Switch, { checked: enabled, label: t('chromeEnabled'), disabled: busy || !form.getSnapshot().writable, onChange: setEnabled })] })] }), _jsxs("section", { className: css.fieldGroup, "aria-labelledby": "chrome-connection-settings", children: [_jsx("h4", { className: css.fieldGroupTitle, id: "chrome-connection-settings", children: t('connectionSettings') }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('chromeEndpoint') }), _jsx("input", { type: "url", value: url, disabled: busy || !form.getSnapshot().writable, onChange: event => setUrl(event.currentTarget.value) }), _jsx("small", { children: t('chromeEndpointHint') })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('token') }), _jsx("input", { type: "password", autoComplete: "new-password", value: token, disabled: busy || !tokenWritable, onChange: event => setToken(event.currentTarget.value) }), _jsx("small", { children: t(tokenLabel) })] })] }), _jsxs("footer", { className: css.cardFooter, children: [_jsxs("p", { className: css.status, role: "status", children: [_jsx("span", { children: t('status') }), _jsx("strong", { "data-state": status.state, children: status.state === 'ready' && status.toolCount !== undefined ? t('chromeStatus.readyCount').replace('{count}', String(status.toolCount)) : t(`chromeStatus.${status.state}`) })] }), _jsxs("div", { className: css.actions, children: [_jsx(Button, { variant: "primary", disabled: busy || !form.getSnapshot().writable, onClick: () => { void save(); }, children: t('save') }), _jsx(Button, { variant: "outline", disabled: busy, onClick: () => { void check(); }, children: busy ? t('checking') : t('check') })] }), failure !== undefined && _jsx("p", { className: css.error, role: "alert", children: t(`chromeError.${failure}`) })] })] });
+    return <section className={css.card} aria-label={t('chromeTitle')}>
+    <header className={css.cardHeader}>
+      <div className={css.cardIdentity}>
+        <span className={css.cardIcon} aria-hidden="true"><IconGlobeOutlineRegular size={24}/></span>
+        <div className={css.cardCopy}><h3 className={css.cardTitle}>Chrome MCP</h3><p className={css.cardDescription}>{t('chromeDescription')}</p></div>
+      </div>
+      <div className={css.enableControl}>
+        <span className={css.enableLabel}>{t('chromeEnabled')}</span>
+        <Switch checked={enabled} label={t('chromeEnabled')} disabled={busy || !form.getSnapshot().writable} onChange={setEnabled}/>
+      </div>
+    </header>
+    <section className={css.fieldGroup} aria-labelledby="chrome-connection-settings">
+      <h4 className={css.fieldGroupTitle} id="chrome-connection-settings">{t('connectionSettings')}</h4>
+      <label className={css.field}><span>{t('chromeEndpoint')}</span><input type="url" value={url} disabled={busy || !form.getSnapshot().writable} onChange={event => setUrl(event.currentTarget.value)}/><small>{t('chromeEndpointHint')}</small></label>
+      <label className={css.field}><span>{t('token')}</span><input type="password" autoComplete="new-password" value={token} disabled={busy || !tokenWritable} onChange={event => setToken(event.currentTarget.value)}/><small>{t(tokenLabel)}</small></label>
+    </section>
+    <footer className={css.cardFooter}>
+      <p className={css.status} role="status"><span>{t('status')}</span><strong data-state={status.state}>{status.state === 'ready' && status.toolCount !== undefined ? t('chromeStatus.readyCount').replace('{count}', String(status.toolCount)) : t(`chromeStatus.${status.state}`)}</strong></p>
+      <div className={css.actions}><Button variant="primary" disabled={busy || !form.getSnapshot().writable} onClick={() => { void save(); }}>{t('save')}</Button><Button variant="outline" disabled={busy} onClick={() => { void check(); }}>{busy ? t('checking') : t('check')}</Button></div>
+      {failure !== undefined && <p className={css.error} role="alert">{t(`chromeError.${failure}`)}</p>}
+    </footer>
+  </section>;
 }
 //# sourceMappingURL=ChromeCard.js.map

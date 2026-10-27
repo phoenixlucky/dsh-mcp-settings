@@ -1,9 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState } from 'react';
 import { Button, IconDataOutlineRegular, Switch } from '@deepseek-ai/dsh-client-ui-primitives';
 import css from './mcp-settings.module.css';
 const CREDENTIAL = 'DSH_COGNEE_MCP_TOKEN';
-/** Settings screen for Cognee's endpoint, separate credential, and readiness. */
+/** Settings screen for VISION-LIAO's endpoint, separate credential, and readiness. */
 export function CogneeCard({ form, remote, t }) {
     const snapshot = form.getSnapshot();
     const [enabled, setEnabled] = useState(snapshot.value?.enabled ?? false);
@@ -72,6 +71,27 @@ export function CogneeCard({ form, remote, t }) {
             setBusy(false);
         }
     };
-    return (_jsxs("section", { className: css.card, "aria-label": t('title'), children: [_jsxs("header", { className: css.cardHeader, children: [_jsxs("div", { className: css.cardIdentity, children: [_jsx("span", { className: css.cardIcon, "aria-hidden": "true", children: _jsx(IconDataOutlineRegular, { size: 24 }) }), _jsxs("div", { className: css.cardCopy, children: [_jsx("h3", { className: css.cardTitle, children: "Cognee" }), _jsx("p", { className: css.cardDescription, children: t('cogneeDescription') })] })] }), _jsxs("div", { className: css.enableControl, children: [_jsx("span", { className: css.enableLabel, children: t('enabled') }), _jsx(Switch, { checked: enabled, label: t('enabled'), disabled: busy, onChange: setEnabled })] })] }), _jsxs("section", { className: css.fieldGroup, "aria-labelledby": "cognee-connection-settings", children: [_jsx("h4", { className: css.fieldGroupTitle, id: "cognee-connection-settings", children: t('connectionSettings') }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('endpoint') }), _jsx("input", { value: endpoint, disabled: busy, onChange: (event) => { setEndpoint(event.currentTarget.value); } }), _jsx("small", { children: t('endpointHint') })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('token') }), _jsx("input", { type: "password", autoComplete: "new-password", value: token, disabled: busy || !tokenWritable, onChange: (event) => { setToken(event.currentTarget.value); } }), _jsx("small", { children: t(tokenConfigured ? 'tokenSet' : 'tokenUnset') })] })] }), _jsxs("footer", { className: css.cardFooter, children: [_jsxs("p", { className: css.status, role: "status", children: [_jsx("span", { children: t('status') }), _jsx("strong", { "data-state": status, children: t(`status.${status}`) })] }), _jsxs("div", { className: css.actions, children: [_jsx(Button, { variant: "primary", disabled: busy || !form.getSnapshot().writable, onClick: () => { void save(); }, children: t('save') }), _jsx(Button, { variant: "outline", disabled: busy, onClick: () => { void check(); }, children: busy ? t('checking') : t('check') })] }), failed && _jsx("p", { className: css.error, role: "alert", children: t('error') })] }));
+    return (<section className={css.card} aria-label={t('cogneeTitle')}>
+      <header className={css.cardHeader}>
+        <div className={css.cardIdentity}>
+          <span className={css.cardIcon} aria-hidden="true"><IconDataOutlineRegular size={24}/></span>
+          <div className={css.cardCopy}><h3 className={css.cardTitle}>{t('cogneeTitle')}</h3><p className={css.cardDescription}>{t('cogneeDescription')}</p></div>
+        </div>
+        <div className={css.enableControl}>
+          <span className={css.enableLabel}>{t('enabled')}</span>
+          <Switch checked={enabled} label={t('enabled')} disabled={busy} onChange={setEnabled}/>
+        </div>
+      </header>
+      <section className={css.fieldGroup} aria-labelledby="vision-liao-connection-settings">
+        <h4 className={css.fieldGroupTitle} id="vision-liao-connection-settings">{t('connectionSettings')}</h4>
+        <label className={css.field}><span>{t('endpoint')}</span><input value={endpoint} disabled={busy} onChange={(event) => { setEndpoint(event.currentTarget.value); }}/><small>{t('endpointHint')}</small></label>
+        <label className={css.field}><span>{t('token')}</span><input type="password" autoComplete="new-password" value={token} disabled={busy || !tokenWritable} onChange={(event) => { setToken(event.currentTarget.value); }}/><small>{t(tokenConfigured ? 'tokenSet' : 'tokenUnset')}</small></label>
+      </section>
+      <footer className={css.cardFooter}>
+        <p className={css.status} role="status"><span>{t('status')}</span><strong data-state={status}>{t(`status.${status}`)}</strong></p>
+        <div className={css.actions}><Button variant="primary" disabled={busy || !form.getSnapshot().writable} onClick={() => { void save(); }}>{t('save')}</Button><Button variant="outline" disabled={busy} onClick={() => { void check(); }}>{busy ? t('checking') : t('check')}</Button></div>
+        {failed && <p className={css.error} role="alert">{t('error')}</p>}
+      </footer>
+    </section>);
 }
 //# sourceMappingURL=CogneeCard.js.map

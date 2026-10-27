@@ -11,7 +11,7 @@ interface Injected {
     form: ConfigForm<Config>;
     remote: Remote;
 }
-/** Settings screen for Cognee's endpoint, separate credential, and readiness. */
+/** Settings screen for VISION-LIAO's endpoint, separate credential, and readiness. */
 export declare function CogneeCard({ form, remote, t }: Injected & PropsLocale<'settings.mcp'>): import("react").JSX.Element;
 export {};
 //# sourceMappingURL=CogneeCard.d.ts.map

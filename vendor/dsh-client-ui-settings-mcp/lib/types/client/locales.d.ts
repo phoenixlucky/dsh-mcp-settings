@@ -1,13 +1,14 @@
-/** English strings for Cognee and MCP card settings. */
+/** English strings for VISION-LIAO and MCP card settings. */
 export declare const en: {
     readonly title: "MCP";
     readonly pageTitle: "MCP settings";
     readonly pageDescription: "Configure and manage MCP service connections.";
-    readonly cogneeDescription: "Configure the Cognee MCP connection and project memory.";
+    readonly cogneeTitle: "VISION-LIAO";
+    readonly cogneeDescription: "Configure the VISION-LIAO MCP connection and project memory.";
     readonly chromeDescription: "Connect Chrome browser tools through MCP.";
-    readonly endpoint: "Cognee MCP endpoint";
+    readonly endpoint: "VISION-LIAO MCP endpoint";
     readonly endpointHint: "Use HTTPS, or HTTP on this computer only.";
-    readonly enabled: "Use Cognee project memory";
+    readonly enabled: "Use VISION-LIAO project memory";
     readonly token: "Bearer token";
     readonly tokenSet: "Token is configured";
     readonly tokenUnset: "Token is not configured";
@@ -16,12 +17,12 @@ export declare const en: {
     readonly check: "Check connection";
     readonly checking: "Checking…";
     readonly status: "Connection status";
-    readonly error: "Could not save or check the Cognee connection.";
+    readonly error: "Could not save or check the VISION-LIAO connection.";
     readonly 'status.not-configured': "Endpoint is not configured";
     readonly 'status.disabled': "Disabled";
     readonly 'status.authorization-required': "Authorization required";
     readonly 'status.connection-failed': "Connection failed";
-    readonly 'status.incompatible-tools': "Cognee tools are incompatible";
+    readonly 'status.incompatible-tools': "VISION-LIAO tools are incompatible";
     readonly 'status.ready': "Connected; required tools are available";
     readonly connectionSettings: "Connection settings";
     readonly chromeTitle: "Chrome MCP";
@@ -99,6 +100,6 @@ export declare const en: {
     readonly 'managed.error.check': "Could not check this MCP server.";
     readonly 'managed.error.invalid': "Complete the required fields and use unique names.";
 };
-/** Simplified Chinese strings for Cognee and MCP card settings. */
+/** Simplified Chinese strings for VISION-LIAO and MCP card settings. */
 export declare const zh: Record<keyof typeof en, string>;
 //# sourceMappingURL=locales.d.ts.map
