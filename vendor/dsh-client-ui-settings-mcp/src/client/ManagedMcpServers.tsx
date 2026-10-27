@@ -51,6 +51,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
 
   useEffect(() => {
     let active = true
+    let timer: ReturnType<typeof setTimeout>
     const refresh = async () => {
       try {
         const reply = await remote.mcpClientStatus.list()
@@ -59,10 +60,10 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         void error
         if (active) setStatuses([])
       }
+      if (active) timer = setTimeout(() => { void refresh() }, 5000)
     }
     void refresh()
-    const timer = setInterval(() => { void refresh() }, 5000)
-    return () => { active = false; clearInterval(timer) }
+    return () => { active = false; clearTimeout(timer) }
   }, [remote])
 
   const saveServers = async (next: ManagedMcpServer[]) => {

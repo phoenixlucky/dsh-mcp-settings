@@ -709,6 +709,7 @@ window.__ModuleLoader__.load({
 			const [checkState, setCheckState] = (0, react.useState)();
 			(0, react.useEffect)(() => {
 				let active = true;
+				let timer;
 				const refresh = async () => {
 					try {
 						const reply = await remote.mcpClientStatus.list();
@@ -716,14 +717,14 @@ window.__ModuleLoader__.load({
 					} catch (error) {
 						if (active) setStatuses([]);
 					}
+					if (active) timer = setTimeout(() => {
+						refresh();
+					}, 5e3);
 				};
 				refresh();
-				const timer = setInterval(() => {
-					refresh();
-				}, 5e3);
 				return () => {
 					active = false;
-					clearInterval(timer);
+					clearTimeout(timer);
 				};
 			}, [remote]);
 			const saveServers = async (next) => {

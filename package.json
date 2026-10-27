@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "The MCP settings bundle: managed MCP servers, Chrome connection, VISION-LIAO memory, and the Settings UI entry",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "publishConfig": {
     "access": "public"
   },
@@ -35,6 +35,7 @@
     "vendor/dsh-mcp-cognee-memory/lib/index.js",
     "vendor/dsh-mcp-cognee-memory/lib/typert.host.js",
     "vendor/dsh-mcp-cognee-memory/lib/typert.remote-client.js",
+    "vendor/dsh-mcp-cognee-memory/lib/types/types.js",
     "vendor/dsh-mcp-cognee-memory/lib/types/**/*.d.ts"
   ],
   "license": "MIT",
