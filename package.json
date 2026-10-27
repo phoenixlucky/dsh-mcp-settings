@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "The MCP settings bundle: managed MCP servers, Chrome connection, VISION-LIAO memory, and the Settings UI entry",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publishConfig": {
     "access": "public"
   },
