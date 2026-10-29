@@ -5,36 +5,33 @@
 /:
   en: cb3f91d54eee30e5
   zh: cb3f91d54eee30e5
-/description-optional-bundle-for-configuring-all-mcp-servers-in-one-managed-list-with-legacy-chrome-and-vision-liao-migration-kind-package-bundle:
-  en: 433e8b8eb8f81f63
-  zh: f20bbb6968e94163
+/description-optional-bundle-for-mcp-server-chrome-and-cognee-runtime-providers-configured-through-profile-patches-kind-package-bundle:
+  en: 620f01cdb76ea7a5
+  zh: 1bf9899e5d075922
 /deepseek-ai-dsh-mcp-settings:
   en: 7bc3d1076fc23548
   zh: ab52e2961043b8b6
 /deepseek-ai-dsh-mcp-settings/summary:
-  en: 7b22df7c0b59699b
-  zh: 0b6d2907a42947f5
+  en: 11647767db11e545
+  zh: 4b541676d6a067fb
 /deepseek-ai-dsh-mcp-settings/compatibility:
-  en: 693b7f1e0d535045
-  zh: 9eeb489e324388e5
+  en: 0f1e089d8e95e351
+  zh: 1d6f0e0d5a397218
 /deepseek-ai-dsh-mcp-settings/use-this-package:
-  en: 7b93d0d71d62348c
-  zh: 60420566c77ebb9a
+  en: 180eb8a2319da75a
+  zh: cffeeb47327cf906
 /deepseek-ai-dsh-mcp-settings/understand-the-implementation:
-  en: aad1f3b8a214a2bd
-  zh: 8b422669fc1199e7
-/deepseek-ai-dsh-mcp-settings/migration:
-  en: 370287c794e0c741
-  zh: 4a0751000ad7b8b4
+  en: 5914aa0021c3385c
+  zh: fddf91e622c5ebaa
 /deepseek-ai-dsh-mcp-settings/dev-note:
-  en: ae97a62a2e3edc9d
-  zh: a2f69feff9717d37
+  en: 7892873bc884c3d6
+  zh: 2668b1333918d204
 /deepseek-ai-dsh-mcp-settings/model-experience:
   en: 9ace611d76caab01
   zh: dfb37bdabe4102d6
 /deepseek-ai-dsh-mcp-settings/known-limitations-and-deferred-work:
-  en: aa5ccb9cbe07f5af
-  zh: 03f13a2152d79ab4
+  en: 77aafb2018d24b65
+  zh: 99e8b95c8e2d7332
 /deepseek-ai-dsh-mcp-settings/vendored-packages:
-  en: 1389a79a98885c5e
-  zh: 5a306f87ba72e1d2
+  en: 51cb5529f393c385
+  zh: d6d426d1f37462ad

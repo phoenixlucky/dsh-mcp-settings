@@ -1,4 +1,4 @@
-# MCP runtime providers and their single Settings UI are grouped for one-list configuration.
+# MCP runtime providers are grouped for profile configuration.
 - insert:
     - id: cognee-memory
       name: '@deepseek-ai/dsh-mcp-cognee-memory'
@@ -19,6 +19,3 @@
             enabled: true
             transport: streamable-http
             url: http://127.0.0.1:12888/new-gold
-
-    - id: ui-settings-mcp
-      name: '@deepseek-ai/dsh-client-ui-settings-mcp'

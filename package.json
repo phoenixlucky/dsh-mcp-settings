@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "Unified managed MCP server settings with legacy Chrome and Cognee migration support",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "publishConfig": {
     "access": "public"
   },
@@ -26,11 +26,6 @@
     "lib/index.js",
     "cordis.patch.yml",
     "lib/types/**/*.d.ts",
-    "vendor/dsh-client-ui-settings-mcp/package.json",
-    "vendor/dsh-client-ui-settings-mcp/lib/index.js",
-    "vendor/dsh-client-ui-settings-mcp/lib/client.js",
-    "vendor/dsh-client-ui-settings-mcp/lib/types/**",
-    "vendor/dsh-client-ui-settings-mcp/src/**",
     "vendor/dsh-mcp-cognee-memory/package.json",
     "vendor/dsh-mcp-cognee-memory/lib/index.js",
     "vendor/dsh-mcp-cognee-memory/lib/typert.host.js",
@@ -57,7 +52,6 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-client-ui-settings-mcp": "file:vendor/dsh-client-ui-settings-mcp",
     "@deepseek-ai/dsh-mcp-client": "file:vendor/dsh-mcp-client",
     "@deepseek-ai/dsh-mcp-cognee-memory": "file:vendor/dsh-mcp-cognee-memory"
   },
