@@ -10,12 +10,15 @@ import css from './mcp-settings.module.css'
 type Remote = ClientContext['remote']
 interface Injected { form: ConfigForm<{ servers?: ManagedMcpServer[] }>; remote: Remote }
 interface SecretRow { name: string; ref: string; value: string }
+interface HeaderRow { name: string; value: string }
 interface Draft {
   id: string
   serverName: string
   enabled: boolean
+  purpose: 'model-tools' | 'project-memory'
   transport: 'streamable-http' | 'stdio'
   url: string
+  headers: HeaderRow[]
   command: string
   args: string
   cwd: string
@@ -23,14 +26,15 @@ interface Draft {
 }
 
 function emptyDraft(): Draft {
-  return { id: randomUUID(), serverName: '', enabled: true, transport: 'streamable-http', url: '', command: '', args: '', cwd: '', secrets: [] }
+  return { id: randomUUID(), serverName: '', enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: '', headers: [], command: '', args: '', cwd: '', secrets: [] }
 }
 
 function toDraft(server: ManagedMcpServer): Draft {
   const secrets = server.transport === 'streamable-http' ? server.headerRefs : server.envRefs
   return {
-    id: server.id, serverName: server.serverName, enabled: server.enabled, transport: server.transport,
+    id: server.id, serverName: server.serverName, enabled: server.enabled, purpose: server.purpose ?? 'model-tools', transport: server.transport,
     url: server.transport === 'streamable-http' ? server.url : '',
+    headers: server.transport === 'streamable-http' ? Object.entries(server.headers ?? {}).map(([name, value]) => ({ name, value })) : [],
     command: server.transport === 'stdio' ? server.command : '',
     args: server.transport === 'stdio' ? server.args.join('\n') : '',
     cwd: server.transport === 'stdio' ? server.cwd : '',
@@ -51,7 +55,6 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
 
   useEffect(() => {
     let active = true
-    let timer: ReturnType<typeof setTimeout>
     const refresh = async () => {
       try {
         const reply = await remote.mcpClientStatus.list()
@@ -60,10 +63,10 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         void error
         if (active) setStatuses([])
       }
-      if (active) timer = setTimeout(() => { void refresh() }, 5000)
     }
     void refresh()
-    return () => { active = false; clearTimeout(timer) }
+    const timer = setInterval(() => { void refresh() }, 5000)
+    return () => { active = false; clearInterval(timer) }
   }, [remote])
 
   const saveServers = async (next: ManagedMcpServer[]) => {
@@ -86,16 +89,32 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       return undefined
     }
     const refs: Record<string, string> = {}
+    const headers: Record<string, string> = {}
+    const headerNames = new Set<string>()
+    for (const row of draft.headers) {
+      const name = row.name.trim()
+      const value = row.value
+      const normalized = name.toLowerCase()
+      if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || /[\r\n]/u.test(value)
+        || /^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name) || headerNames.has(normalized)) {
+        setFailure('invalid')
+        return undefined
+      }
+      headerNames.add(normalized)
+      headers[name] = value
+    }
     for (const row of draft.secrets) {
       const name = row.name.trim()
       const ref = row.ref.trim()
       const validName = draft.transport === 'streamable-http'
         ? /^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name)
         : /^[A-Za-z_][A-Za-z0-9_]*$/u.test(name)
-      if (!validName || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref) || Object.hasOwn(refs, name)) {
+      const normalized = name.toLowerCase()
+      if (!validName || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref) || headerNames.has(normalized)) {
         setFailure('invalid')
         return undefined
       }
+      headerNames.add(normalized)
       refs[name] = ref
     }
     setFailure(undefined)
@@ -110,9 +129,13 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       setFailure('credential')
       return undefined
     }
+    if (draft.purpose === 'project-memory' && draft.transport !== 'streamable-http') {
+      setFailure('invalid')
+      return undefined
+    }
     return draft.transport === 'streamable-http'
-      ? { id: draft.id, serverName, enabled: draft.enabled, transport: 'streamable-http', url: draft.url.trim(), headerRefs: refs }
-      : { id: draft.id, serverName, enabled: draft.enabled, transport: 'stdio', command: draft.command.trim(), args: draft.args.split(/\r?\n/u).filter(value => value.trim() !== ''), cwd: draft.cwd, envRefs: refs }
+      ? { id: draft.id, serverName, enabled: draft.enabled, purpose: draft.purpose, transport: 'streamable-http', url: draft.url.trim(), headers, headerRefs: refs }
+      : { id: draft.id, serverName, enabled: draft.enabled, purpose: draft.purpose, transport: 'stdio', command: draft.command.trim(), args: draft.args.split(/\r?\n/u).filter(value => value.trim() !== ''), cwd: draft.cwd, envRefs: refs }
   }
   const saveDraft = async (): Promise<ManagedMcpServer | undefined> => {
     const server = await prepareDraft()
@@ -158,6 +181,10 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     <section className={css.fieldGroup} aria-label={t('managed.editor')}>
       <h4 className={css.fieldGroupTitle}>{t('managed.editor')}</h4>
       <label className={css.field}><span>{t('serverName')}</span><input value={draft.serverName} disabled={busy} onChange={event => setDraft({ ...draft, serverName: event.currentTarget.value })} /></label>
+      <label className={css.field}><span>{t('managed.purpose')}</span><select value={draft.purpose} disabled={busy} onChange={event => {
+        const purpose = event.currentTarget.value as Draft['purpose']
+        setDraft({ ...draft, purpose, transport: purpose === 'project-memory' ? 'streamable-http' : draft.transport })
+      }}><option value="model-tools">{t('managed.purpose.model-tools')}</option><option value="project-memory">{t('managed.purpose.project-memory')}</option></select></label>
       <label className={css.field}><span>{t('transport')}</span><select value={draft.transport} disabled={busy} onChange={event => setDraft({ ...draft, transport: event.currentTarget.value as Draft['transport'], secrets: [] })}>
         <option value="streamable-http">{t('transport.streamable-http')}</option><option value="stdio">{t('transport.stdio')}</option>
       </select></label>
@@ -169,7 +196,16 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
           <label className={css.field}><span>{t('managed.cwd')}</span><input value={draft.cwd} disabled={busy} onChange={event => setDraft({ ...draft, cwd: event.currentTarget.value })} /></label>
         </>}
       <div className={css.serverList}>
-        <h4>{draft.transport === 'streamable-http' ? t('managed.headers') : t('managed.environment')}</h4>
+        {draft.transport === 'streamable-http' && <>
+          <h4>{t('managed.headers')}</h4>
+          {draft.headers.map((row, index) => <div className={css.secretRow} key={`header-${index}`}>
+            <label className={css.field}><span>{t('managed.headerName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) })} /></label>
+            <label className={css.field}><span>{t('managed.headerValue')}</span><input value={row.value} disabled={busy} onChange={event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, value: event.currentTarget.value } : item) })} /></label>
+            <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, headers: draft.headers.filter((_item, rowIndex) => rowIndex !== index) })}>{t('managed.removeHeader')}</Button>
+          </div>)}
+          <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, headers: [...draft.headers, { name: '', value: '' }] })}>{t('managed.addHeader')}</Button>
+        </>}
+        <h4>{draft.transport === 'streamable-http' ? t('managed.credentials') : t('managed.environment')}</h4>
         {draft.secrets.map((row, index) => <div className={css.secretRow} key={index}>
           <label className={css.field}><span>{draft.transport === 'streamable-http' ? t('managed.headerName') : t('managed.envName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) })} /></label>
           <label className={css.field}><span>{t('managed.credentialRef')}</span><input value={row.ref} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, ref: event.currentTarget.value } : item) })} /></label>

@@ -26,7 +26,7 @@ const $remote = createTypertRemoteInfo({
         description: 'The current closed readiness state.',
         jsonSchema: {"type":"object","properties":{"state":{"type":"string","enum":["ready","not-configured","disabled","authorization-required","connection-failed","incompatible-tools"],"description":"Stable readiness category."},"messageKey":{"type":"string","enum":["cognee.status.ready","cognee.status.not-configured","cognee.status.disabled","cognee.status.authorization-required","cognee.status.connection-failed","cognee.status.incompatible-tools"],"description":"Translation key owned by the settings consumer."}},"required":["state","messageKey"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/mcp/cognee-memory/src/index.ts","line":105,"column":9},
+      sourceLocation: {"file":"packages/mcp/cognee-memory/src/index.ts","line":119,"column":9},
     },
   },
 }, z)

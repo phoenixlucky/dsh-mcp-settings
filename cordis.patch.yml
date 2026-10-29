@@ -1,4 +1,4 @@
-# MCP services and their Settings UI are grouped so profiles can opt in or out together.
+# MCP runtime providers and their single Settings UI are grouped for one-list configuration.
 - insert:
     - id: cognee-memory
       name: '@deepseek-ai/dsh-mcp-cognee-memory'
@@ -7,6 +7,8 @@
 
     - id: mcp-chrome
       name: '@deepseek-ai/dsh-mcp-client/chrome'
+      config:
+        enabled: false
 
     - id: mcp-server-manager
       name: '@deepseek-ai/dsh-mcp-client/managed'

@@ -1,8 +1,9 @@
 import { McpCardSettings } from "./McpCardSettings.js";
 import { McpConnectionsPage } from "./McpConnectionsPage.js";
+import { runLegacyMcpMigration } from "./migration.js";
 import { en, zh } from "./locales.js";
 export const inject = [
-    'slots', 'locale', 'remote', 'remote.credentials', 'remote.cognee', 'remote.chromeMcp',
+    'slots', 'locale', 'remote', 'remote.credentials',
     'remote.mcpClientStatus', 'remote.mcpServerManager', 'configForms',
 ];
 const NS = 'settings.mcp';
@@ -10,15 +11,22 @@ const NS = 'settings.mcp';
 export function apply(ctx) {
     const t = ctx.locale.bind(NS);
     ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'ui-settings-mcp: dictionaries');
-    const connectionsInjected = () => ({
-        cogneeForm: ctx.configForms.get('cognee-memory'),
-        chromeForm: ctx.configForms.get('mcp-chrome'),
-        managedForm: ctx.configForms.get('mcp-server-manager'),
-        remote: ctx.remote,
-    });
-    ctx.effect(() => ctx.configForms.whileServed(['cognee-memory', 'mcp-chrome', 'mcp-server-manager'], () => ctx.slots.inject('settings.section', () => ctx.slots.register({
-        name: 'settings.section', id: 'mcp', order: 14, label: () => t('title'), locale: NS, inject: connectionsInjected,
-    }, McpConnectionsPage))), 'ui-settings-mcp: connection settings section');
+    ctx.effect(() => ctx.configForms.whileServed(['mcp-server-manager'], () => {
+        let active = true;
+        let stopSection;
+        const cognee = ctx.configForms.get('cognee-memory');
+        const chrome = ctx.configForms.get('mcp-chrome');
+        const managed = ctx.configForms.get('mcp-server-manager');
+        void runLegacyMcpMigration(cognee, chrome, managed).catch(() => undefined).finally(() => {
+            if (!active)
+                return;
+            stopSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
+                name: 'settings.section', id: 'mcp', order: 14, label: () => t('title'), locale: NS,
+                inject: () => ({ managedForm: managed, remote: ctx.remote }),
+            }, McpConnectionsPage));
+        });
+        return () => { active = false; stopSection?.(); };
+    }), 'ui-settings-mcp: connection settings section');
     const appearanceInjected = () => ({ form: ctx.configForms.get('mcp-card-presentation'), remote: ctx.remote });
     ctx.effect(() => ctx.configForms.whileServed(['mcp-card-presentation'], () => ctx.slots.inject('settings.section', () => ctx.slots.register({
         name: 'settings.section', id: 'mcp-card-appearance', order: 14.1, label: () => t('appearanceTitle'), locale: NS, inject: appearanceInjected,

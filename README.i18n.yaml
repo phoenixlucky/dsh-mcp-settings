@@ -1,28 +1,40 @@
 # Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
 # section, a hash of its English and Chinese blocks outside code blocks and generated regions.
 # After editing either side, bring the other along and re-record with:
-#   pnpm run verify-translation-pairing --write packages/bundle/mcp-settings/README.md
+#   pnpm run verify-translation-pairing --write ../dsh-mcp/README.md
 /:
-  en: c50faf97457be51c
-  zh: 6c774077faca83ce
+  en: cb3f91d54eee30e5
+  zh: cb3f91d54eee30e5
+/description-optional-bundle-for-configuring-all-mcp-servers-in-one-managed-list-with-legacy-chrome-and-vision-liao-migration-kind-package-bundle:
+  en: 433e8b8eb8f81f63
+  zh: f20bbb6968e94163
 /deepseek-ai-dsh-mcp-settings:
-  en: 98f3baddea63f53f
-  zh: 909e62574653d3aa
+  en: 7bc3d1076fc23548
+  zh: ab52e2961043b8b6
 /deepseek-ai-dsh-mcp-settings/summary:
-  en: 2e1e5ecfa142218e
-  zh: 79189134c769676a
+  en: 7b22df7c0b59699b
+  zh: 0b6d2907a42947f5
+/deepseek-ai-dsh-mcp-settings/compatibility:
+  en: 693b7f1e0d535045
+  zh: 9eeb489e324388e5
 /deepseek-ai-dsh-mcp-settings/use-this-package:
   en: 7b93d0d71d62348c
   zh: 60420566c77ebb9a
 /deepseek-ai-dsh-mcp-settings/understand-the-implementation:
-  en: a885cc178d0ef4b5
-  zh: 74fedf6e4e0e3b0b
+  en: aad1f3b8a214a2bd
+  zh: 8b422669fc1199e7
+/deepseek-ai-dsh-mcp-settings/migration:
+  en: 370287c794e0c741
+  zh: 4a0751000ad7b8b4
 /deepseek-ai-dsh-mcp-settings/dev-note:
-  en: c9466196ffcf5735
-  zh: e2e8e149e9402a6d
+  en: ae97a62a2e3edc9d
+  zh: a2f69feff9717d37
 /deepseek-ai-dsh-mcp-settings/model-experience:
-  en: 5258031fe19fa4c0
-  zh: 69254d1355b12454
+  en: 9ace611d76caab01
+  zh: dfb37bdabe4102d6
 /deepseek-ai-dsh-mcp-settings/known-limitations-and-deferred-work:
   en: aa5ccb9cbe07f5af
   zh: 03f13a2152d79ab4
+/deepseek-ai-dsh-mcp-settings/vendored-packages:
+  en: 1389a79a98885c5e
+  zh: 5a306f87ba72e1d2

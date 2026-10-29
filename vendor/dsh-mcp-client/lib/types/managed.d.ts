@@ -4,7 +4,14 @@ import type { Volatile } from '@deepseek-ai/cordis';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
 import type { CredentialProvider } from '@deepseek-ai/dsh-credentials';
 import z from '@deepseek-ai/schemastery';
-import type { ManagedMcpCheck, ManagedMcpServer } from './types.ts';
+import type { ManagedMcpCheck, ManagedMcpPurpose, ManagedMcpServer } from './types.ts';
+/** Host-local lifecycle supplied by a managed row's non-model consumer. */
+export interface ManagedMcpConsumer {
+    /** Start one validated row and return its asynchronous disposer. */
+    start(server: ManagedMcpServer): Promise<() => Promise<void>>;
+    /** Check one draft without publishing tools. */
+    check(server: ManagedMcpServer): Promise<ManagedMcpCheck>;
+}
 /** Config for the host manager's persisted server list. */
 export interface ManagedConfig {
     /** Volatile settings list edited by the MCP settings page. */
@@ -38,6 +45,7 @@ export declare class ManagedMcpServerManager extends TypertRemoteService {
     private readonly config;
     private readonly credentials;
     private readonly active;
+    private readonly consumers;
     private tail;
     private disposed;
     private readonly stopVolatile;
@@ -51,6 +59,17 @@ export declare class ManagedMcpServerManager extends TypertRemoteService {
      * @returns A safe result classification and discovered tool count on success.
      */
     check(server: ManagedMcpServer): Promise<ManagedMcpCheck>;
+    /** Tell upgrade shims whether a managed row now owns this name.
+     * @param serverName - Server namespace to look up.
+     * @returns Whether any persisted managed row claims the namespace.
+     */
+    hasServer(serverName: string): boolean;
+    /** Register the host-only owner for a managed row purpose.
+     * @param purpose - Row purpose owned by the consumer.
+     * @param consumer - Start, dispose, and check operations for those rows.
+     * @returns An asynchronous disposer that stops rows owned by this consumer.
+     */
+    registerConsumer(purpose: ManagedMcpPurpose, consumer: ManagedMcpConsumer): Promise<() => Promise<void>>;
     /** Replace or remove only the active client fibers affected by the new list.
      * @param servers - Complete next settings list.
      * @param restartIds - Optional ids to restart after a referenced credential changes.

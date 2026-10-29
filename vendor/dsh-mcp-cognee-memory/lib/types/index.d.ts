@@ -50,6 +50,10 @@ export declare class CogneeMemoryService extends TypertRemoteService implements 
         requestTimeoutMs: number;
     }>, Config>;
     private readonly config;
+    private managedServer;
+    private managedOwnsMemory;
+    private unregisterConsumer;
+    private managedStatus;
     /** @param ctx - Host with the credential provider. @param config - endpoint and readiness policy. */
     constructor(ctx: Context, config: Config);
     protected [Service.init](): Promise<void>;
@@ -79,6 +83,8 @@ export declare class CogneeMemoryService extends TypertRemoteService implements 
     /** Reject operations while the opt-in setting or endpoint is absent. */
     private assertEnabled;
     private snapshotConfig;
+    private startManagedServer;
+    private checkManagedServer;
     /** Bound one MCP connection and its requests, then clear the operation timer. */
     private withDeadline;
 }

@@ -1,16 +1,17 @@
 /** Managed Cognee MCP calls; no operation is registered as a model tool. */
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+import { credentialRef } from '@deepseek-ai/dsh-credentials';
 import { isIP } from 'node:net';
 const MAX_QUERY_BYTES = 1024;
 const MAX_RECALL_BYTES = 8 * 1024;
 const MAX_PROPOSAL_BYTES = 3 * 1024;
-const COGNEE_TOOL_NAMES = ['get_guidance', 'search_memory', 'recall', 'propose_memory'];
+const COGNEE_TOOL_NAMES = ['get_guidance', 'search_memory', 'propose_memory'];
 /** Return the schema-compatible preferred recall tool.
  * @param tools - MCP tool descriptors from the managed Cognee connection.
  * @returns A validated allow-listed recall tool, when available.
  */
 export function resolveCogneeRecallTool(tools) {
-    for (const name of ['get_guidance', 'search_memory', 'recall']) {
+    for (const name of ['get_guidance', 'search_memory']) {
         const tool = tools.find(candidate => candidate.name === name);
         if (tool === undefined)
             continue;
@@ -42,8 +43,7 @@ export function resolveCogneeProposalTool(tools) {
     if (!schemaAllowsEnum(properties[scopeField], 'private') || !schemaAllowsEnum(properties[scopeField], 'global'))
         return undefined;
     const categoryValue = ['adaptive_strategy', 'decision_principle', 'collaboration_practice', 'experience']
-        .find(value => schemaAllowsEnum(properties[categoryField], value))
-        ?? (isRecord(properties[categoryField]) && properties[categoryField].type === 'string' && properties[categoryField].enum === undefined ? 'experience' : undefined);
+        .find(value => schemaAllowsEnum(properties[categoryField], value));
     if (categoryValue === undefined)
         return undefined;
     if (contentField !== 'content' && contentField !== 'text')
@@ -126,12 +126,22 @@ export function cogneeProposalSummary(raw) {
  */
 export async function withCogneeClient(options) {
     const url = validateCogneeEndpoint(options.endpoint);
-    const credential = await options.credentials.resolve(options.credentialRef);
-    if (credential === undefined)
-        throw new CogneeClientError('authorization-required', 'Cognee credential is not configured');
+    const headers = { ...(options.headers ?? {}) };
+    for (const [name, reference] of Object.entries(options.headerRefs ?? {})) {
+        const credential = await options.credentials.resolve(credentialRef(reference));
+        if (credential === undefined)
+            throw new CogneeClientError('authorization-required', 'Cognee credential is not configured');
+        headers[name] = credential.value;
+    }
+    if (options.credentialRef !== undefined) {
+        const credential = await options.credentials.resolve(options.credentialRef);
+        if (credential === undefined)
+            throw new CogneeClientError('authorization-required', 'Cognee credential is not configured');
+        headers.Authorization ??= `Bearer ${credential.value}`;
+    }
     const transport = new StreamableHTTPClientTransport(url, {
         requestInit: {
-            headers: { Authorization: `Bearer ${credential.value}` },
+            headers,
             redirect: 'error',
             signal: options.signal,
         },

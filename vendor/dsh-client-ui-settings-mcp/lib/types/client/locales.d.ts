@@ -1,14 +1,13 @@
-/** English strings for VISION-LIAO and MCP card settings. */
+/** English strings for Cognee and MCP card settings. */
 export declare const en: {
     readonly title: "MCP";
     readonly pageTitle: "MCP settings";
-    readonly pageDescription: "Configure and manage MCP service connections.";
-    readonly cogneeTitle: "VISION-LIAO";
-    readonly cogneeDescription: "Configure the VISION-LIAO MCP connection and project memory.";
+    readonly pageDescription: "Configure every MCP server in one managed list.";
+    readonly cogneeDescription: "Configure the Cognee MCP connection and project memory.";
     readonly chromeDescription: "Connect Chrome browser tools through MCP.";
-    readonly endpoint: "VISION-LIAO MCP endpoint";
+    readonly endpoint: "Cognee MCP endpoint";
     readonly endpointHint: "Use HTTPS, or HTTP on this computer only.";
-    readonly enabled: "Use VISION-LIAO project memory";
+    readonly enabled: "Use Cognee project memory";
     readonly token: "Bearer token";
     readonly tokenSet: "Token is configured";
     readonly tokenUnset: "Token is not configured";
@@ -17,12 +16,12 @@ export declare const en: {
     readonly check: "Check connection";
     readonly checking: "Checking…";
     readonly status: "Connection status";
-    readonly error: "Could not save or check the VISION-LIAO connection.";
+    readonly error: "Could not save or check the Cognee connection.";
     readonly 'status.not-configured': "Endpoint is not configured";
     readonly 'status.disabled': "Disabled";
     readonly 'status.authorization-required': "Authorization required";
     readonly 'status.connection-failed': "Connection failed";
-    readonly 'status.incompatible-tools': "VISION-LIAO tools are incompatible";
+    readonly 'status.incompatible-tools': "Cognee tools are incompatible";
     readonly 'status.ready': "Connected; required tools are available";
     readonly connectionSettings: "Connection settings";
     readonly chromeTitle: "Chrome MCP";
@@ -65,21 +64,28 @@ export declare const en: {
     readonly 'connection.disconnected': "Disconnected";
     readonly 'transport.stdio': "Local process";
     readonly 'transport.streamable-http': "Streamable HTTP";
-    readonly 'managed.title': "Managed MCP servers";
-    readonly 'managed.description': "Manage third-party MCP servers and their connection status.";
+    readonly 'managed.title': "MCP servers";
+    readonly 'managed.description': "Configure server connections, purpose, credentials, and live status in one list.";
     readonly 'managed.add': "Add server";
-    readonly 'managed.empty': "No managed MCP servers are configured.";
+    readonly 'managed.empty': "No MCP servers are configured.";
     readonly 'managed.enabled': "Enabled";
     readonly 'managed.edit': "Edit";
     readonly 'managed.delete': "Delete";
     readonly 'managed.editor': "Server settings";
+    readonly 'managed.purpose': "Purpose";
+    readonly 'managed.purpose.model-tools': "Tools for the model";
+    readonly 'managed.purpose.project-memory': "Internal project memory";
     readonly 'managed.endpoint': "MCP endpoint";
     readonly 'managed.command': "Executable";
     readonly 'managed.args': "Arguments (one per line)";
     readonly 'managed.cwd': "Working directory";
-    readonly 'managed.headers': "Secret HTTP headers";
+    readonly 'managed.headers': "HTTP headers";
+    readonly 'managed.credentials': "Credential references";
     readonly 'managed.environment': "Secret environment variables";
     readonly 'managed.headerName': "Header name";
+    readonly 'managed.headerValue': "Header value";
+    readonly 'managed.addHeader': "Add header";
+    readonly 'managed.removeHeader': "Remove header";
     readonly 'managed.envName': "Environment variable";
     readonly 'managed.credentialRef': "Credential reference";
     readonly 'managed.secret': "Secret value";
@@ -100,6 +106,6 @@ export declare const en: {
     readonly 'managed.error.check': "Could not check this MCP server.";
     readonly 'managed.error.invalid': "Complete the required fields and use unique names.";
 };
-/** Simplified Chinese strings for VISION-LIAO and MCP card settings. */
+/** Simplified Chinese strings for Cognee and MCP card settings. */
 export declare const zh: Record<keyof typeof en, string>;
 //# sourceMappingURL=locales.d.ts.map

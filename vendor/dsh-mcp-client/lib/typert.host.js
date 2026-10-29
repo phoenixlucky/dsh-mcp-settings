@@ -22,13 +22,16 @@ const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema = ()
   'id': z.string().describe('Stable settings identity.'),
   'serverName': z.string().describe('Unique namespace for this server\'s model-facing tools.'),
   'enabled': z.boolean().describe('Whether the server should be connected.'),
+  'purpose': z.union([z.literal("model-tools"), z.literal("project-memory")]).optional().describe('Consumer that owns this server connection.'),
   'transport': z.literal("streamable-http").describe('Selects Streamable HTTP transport.'),
   'url': z.string().describe('MCP endpoint.'),
+  'headers': z.record(z.string(), z.string()).optional().describe('Non-secret request headers. Authentication headers belong in `headerRefs`.'),
   'headerRefs': z.record(z.string(), z.string()).describe('Header names mapped to credential references.'),
 }), z.object({
   'id': z.string().describe('Stable settings identity.'),
   'serverName': z.string().describe('Unique namespace for this server\'s model-facing tools.'),
   'enabled': z.boolean().describe('Whether the server should be connected.'),
+  'purpose': z.union([z.literal("model-tools"), z.literal("project-memory")]).optional().describe('Consumer that owns this server connection.'),
   'transport': z.literal("stdio").describe('Selects stdio transport.'),
   'command': z.string().describe('Executable started directly.'),
   'args': z.array(z.string()).describe('Arguments passed directly.'),
@@ -51,13 +54,16 @@ const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$sche
   'id': z.string().describe('Stable settings identity.'),
   'serverName': z.string().describe('Unique namespace for this server\'s model-facing tools.'),
   'enabled': z.boolean().describe('Whether the server should be connected.'),
+  'purpose': z.union([z.literal("model-tools"), z.literal("project-memory")]).optional().describe('Consumer that owns this server connection.'),
   'transport': z.literal("streamable-http").describe('Selects Streamable HTTP transport.'),
   'url': z.string().describe('MCP endpoint.'),
+  'headers': z.record(z.string(), z.string()).optional().describe('Non-secret request headers. Authentication headers belong in `headerRefs`.'),
   'headerRefs': z.record(z.string(), z.string()).describe('Header names mapped to credential references.'),
 }), z.strictObject({
   'id': z.string().describe('Stable settings identity.'),
   'serverName': z.string().describe('Unique namespace for this server\'s model-facing tools.'),
   'enabled': z.boolean().describe('Whether the server should be connected.'),
+  'purpose': z.union([z.literal("model-tools"), z.literal("project-memory")]).optional().describe('Consumer that owns this server connection.'),
   'transport': z.literal("stdio").describe('Selects stdio transport.'),
   'command': z.string().describe('Executable started directly.'),
   'args': z.array(z.string()).describe('Arguments passed directly.'),
@@ -81,7 +87,7 @@ const $remote = createTypertRemoteInfo({
         description: 'A client-safe connection state; the response never contains endpoint or credential values.',
         jsonSchema: {"type":"object","properties":{"state":{"type":"string","enum":["ready","not-configured","disabled","authorization-required","connection-failed","timed-out"]},"toolCount":{"type":"number","description":"Discovered tools when the endpoint is ready."}},"required":["state"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/mcp/mcp-client/src/chrome.ts","line":83,"column":9},
+      sourceLocation: {"file":"packages/mcp/mcp-client/src/chrome.ts","line":84,"column":9},
     },
     'mcpClientStatus/list': {
       service: 'mcpClientStatus',
@@ -128,7 +134,7 @@ const $remote = createTypertRemoteInfo({
         description: 'A safe result classification and discovered tool count on success.',
         jsonSchema: {"oneOf":[{"type":"object","properties":{"state":{"type":"string","const":"authorization-required"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"connection-failed"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"timed-out"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"ready"},"toolCount":{"type":"number"}},"required":["state","toolCount"],"additionalProperties":true}]},
       },
-      sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":111,"column":3},
+      sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":122,"column":3},
     },
   },
 }, z)
@@ -222,6 +228,20 @@ export const TYPERT = {
           },
           {
             "kind": "method",
+            "name": "hasServer",
+            "signature": "hasServer(serverName: string): boolean",
+            "summary": "Tell upgrade shims whether a managed row now owns this name.",
+            "jsDoc": "/** Tell upgrade shims whether a managed row now owns this name.\n * @param serverName - Server namespace to look up.\n * @returns Whether any persisted managed row claims the namespace.\n */"
+          },
+          {
+            "kind": "method",
+            "name": "registerConsumer",
+            "signature": "async registerConsumer(purpose: ManagedMcpPurpose, consumer: ManagedMcpConsumer): Promise<() => Promise<void>>",
+            "summary": "Register the host-only owner for a managed row purpose.",
+            "jsDoc": "/** Register the host-only owner for a managed row purpose.\n * @param purpose - Row purpose owned by the consumer.\n * @param consumer - Start, dispose, and check operations for those rows.\n * @returns An asynchronous disposer that stops rows owned by this consumer.\n */"
+          },
+          {
+            "kind": "method",
             "name": "dispose",
             "signature": "async dispose(): Promise<void>",
             "summary": "Stop listening for configuration changes and await all delegated clients.",
@@ -231,11 +251,19 @@ export const TYPERT = {
         "types": [
           {
             "name": "ManagedHttpServer",
-            "declaration": "export interface ManagedHttpServer {\n    id: string;\n    serverName: string;\n    enabled: boolean;\n    transport: 'streamable-http';\n    url: string;\n    headerRefs: Record<string, string>;\n}"
+            "declaration": "export interface ManagedHttpServer {\n    id: string;\n    serverName: string;\n    enabled: boolean;\n    purpose?: ManagedMcpPurpose;\n    transport: 'streamable-http';\n    url: string;\n    headers?: Record<string, string>;\n    headerRefs: Record<string, string>;\n}"
           },
           {
             "name": "ManagedMcpCheck",
             "declaration": "export type ManagedMcpCheck = { state: 'authorization-required'; } | { state: 'connection-failed'; } | { state: 'timed-out'; } | { state: 'ready'; toolCount: number; };"
+          },
+          {
+            "name": "ManagedMcpConsumer",
+            "declaration": "export interface ManagedMcpConsumer {\n    start(server: ManagedMcpServer): Promise<() => Promise<void>>;\n    check(server: ManagedMcpServer): Promise<ManagedMcpCheck>;\n}"
+          },
+          {
+            "name": "ManagedMcpPurpose",
+            "declaration": "export type ManagedMcpPurpose = 'model-tools' | 'project-memory';"
           },
           {
             "name": "ManagedMcpServer",
@@ -243,7 +271,7 @@ export const TYPERT = {
           },
           {
             "name": "ManagedStdioServer",
-            "declaration": "export interface ManagedStdioServer {\n    id: string;\n    serverName: string;\n    enabled: boolean;\n    transport: 'stdio';\n    command: string;\n    args: readonly string[];\n    cwd: string;\n    envRefs: Record<string, string>;\n}"
+            "declaration": "export interface ManagedStdioServer {\n    id: string;\n    serverName: string;\n    enabled: boolean;\n    purpose?: ManagedMcpPurpose;\n    transport: 'stdio';\n    command: string;\n    args: readonly string[];\n    cwd: string;\n    envRefs: Record<string, string>;\n}"
           }
         ]
       }

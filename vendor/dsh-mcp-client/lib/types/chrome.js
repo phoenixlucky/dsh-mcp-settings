@@ -46,7 +46,6 @@ export const CHROME_CREDENTIAL_REF = 'DSH_CHROME_MCP_TOKEN';
 export const Config = z.object({
     enabled: z.boolean().default(false).volatile(),
     url: z.string().default('').volatile(),
-    origin: z.string().default('').volatile(),
     credentialRef: z.string().pattern(/^[A-Za-z_][A-Za-z0-9_]*$/).default(CHROME_CREDENTIAL_REF).volatile(),
     bridgePath: z.string().default('@deepseek-ai/dsh-chrome-bridge/bridge'),
     requestTimeoutMs: z.number().step(1).min(1).max(120_000).default(10_000).volatile(),
@@ -67,7 +66,7 @@ let ChromeMcpService = (() => {
             __esDecorate(this, null, _checkChromeConnection_decorators, { kind: "method", name: "checkChromeConnection", static: false, private: false, access: { has: obj => "checkChromeConnection" in obj, get: obj => obj.checkChromeConnection }, metadata: _metadata }, null, _instanceExtraInitializers);
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        static inject = ['credentials', 'tools'];
+        static inject = ['credentials', 'tools', 'mcpServerManager'];
         static Config = Config;
         config = __runInitializers(this, _instanceExtraInitializers);
         /** @param ctx - Host with credentials and MCP tools. @param config - Managed endpoint settings. */
@@ -77,7 +76,7 @@ let ChromeMcpService = (() => {
             const controller = createChromeConnectionController(ctx, config, ctx.credentials, async (clientConfig) => {
                 const fiber = await ctx.plugin({ name: 'mcp-chrome.client', inject: mcpClientInject, apply: applyMcpClient }, clientConfig);
                 return async () => { await fiber.dispose(); };
-            });
+            }, () => ctx.mcpServerManager.hasServer('chrome'));
             ctx.effect(() => controller.dispose, 'mcp-chrome.connection');
             void controller.start();
         }
@@ -115,7 +114,7 @@ export async function checkChromeConnection(ctx, config) {
         ]);
         if (controller.signal.aborted)
             return { state: 'timed-out' };
-        const transport = createTransport(createChromeClientConfig(endpoint, credential?.value, config.bridgePath, config.origin.get()));
+        const transport = createTransport(createChromeClientConfig(endpoint, credential?.value, config.bridgePath));
         client = new Client({ name: 'deepseek-harness-chrome-check', version: '0.2.1' });
         await client.connect(transport, { signal: controller.signal });
         const tools = await client.listTools({}, { signal: controller.signal });
@@ -144,7 +143,7 @@ export async function checkChromeConnection(ctx, config) {
  * @param bridgePath - Installed bridge executable path.
  * @returns The generic MCP client's stdio settings.
  */
-export function createChromeClientConfig(endpoint, token, bridgePath, origin = '') {
+export function createChromeClientConfig(endpoint, token, bridgePath) {
     let url;
     try {
         url = new URL(endpoint);
@@ -166,7 +165,7 @@ export function createChromeClientConfig(endpoint, token, bridgePath, origin = '
         args: [bridgePath],
         env: {
             DSH_CHROME_MCP_URL: url.href,
-            DSH_CHROME_MCP_ORIGIN: origin.trim() || `${url.protocol}//${url.hostname}`,
+            DSH_CHROME_MCP_ORIGIN: `${url.protocol}//${url.hostname}`,
             ...(token === undefined ? {} : { DSH_CHROME_MCP_TOKEN: token }),
         },
         cwd: '',
@@ -181,7 +180,7 @@ export function createChromeClientConfig(endpoint, token, bridgePath, origin = '
  * @param startClient - Starts the generic MCP client and returns its disposer.
  * @returns The managed connection's start and disposal controls.
  */
-export function createChromeConnectionController(ctx, config, credentials, startClient) {
+export function createChromeConnectionController(ctx, config, credentials, startClient, hasManagedServer = () => false) {
     let currentDispose;
     let tail = Promise.resolve();
     let disposed = false;
@@ -191,12 +190,12 @@ export function createChromeConnectionController(ctx, config, credentials, start
             currentDispose = undefined;
             if (dispose !== undefined)
                 await dispose();
-            if (disposed || !config.enabled.get() || config.url.get().trim() === '')
+            if (disposed || await hasManagedServer() || !config.enabled.get() || config.url.get().trim() === '')
                 return;
             const endpoint = config.url.get().trim();
             const ref = credentialRef(config.credentialRef.get());
             const secret = await credentials.resolve(ref);
-            const nextDispose = await startClient(createChromeClientConfig(endpoint, secret?.value, config.bridgePath, config.origin.get()));
+            const nextDispose = await startClient(createChromeClientConfig(endpoint, secret?.value, config.bridgePath));
             if (disposed)
                 await nextDispose();
             else
@@ -208,7 +207,7 @@ export function createChromeConnectionController(ctx, config, credentials, start
         return tail;
     };
     const stopConfig = ctx.on('loader/volatile-update', (paths) => {
-        if (paths.some(([field]) => field === 'enabled' || field === 'url' || field === 'origin' || field === 'credentialRef'))
+        if (paths.some(([field]) => field === 'enabled' || field === 'url' || field === 'credentialRef' || field === 'servers'))
             return enqueue();
     });
     const stopCredential = ctx.on('credentials/reference-updated', (ref) => {

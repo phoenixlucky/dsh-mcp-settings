@@ -1,0 +1,1 @@
+{"version":3,"file":"typert.remote-client.d.ts","names":["checkChromeConnection","list","check"],"sources":["../src/chrome.ts","../src/status.ts","../src/managed.ts"],"sourcesContent":[null,null,null],"mappings":";;;;;;;;;;IAmFQA,qB;;;IC3DNC,I;;;ICiGAC,K;;;IFtCMF,iC;IC3DNC,sB;ICiGAC,wB","ignoreList":[]}

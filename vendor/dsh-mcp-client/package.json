@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-mcp-client",
-  "description": "MCP client runtime with Chrome and managed server entry points",
+  "description": "MCP client runtime with a unified managed server list and a temporary Chrome migration shim",
   "version": "0.2.2-alpha.2",
   "type": "module",
   "main": "lib/index.js",

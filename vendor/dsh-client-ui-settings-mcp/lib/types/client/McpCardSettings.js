@@ -1,3 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Button, Switch } from '@deepseek-ai/dsh-client-ui-primitives';
 import { isMcpServerIdentity, withMcpCardAppearance, withoutMcpCardAppearance } from "./mcpCardAppearance.js";
@@ -51,40 +52,15 @@ export function McpCardSettings({ form, remote, t }) {
         setError(!await form.set('servers', withoutMcpCardAppearance(saved, serverName)));
         setDraft({});
     };
-    const field = (key, label) => (<label className={css.field}>
-      <span>{label}</span>
-      <input value={draft[key] ?? ''} disabled={!state.writable} onChange={(event) => {
-            setDraft(value => ({ ...value, [key]: event.currentTarget.value }));
-        }}/>
-    </label>);
-    const flag = (key, label) => (<label className={css.switchRow}>
-      <span>{label}</span>
-      <Switch checked={draft[key] ?? true} label={label} disabled={!state.writable} onChange={(value) => {
-            setDraft(current => ({ ...current, [key]: value }));
-        }}/>
-    </label>);
-    return <section className={css.card} aria-label={t('appearanceTitle')}>
-    <h3>{t('appearanceTitle')}</h3>
-    <div className={css.serverList} aria-label={t('serverCards')}>
-      <h4>{t('serverCards')}</h4>
-      {servers.length === 0 && <p role="status">{t(statusAvailable ? 'noServers' : 'statusUnavailable')}</p>}
-      {servers.map((server) => {
-            const appearance = saved[server.serverName] ?? {};
-            return <article className={css.serverCard} key={server.id}>
-          <strong>{appearance.icon && <span aria-hidden="true">{appearance.icon} </span>}{appearance.displayName || server.serverName}</strong>
-          {appearance.description && <p>{appearance.description}</p>}
-          {appearance.showConnectionStatus !== false && <span>{t('connectionState')}: {t(`connection.${server.state}`)}</span>}
-          {appearance.showToolCount !== false && <span>{t('toolCount')}: {server.toolCount}</span>}
-          {appearance.showTransport !== false && <span>{t('transport')}: {t(`transport.${server.transport}`)}</span>}
-          {appearance.showSource !== false && <span>{t('source')}: {server.source}</span>}
-        </article>;
-        })}
-    </div>
-    <label className={css.field}><span>{t('serverName')}</span><input value={serverName} disabled={!state.writable} onChange={(event) => { setServerName(event.currentTarget.value); load(event.currentTarget.value); }}/><small>{t('serverNameHint')}</small></label>
-    {field('displayName', t('displayName'))}{field('description', t('description'))}{field('icon', t('icon'))}
-    {flag('showConnectionStatus', t('showConnectionStatus'))}{flag('showToolCount', t('showToolCount'))}{flag('showTransport', t('showTransport'))}{flag('showSource', t('showSource'))}
-    <div className={css.actions}><Button variant="primary" disabled={!state.writable} onClick={() => { void save(); }}>{t('saveAppearance')}</Button><Button variant="outline" disabled={!state.writable} onClick={() => { void reset(); }}>{t('resetAppearance')}</Button></div>
-    {error && <p role="alert">{t('invalidServerName')}</p>}
-  </section>;
+    const field = (key, label) => (_jsxs("label", { className: css.field, children: [_jsx("span", { children: label }), _jsx("input", { value: draft[key] ?? '', disabled: !state.writable, onChange: (event) => {
+                    setDraft(value => ({ ...value, [key]: event.currentTarget.value }));
+                } })] }));
+    const flag = (key, label) => (_jsxs("label", { className: css.switchRow, children: [_jsx("span", { children: label }), _jsx(Switch, { checked: draft[key] ?? true, label: label, disabled: !state.writable, onChange: (value) => {
+                    setDraft(current => ({ ...current, [key]: value }));
+                } })] }));
+    return _jsxs("section", { className: css.card, "aria-label": t('appearanceTitle'), children: [_jsx("h3", { children: t('appearanceTitle') }), _jsxs("div", { className: css.serverList, "aria-label": t('serverCards'), children: [_jsx("h4", { children: t('serverCards') }), servers.length === 0 && _jsx("p", { role: "status", children: t(statusAvailable ? 'noServers' : 'statusUnavailable') }), servers.map((server) => {
+                        const appearance = saved[server.serverName] ?? {};
+                        return _jsxs("article", { className: css.serverCard, children: [_jsxs("strong", { children: [appearance.icon && _jsxs("span", { "aria-hidden": "true", children: [appearance.icon, " "] }), appearance.displayName || server.serverName] }), appearance.description && _jsx("p", { children: appearance.description }), appearance.showConnectionStatus !== false && _jsxs("span", { children: [t('connectionState'), ": ", t(`connection.${server.state}`)] }), appearance.showToolCount !== false && _jsxs("span", { children: [t('toolCount'), ": ", server.toolCount] }), appearance.showTransport !== false && _jsxs("span", { children: [t('transport'), ": ", t(`transport.${server.transport}`)] }), appearance.showSource !== false && _jsxs("span", { children: [t('source'), ": ", server.source] })] }, server.id);
+                    })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('serverName') }), _jsx("input", { value: serverName, disabled: !state.writable, onChange: (event) => { setServerName(event.currentTarget.value); load(event.currentTarget.value); } }), _jsx("small", { children: t('serverNameHint') })] }), field('displayName', t('displayName')), field('description', t('description')), field('icon', t('icon')), flag('showConnectionStatus', t('showConnectionStatus')), flag('showToolCount', t('showToolCount')), flag('showTransport', t('showTransport')), flag('showSource', t('showSource')), _jsxs("div", { className: css.actions, children: [_jsx(Button, { variant: "primary", disabled: !state.writable, onClick: () => { void save(); }, children: t('saveAppearance') }), _jsx(Button, { variant: "outline", disabled: !state.writable, onClick: () => { void reset(); }, children: t('resetAppearance') })] }), error && _jsx("p", { role: "alert", children: t('invalidServerName') })] });
 }
 //# sourceMappingURL=McpCardSettings.js.map

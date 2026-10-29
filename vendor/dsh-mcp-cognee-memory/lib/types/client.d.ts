@@ -1,11 +1,11 @@
 /** Managed Cognee MCP calls; no operation is registered as a model tool. */
 import { Client, type CallToolResult } from '@modelcontextprotocol/client';
 import type { CredentialProvider, CredentialRef } from '@deepseek-ai/dsh-credentials';
-declare const COGNEE_TOOL_NAMES: readonly ["get_guidance", "search_memory", "recall", "propose_memory"];
+declare const COGNEE_TOOL_NAMES: readonly ["get_guidance", "search_memory", "propose_memory"];
 /** One schema-validated Cognee read operation. */
 export interface CogneeRecallTool {
     /** Supported MCP operation name. */
-    readonly name: 'get_guidance' | 'search_memory' | 'recall';
+    readonly name: 'get_guidance' | 'search_memory';
     /** String field used to send the query. */
     readonly queryField: 'task' | 'query';
 }
@@ -72,7 +72,9 @@ export declare function cogneeProposalSummary(raw: string): string;
  */
 export declare function withCogneeClient<T>(options: {
     endpoint: string;
-    credentialRef: CredentialRef;
+    credentialRef?: CredentialRef;
+    headers?: Record<string, string>;
+    headerRefs?: Record<string, string>;
     credentials: CredentialProvider;
     signal: AbortSignal;
     operation: (client: Client) => Promise<T>;

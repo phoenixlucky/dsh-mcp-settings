@@ -43,16 +43,18 @@ import { createTransport } from "./transport.js";
 const SERVER_NAME_PATTERN = /^[A-Za-z0-9_-]{1,32}$/;
 const CREDENTIAL_REF_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
 const HEADER_NAME_PATTERN = /^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/;
+const INLINE_SECRET_HEADER_PATTERN = /^(?:authorization|cookie|proxy-authorization|x-api-key)$/iu;
 const DEFAULT_CHECK_TIMEOUT_MS = 10_000;
 const ServerName = z.string().required().pattern(SERVER_NAME_PATTERN);
 const CredentialRefs = z.dict(z.string().required().pattern(CREDENTIAL_REF_PATTERN)).default({});
+const Purpose = z.union([z.const('model-tools'), z.const('project-memory')]).default('model-tools');
 const ManagedServerSchema = z.union([
     z.object({
-        id: z.string().required().min(1), serverName: ServerName, enabled: z.boolean().default(true),
-        transport: z.const('streamable-http'), url: z.string().required(), headerRefs: CredentialRefs,
+        id: z.string().required().min(1), serverName: ServerName, enabled: z.boolean().default(true), purpose: Purpose,
+        transport: z.const('streamable-http'), url: z.string().required(), headers: z.dict(String).default({}), headerRefs: CredentialRefs,
     }),
     z.object({
-        id: z.string().required().min(1), serverName: ServerName, enabled: z.boolean().default(true),
+        id: z.string().required().min(1), serverName: ServerName, enabled: z.boolean().default(true), purpose: Purpose,
         transport: z.const('stdio'), command: z.string().required().min(1), args: z.array(String).default([]),
         cwd: z.string().default(''), envRefs: CredentialRefs,
     }),
@@ -83,6 +85,7 @@ let ManagedMcpServerManager = (() => {
         config = __runInitializers(this, _instanceExtraInitializers);
         credentials;
         active = new Map();
+        consumers = new Map();
         tail = Promise.resolve();
         disposed = false;
         stopVolatile;
@@ -119,7 +122,45 @@ let ManagedMcpServerManager = (() => {
          * @returns A safe result classification and discovered tool count on success.
          */
         check(server) {
-            return checkManagedMcpServer(this.ctx, this.credentials, server, this.config.checkTimeoutMs.get());
+            const checked = ManagedServerSchema(server);
+            validateManagedServer(checked);
+            const purpose = managedPurpose(checked);
+            if (purpose === 'model-tools') {
+                return checkManagedMcpServer(this.ctx, this.credentials, { ...checked, purpose }, this.config.checkTimeoutMs.get());
+            }
+            return this.consumers.get(purpose)?.check({ ...checked, purpose }) ?? Promise.resolve({ state: 'connection-failed' });
+        }
+        /** Tell upgrade shims whether a managed row now owns this name.
+         * @param serverName - Server namespace to look up.
+         * @returns Whether any persisted managed row claims the namespace.
+         */
+        hasServer(serverName) {
+            return this.config.servers.get().some(server => server.serverName === serverName);
+        }
+        /** Register the host-only owner for a managed row purpose.
+         * @param purpose - Row purpose owned by the consumer.
+         * @param consumer - Start, dispose, and check operations for those rows.
+         * @returns An asynchronous disposer that stops rows owned by this consumer.
+         */
+        async registerConsumer(purpose, consumer) {
+            if (purpose === 'model-tools')
+                throw new TypeError('mcp-server-manager: model-tools purpose is reserved');
+            if (this.disposed)
+                throw new Error('mcp-server-manager: cannot register a consumer after disposal');
+            if (this.consumers.has(purpose))
+                throw new TypeError(`mcp-server-manager: consumer for "${purpose}" is already registered`);
+            this.consumers.set(purpose, consumer);
+            await this.reconcile(this.config.servers.get());
+            let registered = true;
+            return async () => {
+                if (!registered)
+                    return;
+                registered = false;
+                if (this.consumers.get(purpose) !== consumer)
+                    return;
+                this.consumers.delete(purpose);
+                await this.reconcile(this.config.servers.get());
+            };
         }
         /** Replace or remove only the active client fibers affected by the new list.
          * @param servers - Complete next settings list.
@@ -134,21 +175,27 @@ let ManagedMcpServerManager = (() => {
                 const nextById = new Map(snapshot.map(server => [server.id, server]));
                 for (const [id, current] of this.active) {
                     const next = nextById.get(id);
-                    if (next === undefined || !next.enabled || restartIds.has(id) || fingerprint(next) !== current.fingerprint) {
+                    const consumer = next === undefined || managedPurpose(next) === 'model-tools' ? undefined : this.consumers.get(managedPurpose(next));
+                    if (next === undefined || !next.enabled || current.consumer !== consumer || restartIds.has(id) || fingerprint(next) !== current.fingerprint) {
                         this.active.delete(id);
-                        await current.fiber.dispose();
+                        await current.dispose();
                     }
                 }
                 for (const server of snapshot) {
                     if (this.disposed || !server.enabled || this.active.has(server.id))
                         continue;
+                    const purpose = managedPurpose(server);
+                    const consumer = purpose === 'model-tools' ? undefined : this.consumers.get(purpose);
+                    if (purpose !== 'model-tools' && consumer === undefined)
+                        continue;
                     try {
-                        const runtime = await resolveClientConfig(this.credentials, server);
-                        const fiber = await this.ctx.plugin({ name: 'mcp-server-manager:' + server.id, inject: mcpClientInject, apply: applyMcpClient }, runtime);
+                        const dispose = consumer === undefined
+                            ? await startManagedClient(this.ctx, this.credentials, server)
+                            : await consumer.start({ ...server, purpose });
                         if (this.disposed)
-                            await fiber.dispose();
+                            await dispose();
                         else
-                            this.active.set(server.id, { fingerprint: fingerprint(server), fiber });
+                            this.active.set(server.id, { fingerprint: fingerprint(server), ...(consumer === undefined ? {} : { consumer }), dispose });
                     }
                     catch (error) {
                         this.ctx.logger.warn('mcp-server-manager: could not start server "%s" (%s)', server.serverName, error instanceof Error ? error.name : 'unknown error');
@@ -172,7 +219,7 @@ let ManagedMcpServerManager = (() => {
             await this.tail;
             const clients = [...this.active.values()];
             this.active.clear();
-            await Promise.all(clients.map(({ fiber }) => fiber.dispose()));
+            await Promise.all(clients.map(({ dispose }) => dispose()));
         }
     };
 })();
@@ -250,8 +297,20 @@ function validateManagedServers(servers) {
 function validateManagedServer(server) {
     if (server.transport === 'streamable-http') {
         validateHttpUrl(server.url);
-        if (Object.keys(server.headerRefs).some(key => !HEADER_NAME_PATTERN.test(key)))
-            throw new TypeError('mcp-server-manager: invalid HTTP header name');
+        const names = new Set();
+        for (const [name, value] of Object.entries(server.headers ?? {})) {
+            const normalized = name.toLowerCase();
+            if (!HEADER_NAME_PATTERN.test(name) || /[\r\n]/u.test(value) || INLINE_SECRET_HEADER_PATTERN.test(name)) {
+                throw new TypeError('mcp-server-manager: invalid or sensitive inline HTTP header');
+            }
+            names.add(normalized);
+        }
+        for (const name of Object.keys(server.headerRefs)) {
+            const normalized = name.toLowerCase();
+            if (!HEADER_NAME_PATTERN.test(name) || names.has(normalized))
+                throw new TypeError('mcp-server-manager: invalid or duplicate HTTP header name');
+            names.add(normalized);
+        }
     }
     else if (Object.keys(server.envRefs).some(key => !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(key))) {
         throw new TypeError('mcp-server-manager: invalid environment variable name');
@@ -261,11 +320,17 @@ function validateManagedServer(server) {
 async function resolveClientConfig(credentials, server) {
     if (server.transport === 'streamable-http') {
         const url = validateHttpUrl(server.url);
-        const headers = await resolveSecretMap(credentials, server.headerRefs);
+        const headers = { ...server.headers, ...await resolveSecretMap(credentials, server.headerRefs) };
         return { transport: 'streamable-http', serverName: server.serverName, url: url.href, headers, toolCallTimeoutMs: 60_000, failOnStartupError: false };
     }
     const env = await resolveSecretMap(credentials, server.envRefs);
     return { transport: 'stdio', serverName: server.serverName, command: server.command, args: [...server.args], env, cwd: server.cwd, toolCallTimeoutMs: 60_000, failOnStartupError: false };
+}
+/** Start one ordinary managed server and return the plugin fiber's disposer. */
+async function startManagedClient(ctx, credentials, server) {
+    const runtime = await resolveClientConfig(credentials, server);
+    const fiber = await ctx.plugin({ name: 'mcp-server-manager:' + server.id, inject: mcpClientInject, apply: applyMcpClient }, runtime);
+    return () => fiber.dispose();
 }
 /** Resolve every configured secret and refuse to start with a missing reference. */
 async function resolveSecretMap(credentials, refs) {
@@ -304,6 +369,10 @@ function validateHttpUrl(input) {
 }
 /** Compare settings without exposing values in diagnostics. */
 function fingerprint(server) { return JSON.stringify(server); }
+/** Resolve compatibility rows whose purpose predates the managed purpose field. */
+function managedPurpose(server) {
+    return server.purpose ?? 'model-tools';
+}
 /** Detect authorization status without returning transport-provided text. */
 function isAuthorizationFailure(error) {
     let candidate = error;

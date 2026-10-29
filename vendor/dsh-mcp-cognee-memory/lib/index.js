@@ -1700,12 +1700,17 @@ var LlmError = class extends HarnessError {
 				if (typeof model.provider !== "string" || model.provider !== provider || typeof model.id !== "string" || model.id.length === 0 || typeof model.name !== "string" || model.name.length === 0 || model.description !== void 0 && typeof model.description !== "string" || seen.has(model.id)) throw new LlmError(`adapter returned invalid or duplicate model metadata for provider "${provider}"`, "INVALID_CATALOG");
 				seen.add(model.id);
 				const inputModalities = this.detachedModalities(model.inputModalities);
+				const badge = model.badge;
 				return {
 					provider: model.provider,
 					id: model.id,
 					name: model.name,
 					...model.description === void 0 ? {} : { description: model.description },
-					...inputModalities === void 0 ? {} : { inputModalities }
+					...inputModalities === void 0 ? {} : { inputModalities },
+					...badge === void 0 ? {} : { badge: {
+						text: typeof badge.text === "string" ? badge.text : { ...badge.text },
+						tone: badge.tone
+					} }
 				};
 			});
 		}
@@ -2045,7 +2050,6 @@ const MAX_PROPOSAL_BYTES = 3 * 1024;
 const COGNEE_TOOL_NAMES = [
 	"get_guidance",
 	"search_memory",
-	"recall",
 	"propose_memory"
 ];
 /** Return the schema-compatible preferred recall tool.
@@ -2053,7 +2057,7 @@ const COGNEE_TOOL_NAMES = [
 * @returns A validated allow-listed recall tool, when available.
 */
 function resolveCogneeRecallTool(tools) {
-	for (const name of ["get_guidance", "search_memory", "recall"]) {
+	for (const name of ["get_guidance", "search_memory"]) {
 		const tool = tools.find((candidate) => candidate.name === name);
 		if (tool === void 0) continue;
 		const properties = schemaProperties(tool.inputSchema);
@@ -2084,7 +2088,7 @@ function resolveCogneeProposalTool(tools) {
 		"decision_principle",
 		"collaboration_practice",
 		"experience"
-	].find((value) => schemaAllowsEnum(properties[categoryField], value)) ?? (isRecord(properties[categoryField]) && properties[categoryField].type === "string" && properties[categoryField].enum === void 0 ? "experience" : void 0);
+	].find((value) => schemaAllowsEnum(properties[categoryField], value));
 	if (categoryValue === void 0) return void 0;
 	if (contentField !== "content" && contentField !== "text") return void 0;
 	if (categoryField !== "category" || sourceField !== "source" && sourceField !== "source_description") return void 0;
@@ -2160,10 +2164,19 @@ function cogneeProposalSummary(raw) {
 */
 async function withCogneeClient(options) {
 	const url = validateCogneeEndpoint(options.endpoint);
-	const credential = await options.credentials.resolve(options.credentialRef);
-	if (credential === void 0) throw new CogneeClientError("authorization-required", "Cognee credential is not configured");
+	const headers = { ...options.headers ?? {} };
+	for (const [name, reference] of Object.entries(options.headerRefs ?? {})) {
+		const credential = await options.credentials.resolve(credentialRef(reference));
+		if (credential === void 0) throw new CogneeClientError("authorization-required", "Cognee credential is not configured");
+		headers[name] = credential.value;
+	}
+	if (options.credentialRef !== void 0) {
+		const credential = await options.credentials.resolve(options.credentialRef);
+		if (credential === void 0) throw new CogneeClientError("authorization-required", "Cognee credential is not configured");
+		headers.Authorization ??= `Bearer ${credential.value}`;
+	}
 	const transport = new StreamableHTTPClientTransport(url, { requestInit: {
-		headers: { Authorization: `Bearer ${credential.value}` },
+		headers,
 		redirect: "error",
 		signal: options.signal
 	} });
@@ -6546,10 +6559,15 @@ let CogneeMemoryService = (() => {
 		static inject = [
 			"credentials",
 			"sessionProjections",
-			"fs"
+			"fs",
+			"mcpServerManager"
 		];
 		static Config = ConfigSchema;
 		config = __runInitializers(this, _instanceExtraInitializers);
+		managedServer;
+		managedOwnsMemory = false;
+		unregisterConsumer;
+		managedStatus;
 		/** @param ctx - Host with the credential provider. @param config - endpoint and readiness policy. */
 		constructor(ctx, config) {
 			super(ctx, "cogneeMemory", { namespace: "cognee" });
@@ -6557,6 +6575,14 @@ let CogneeMemoryService = (() => {
 		}
 		async [Service.init]() {
 			await installCogneeMemoryLifecycle(this.ctx, this);
+			const consumer = {
+				start: (server) => this.startManagedServer(server),
+				check: (server) => this.checkManagedServer(server)
+			};
+			this.unregisterConsumer = await this.ctx.mcpServerManager.registerConsumer("project-memory", consumer);
+			this.ctx.effect(() => () => {
+				this.unregisterConsumer?.();
+			}, "cognee-memory.managed-consumer");
 		}
 		/**
 		* Inspect connectivity, authorization, and managed tool compatibility.
@@ -6571,7 +6597,9 @@ let CogneeMemoryService = (() => {
 			try {
 				return await this.withDeadline(signal, async (deadline) => withCogneeClient({
 					endpoint: options.endpoint,
-					credentialRef: options.credential,
+					...options.managed ? {} : { credentialRef: options.credential },
+					headers: options.headers ?? {},
+					headerRefs: options.headerRefs ?? {},
 					credentials: this.ctx.credentials,
 					signal: deadline,
 					operation: async (client) => {
@@ -6599,7 +6627,9 @@ let CogneeMemoryService = (() => {
 			if (boundedQuery === "") throw new CogneeClientError("incompatible-tools", "Cognee recall query is empty after redaction");
 			return this.withDeadline(signal, (deadline) => withCogneeClient({
 				endpoint: options.endpoint,
-				credentialRef: options.credential,
+				...options.managed ? {} : { credentialRef: options.credential },
+				headers: options.headers ?? {},
+				headerRefs: options.headerRefs ?? {},
 				credentials: this.ctx.credentials,
 				signal: deadline,
 				operation: async (client) => {
@@ -6628,7 +6658,9 @@ let CogneeMemoryService = (() => {
 			if (boundedSummary === "") throw new CogneeClientError("incompatible-tools", "Cognee proposal summary is empty after redaction");
 			await this.withDeadline(signal, (deadline) => withCogneeClient({
 				endpoint: options.endpoint,
-				credentialRef: options.credential,
+				...options.managed ? {} : { credentialRef: options.credential },
+				headers: options.headers ?? {},
+				headerRefs: options.headerRefs ?? {},
 				credentials: this.ctx.credentials,
 				signal: deadline,
 				operation: async (client) => {
@@ -6642,15 +6674,71 @@ let CogneeMemoryService = (() => {
 		/** Reject operations while the opt-in setting or endpoint is absent. */
 		assertEnabled() {
 			const options = this.snapshotConfig();
+			if (this.managedOwnsMemory && !this.managedServer) throw new CogneeClientError("connection-failed", "Cognee memory is disabled");
 			if (!options.enabled) throw new CogneeClientError("connection-failed", "Cognee memory is disabled");
 			if (options.endpoint === "") throw new CogneeClientError("connection-failed", "Cognee endpoint is not configured");
 		}
 		snapshotConfig() {
-			return {
-				enabled: this.config.enabled.get(),
-				endpoint: this.config.endpoint.get().trim(),
-				credential: credentialRef(this.config.credentialRef.get())
+			if (this.managedServer !== void 0) return {
+				enabled: this.managedServer.enabled,
+				endpoint: this.managedServer.url.trim(),
+				credential: credentialRef(this.config.credentialRef.get()),
+				headers: this.managedServer.headers ?? {},
+				headerRefs: this.managedServer.headerRefs,
+				managed: true
 			};
+			return {
+				enabled: !this.managedOwnsMemory && this.config.enabled.get(),
+				endpoint: this.config.endpoint.get().trim(),
+				credential: credentialRef(this.config.credentialRef.get()),
+				managed: false
+			};
+		}
+		async startManagedServer(server) {
+			if (server.transport !== "streamable-http") throw new CogneeClientError("connection-failed", "Cognee requires Streamable HTTP");
+			this.managedOwnsMemory = true;
+			this.managedServer = server;
+			const catalog = this.ctx.reflect.get("mcpClientStatus", false);
+			this.managedStatus = catalog?.register({
+				serverName: server.serverName,
+				transport: "streamable-http",
+				source: "Project memory",
+				state: "connecting",
+				toolCount: 0
+			});
+			const result = await this.checkManagedServer(server);
+			this.managedStatus?.update({
+				state: result.state === "ready" ? "connected" : "disconnected",
+				toolCount: result.state === "ready" ? result.toolCount ?? 0 : 0
+			});
+			return async () => {
+				this.managedServer = void 0;
+				this.managedStatus?.dispose();
+				this.managedStatus = void 0;
+			};
+		}
+		async checkManagedServer(server) {
+			if (server.transport !== "streamable-http") return { state: "connection-failed" };
+			try {
+				return await this.withDeadline(new AbortController().signal, (deadline) => withCogneeClient({
+					endpoint: server.url,
+					headers: server.headers ?? {},
+					headerRefs: server.headerRefs,
+					credentials: this.ctx.credentials,
+					signal: deadline,
+					operation: async (client) => {
+						const tools = await listCogneeTools(client, deadline);
+						if (resolveCogneeRecallTool(tools) === void 0 || resolveCogneeProposalTool(tools) === void 0) return { state: "connection-failed" };
+						return {
+							state: "ready",
+							toolCount: tools.length
+						};
+					}
+				}));
+			} catch (error) {
+				const failure = normalizeClientError(error);
+				return { state: failure.state === "incompatible-tools" ? "connection-failed" : failure.state };
+			}
 		}
 		/** Bound one MCP connection and its requests, then clear the operation timer. */
 		async withDeadline(signal, operation) {

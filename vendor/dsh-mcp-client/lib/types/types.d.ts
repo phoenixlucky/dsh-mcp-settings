@@ -1,5 +1,7 @@
 /** Display state for a configured MCP connection. */
 export type McpConnectionState = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+/** Selects whether a managed MCP row publishes model tools or serves project memory. */
+export type ManagedMcpPurpose = 'model-tools' | 'project-memory';
 /** Credential-safe information displayed on an MCP server card. */
 export interface McpServerStatus {
     readonly id: string;
@@ -17,10 +19,14 @@ export interface ManagedHttpServer {
     serverName: string;
     /** Whether the server should be connected. */
     enabled: boolean;
+    /** Consumer that owns this server connection. */
+    purpose?: ManagedMcpPurpose;
     /** Selects Streamable HTTP transport. */
     transport: 'streamable-http';
     /** MCP endpoint. */
     url: string;
+    /** Non-secret request headers. Authentication headers belong in `headerRefs`. */
+    headers?: Record<string, string>;
     /** Header names mapped to credential references. */
     headerRefs: Record<string, string>;
 }
@@ -32,6 +38,8 @@ export interface ManagedStdioServer {
     serverName: string;
     /** Whether the server should be connected. */
     enabled: boolean;
+    /** Consumer that owns this server connection. */
+    purpose?: ManagedMcpPurpose;
     /** Selects stdio transport. */
     transport: 'stdio';
     /** Executable started directly. */

@@ -4,10 +4,10 @@ window.__ModuleLoader__.load({
 		var module = { exports: {} };
 		var exports = module.exports;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+		let react_jsx_runtime = require("react/jsx-runtime");
 		let react = require("react");
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
-		let react_jsx_runtime = require("react/jsx-runtime");
-		//#region src/client/mcpCardAppearance.ts
+		//#region lib/types/client/mcpCardAppearance.js
 		/** Validate a server key before it is used to address presentation settings.
 		* @param value - Candidate MCP `serverName`.
 		* @returns Whether the key matches the stable server-name format.
@@ -38,8 +38,8 @@ window.__ModuleLoader__.load({
 			return Object.fromEntries(Object.entries(current).filter(([name]) => name !== serverName));
 		}
 		//#endregion
-		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
-		const css = ".oetn4G_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 28%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:color-mix(in srgb, var(--dsw-static-amber-100) 48%, var(--dsw-alias-bg-layer-1));--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:none;margin-inline:auto;display:grid}.oetn4G_pageHeader{align-items:center;gap:var(--mcp-space-3);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.oetn4G_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_card{align-content:start;gap:var(--mcp-space-3);width:100%;min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:none;display:grid;container-type:inline-size}.oetn4G_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding-inline:var(--mcp-space-1);display:flex}.oetn4G_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.oetn4G_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.oetn4G_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.oetn4G_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);display:grid}.oetn4G_fieldGroupTitle{clip:rect(0, 0, 0, 0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.oetn4G_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.oetn4G_field input,.oetn4G_field textarea,.oetn4G_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.oetn4G_field textarea:focus-visible,.oetn4G_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field textarea:disabled,.oetn4G_field select:disabled{opacity:.6}.oetn4G_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field input:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:.5px dashed var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.oetn4G_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.oetn4G_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.oetn4G_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.oetn4G_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.oetn4G_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;display:grid}.oetn4G_serverCard strong{color:var(--dsw-alias-label-primary)}.oetn4G_serverCard p{margin:0}.oetn4G_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.oetn4G_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);display:flex}.oetn4G_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_serverState{width:fit-content;padding:2px var(--mcp-space-2);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;display:inline-flex}.oetn4G_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_serverCardEditing{grid-template-columns:minmax(0,1fr)}.oetn4G_serverCardEditing>p{white-space:normal;border:0;padding:0}.oetn4G_serverCardEditing>.oetn4G_actions,.oetn4G_serverCardEditing>section{grid-column:1/-1}.oetn4G_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}@container (width<=48rem){.oetn4G_serverCard:not(.oetn4G_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_serverHeading{grid-column:1/-1}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.oetn4G_cardHeader{flex-wrap:wrap;align-items:flex-start}.oetn4G_cardIdentity{flex:100%}.oetn4G_enableControl{flex:auto;justify-content:space-between;max-width:100%}.oetn4G_serverCard:not(.oetn4G_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-start}}@container (width>=38rem){.oetn4G_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.oetn4G_field small{grid-column:2}.oetn4G_secretRow .oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_secretRow .oetn4G_field small{grid-column:1}}@container (width<=32rem){.oetn4G_card{padding:var(--mcp-space-3)}.oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_field small{grid-column:1}.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}.oetn4G_actions{justify-content:flex-start}.oetn4G_secretRow{grid-template-columns:minmax(0,1fr)}.oetn4G_serverHeading{flex-wrap:wrap;align-items:flex-start}.oetn4G_serverCard>.oetn4G_actions{justify-content:flex-start}.oetn4G_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard>p{white-space:normal;border:0;padding:0}}";
+		//#region \0dsh-css:E:\home\deepseek-harness\packages\client\ui-settings-mcp\src\client\mcp-settings.module.css.mjs
+		const css = ".DqpPCW_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 28%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:color-mix(in srgb, var(--dsw-static-amber-100) 48%, var(--dsw-alias-bg-layer-1));--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:none;margin-inline:auto;display:grid}.DqpPCW_pageHeader{align-items:center;gap:var(--mcp-space-3);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.DqpPCW_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.DqpPCW_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.DqpPCW_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.DqpPCW_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.DqpPCW_card{align-content:start;gap:var(--mcp-space-3);width:100%;min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:none;display:grid;container-type:inline-size}.DqpPCW_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding-inline:var(--mcp-space-1);display:flex}.DqpPCW_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.DqpPCW_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.DqpPCW_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.DqpPCW_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.DqpPCW_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.DqpPCW_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.DqpPCW_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.DqpPCW_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.DqpPCW_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);display:grid}.DqpPCW_fieldGroupTitle{clip:rect(0, 0, 0, 0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.DqpPCW_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.DqpPCW_field input,.DqpPCW_field textarea,.DqpPCW_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.DqpPCW_field textarea:focus-visible,.DqpPCW_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.DqpPCW_field textarea:disabled,.DqpPCW_field select:disabled{opacity:.6}.DqpPCW_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.DqpPCW_field input:disabled{opacity:.6}.DqpPCW_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.DqpPCW_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:.5px dashed var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.DqpPCW_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.DqpPCW_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.DqpPCW_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.DqpPCW_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.DqpPCW_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.DqpPCW_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.DqpPCW_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.DqpPCW_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;display:grid}.DqpPCW_serverCard strong{color:var(--dsw-alias-label-primary)}.DqpPCW_serverCard p{margin:0}.DqpPCW_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.DqpPCW_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);display:flex}.DqpPCW_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.DqpPCW_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.DqpPCW_serverState{width:fit-content;padding:2px var(--mcp-space-2);background:var(--mcp-field-fill);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;display:inline-flex}.DqpPCW_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.DqpPCW_serverCardEditing{grid-template-columns:minmax(0,1fr)}.DqpPCW_serverCardEditing>p{white-space:normal;border:0;padding:0}.DqpPCW_serverCardEditing>.DqpPCW_actions,.DqpPCW_serverCardEditing>section{grid-column:1/-1}.DqpPCW_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}@container (width<=48rem){.DqpPCW_serverCard:not(.DqpPCW_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.DqpPCW_serverCard:not(.DqpPCW_serverCardEditing)>.DqpPCW_serverHeading{grid-column:1/-1}.DqpPCW_serverCard:not(.DqpPCW_serverCardEditing)>p{white-space:normal;border:0;padding:0}.DqpPCW_serverCard:not(.DqpPCW_serverCardEditing)>.DqpPCW_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.DqpPCW_cardHeader{flex-wrap:wrap;align-items:flex-start}.DqpPCW_cardIdentity{flex:100%}.DqpPCW_enableControl{flex:auto;justify-content:space-between;max-width:100%}.DqpPCW_serverCard:not(.DqpPCW_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.DqpPCW_serverCard:not(.DqpPCW_serverCardEditing)>p{white-space:normal;border:0;padding:0}.DqpPCW_serverCard:not(.DqpPCW_serverCardEditing)>.DqpPCW_actions{justify-content:flex-start}}@container (width>=38rem){.DqpPCW_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.DqpPCW_field small{grid-column:2}.DqpPCW_secretRow .DqpPCW_field{grid-template-columns:minmax(0,1fr)}.DqpPCW_secretRow .DqpPCW_field small{grid-column:1}}@container (width<=32rem){.DqpPCW_card{padding:var(--mcp-space-3)}.DqpPCW_field{grid-template-columns:minmax(0,1fr)}.DqpPCW_field small{grid-column:1}.DqpPCW_cardFooter{grid-template-columns:minmax(0,1fr)}.DqpPCW_actions{justify-content:flex-start}.DqpPCW_secretRow{grid-template-columns:minmax(0,1fr)}.DqpPCW_serverHeading{flex-wrap:wrap;align-items:flex-start}.DqpPCW_serverCard>.DqpPCW_actions{justify-content:flex-start}.DqpPCW_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.DqpPCW_serverCard>p{white-space:normal;border:0;padding:0}}";
 		const tagId = "@deepseek-ai/dsh-client-ui-settings-mcp/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -49,39 +49,39 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var mcp_settings_module_css_default = {
-			"actions": "oetn4G_actions",
-			"card": "oetn4G_card",
-			"cardCopy": "oetn4G_cardCopy",
-			"cardDescription": "oetn4G_cardDescription",
-			"cardFooter": "oetn4G_cardFooter",
-			"cardHeader": "oetn4G_cardHeader",
-			"cardIcon": "oetn4G_cardIcon",
-			"cardIdentity": "oetn4G_cardIdentity",
-			"cardTitle": "oetn4G_cardTitle",
-			"connections": "oetn4G_connections",
-			"enableControl": "oetn4G_enableControl",
-			"enableLabel": "oetn4G_enableLabel",
-			"error": "oetn4G_error",
-			"field": "oetn4G_field",
-			"fieldGroup": "oetn4G_fieldGroup",
-			"fieldGroupTitle": "oetn4G_fieldGroupTitle",
-			"pageCopy": "oetn4G_pageCopy",
-			"pageDescription": "oetn4G_pageDescription",
-			"pageHeader": "oetn4G_pageHeader",
-			"pageIcon": "oetn4G_pageIcon",
-			"pageTitle": "oetn4G_pageTitle",
-			"secretRow": "oetn4G_secretRow",
-			"serverCard": "oetn4G_serverCard",
-			"serverCardEditing": "oetn4G_serverCardEditing",
-			"serverHeading": "oetn4G_serverHeading",
-			"serverIcon": "oetn4G_serverIcon",
-			"serverIdentity": "oetn4G_serverIdentity",
-			"serverList": "oetn4G_serverList",
-			"serverState": "oetn4G_serverState",
-			"status": "oetn4G_status"
+			"actions": "DqpPCW_actions",
+			"card": "DqpPCW_card",
+			"cardCopy": "DqpPCW_cardCopy",
+			"cardDescription": "DqpPCW_cardDescription",
+			"cardFooter": "DqpPCW_cardFooter",
+			"cardHeader": "DqpPCW_cardHeader",
+			"cardIcon": "DqpPCW_cardIcon",
+			"cardIdentity": "DqpPCW_cardIdentity",
+			"cardTitle": "DqpPCW_cardTitle",
+			"connections": "DqpPCW_connections",
+			"enableControl": "DqpPCW_enableControl",
+			"enableLabel": "DqpPCW_enableLabel",
+			"error": "DqpPCW_error",
+			"field": "DqpPCW_field",
+			"fieldGroup": "DqpPCW_fieldGroup",
+			"fieldGroupTitle": "DqpPCW_fieldGroupTitle",
+			"pageCopy": "DqpPCW_pageCopy",
+			"pageDescription": "DqpPCW_pageDescription",
+			"pageHeader": "DqpPCW_pageHeader",
+			"pageIcon": "DqpPCW_pageIcon",
+			"pageTitle": "DqpPCW_pageTitle",
+			"secretRow": "DqpPCW_secretRow",
+			"serverCard": "DqpPCW_serverCard",
+			"serverCardEditing": "DqpPCW_serverCardEditing",
+			"serverHeading": "DqpPCW_serverHeading",
+			"serverIcon": "DqpPCW_serverIcon",
+			"serverIdentity": "DqpPCW_serverIdentity",
+			"serverList": "DqpPCW_serverList",
+			"serverState": "DqpPCW_serverState",
+			"status": "DqpPCW_status"
 		};
 		//#endregion
-		//#region src/client/McpCardSettings.tsx
+		//#region lib/types/client/McpCardSettings.js
 		/** Configure display-only metadata without touching an MCP server declaration. */
 		function McpCardSettings({ form, remote, t }) {
 			const state = (0, react.useSyncExternalStore)((listener) => form.subscribe(listener), () => form.getSnapshot());
@@ -134,9 +134,9 @@ window.__ModuleLoader__.load({
 				setError(!await form.set("servers", withoutMcpCardAppearance(saved, serverName)));
 				setDraft({});
 			};
-			const field = (key, label) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+			const field = (key, label) => (0, react_jsx_runtime.jsxs)("label", {
 				className: mcp_settings_module_css_default.field,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: label }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+				children: [(0, react_jsx_runtime.jsx)("span", { children: label }), (0, react_jsx_runtime.jsx)("input", {
 					value: draft[key] ?? "",
 					disabled: !state.writable,
 					onChange: (event) => {
@@ -147,9 +147,9 @@ window.__ModuleLoader__.load({
 					}
 				})]
 			});
-			const flag = (key, label) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+			const flag = (key, label) => (0, react_jsx_runtime.jsxs)("label", {
 				className: mcp_settings_module_css_default.switchRow,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: label }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
+				children: [(0, react_jsx_runtime.jsx)("span", { children: label }), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 					checked: draft[key] ?? true,
 					label,
 					disabled: !state.writable,
@@ -161,46 +161,46 @@ window.__ModuleLoader__.load({
 					}
 				})]
 			});
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+			return (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.card,
 				"aria-label": t("appearanceTitle"),
 				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", { children: t("appearanceTitle") }),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					(0, react_jsx_runtime.jsx)("h3", { children: t("appearanceTitle") }),
+					(0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.serverList,
 						"aria-label": t("serverCards"),
 						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: t("serverCards") }),
-							servers.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+							(0, react_jsx_runtime.jsx)("h4", { children: t("serverCards") }),
+							servers.length === 0 && (0, react_jsx_runtime.jsx)("p", {
 								role: "status",
 								children: t(statusAvailable ? "noServers" : "statusUnavailable")
 							}),
 							servers.map((server) => {
 								const appearance = saved[server.serverName] ?? {};
-								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
+								return (0, react_jsx_runtime.jsxs)("article", {
 									className: mcp_settings_module_css_default.serverCard,
 									children: [
-										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("strong", { children: [appearance.icon && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+										(0, react_jsx_runtime.jsxs)("strong", { children: [appearance.icon && (0, react_jsx_runtime.jsxs)("span", {
 											"aria-hidden": "true",
 											children: [appearance.icon, " "]
 										}), appearance.displayName || server.serverName] }),
-										appearance.description && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: appearance.description }),
-										appearance.showConnectionStatus !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.description && (0, react_jsx_runtime.jsx)("p", { children: appearance.description }),
+										appearance.showConnectionStatus !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("connectionState"),
 											": ",
 											t(`connection.${server.state}`)
 										] }),
-										appearance.showToolCount !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.showToolCount !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("toolCount"),
 											": ",
 											server.toolCount
 										] }),
-										appearance.showTransport !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.showTransport !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("transport"),
 											": ",
 											t(`transport.${server.transport}`)
 										] }),
-										appearance.showSource !== false && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
+										appearance.showSource !== false && (0, react_jsx_runtime.jsxs)("span", { children: [
 											t("source"),
 											": ",
 											server.source
@@ -210,11 +210,11 @@ window.__ModuleLoader__.load({
 							})
 						]
 					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+					(0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
 						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("serverName") }),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+							(0, react_jsx_runtime.jsx)("span", { children: t("serverName") }),
+							(0, react_jsx_runtime.jsx)("input", {
 								value: serverName,
 								disabled: !state.writable,
 								onChange: (event) => {
@@ -222,7 +222,7 @@ window.__ModuleLoader__.load({
 									load(event.currentTarget.value);
 								}
 							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("serverNameHint") })
+							(0, react_jsx_runtime.jsx)("small", { children: t("serverNameHint") })
 						]
 					}),
 					field("displayName", t("displayName")),
@@ -232,16 +232,16 @@ window.__ModuleLoader__.load({
 					flag("showToolCount", t("showToolCount")),
 					flag("showTransport", t("showTransport")),
 					flag("showSource", t("showSource")),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					(0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.actions,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+						children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 							variant: "primary",
 							disabled: !state.writable,
 							onClick: () => {
 								save();
 							},
 							children: t("saveAppearance")
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+						}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 							variant: "outline",
 							disabled: !state.writable,
 							onClick: () => {
@@ -250,7 +250,7 @@ window.__ModuleLoader__.load({
 							children: t("resetAppearance")
 						})]
 					}),
-					error && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+					error && (0, react_jsx_runtime.jsx)("p", {
 						role: "alert",
 						children: t("invalidServerName")
 					})
@@ -258,424 +258,7 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
-		//#region src/client/ChromeCard.tsx
-		const CREDENTIAL$1 = "DSH_CHROME_MCP_TOKEN";
-		/** Configure the managed Chrome MCP endpoint and its separately stored token. */
-		function ChromeCard({ form, remote, t }) {
-			const snapshot = form.getSnapshot();
-			const [enabled, setEnabled] = (0, react.useState)(snapshot.value?.enabled ?? false);
-			const [url, setUrl] = (0, react.useState)(snapshot.value?.url ?? "");
-			const [origin, setOrigin] = (0, react.useState)(snapshot.value?.origin ?? "");
-			const [token, setToken] = (0, react.useState)("");
-			const [tokenConfigured, setTokenConfigured] = (0, react.useState)(false);
-			const [tokenWritable, setTokenWritable] = (0, react.useState)(false);
-			const [status, setStatus] = (0, react.useState)({ state: "not-configured" });
-			const [busy, setBusy] = (0, react.useState)(false);
-			const [failure, setFailure] = (0, react.useState)();
-			(0, react.useEffect)(() => form.subscribe(() => {
-				const value = form.getSnapshot().value;
-				if (value !== void 0) {
-					setEnabled(value.enabled ?? false);
-					setUrl(value.url ?? "");
-					setOrigin(value.origin ?? "");
-				}
-			}), [form]);
-			(0, react.useEffect)(() => {
-				let active = true;
-				remote.credentials.describe([CREDENTIAL$1]).then((reply) => {
-					const credential = reply.ok ? reply.value[CREDENTIAL$1] : void 0;
-					if (active && credential !== void 0) {
-						setTokenConfigured(credential.configured);
-						setTokenWritable(credential.writable);
-					}
-				}).catch(() => {
-					if (active) setFailure("credential");
-				});
-				return () => {
-					active = false;
-				};
-			}, [remote]);
-			(0, react.useEffect)(() => {
-				let active = true;
-				remote.chromeMcp.checkChromeConnection().then((reply) => {
-					if (active && reply.ok) setStatus(reply.value);
-					else if (active) setFailure("check");
-				}).catch(() => {
-					if (active) setFailure("check");
-				});
-				return () => {
-					active = false;
-				};
-			}, [remote]);
-			const readStatus = async () => {
-				try {
-					const reply = await remote.chromeMcp.checkChromeConnection();
-					if (!reply.ok) {
-						setFailure("check");
-						return;
-					}
-					setStatus(reply.value);
-				} catch {
-					setFailure("check");
-				}
-			};
-			const check = async () => {
-				setBusy(true);
-				setFailure(void 0);
-				try {
-					await readStatus();
-				} finally {
-					setBusy(false);
-				}
-			};
-			const save = async () => {
-				setBusy(true);
-				setFailure(void 0);
-				try {
-					if (!await form.mutate([
-						{
-							op: "set",
-							path: ["enabled"],
-							value: enabled
-						},
-						{
-							op: "set",
-							path: ["url"],
-							value: url
-						},
-						{
-							op: "set",
-							path: ["origin"],
-							value: origin
-						}
-					])) {
-						setFailure("save");
-						return;
-					}
-					if (token !== "") {
-						if (!(await remote.credentials.set(CREDENTIAL$1, token)).ok) {
-							setFailure("credential");
-							return;
-						}
-						setToken("");
-						setTokenConfigured(true);
-					}
-					await readStatus();
-				} catch {
-					setFailure("save");
-				} finally {
-					setBusy(false);
-				}
-			};
-			const tokenLabel = tokenWritable ? tokenConfigured ? "tokenSet" : "tokenUnset" : "credentialsUnavailable";
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
-				className: mcp_settings_module_css_default.card,
-				"aria-label": t("chromeTitle"),
-				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-						className: mcp_settings_module_css_default.cardHeader,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: mcp_settings_module_css_default.cardIdentity,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: mcp_settings_module_css_default.cardIcon,
-								"aria-hidden": "true",
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGlobeOutlineRegular, { size: 24 })
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: mcp_settings_module_css_default.cardCopy,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
-									className: mcp_settings_module_css_default.cardTitle,
-									children: "Chrome MCP"
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-									className: mcp_settings_module_css_default.cardDescription,
-									children: t("chromeDescription")
-								})]
-							})]
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: mcp_settings_module_css_default.enableControl,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: mcp_settings_module_css_default.enableLabel,
-								children: t("chromeEnabled")
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
-								checked: enabled,
-								label: t("chromeEnabled"),
-								disabled: busy || !form.getSnapshot().writable,
-								onChange: setEnabled
-							})]
-						})]
-					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
-						className: mcp_settings_module_css_default.fieldGroup,
-						"aria-labelledby": "chrome-connection-settings",
-						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", {
-								className: mcp_settings_module_css_default.fieldGroupTitle,
-								id: "chrome-connection-settings",
-								children: t("connectionSettings")
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("chromeEndpoint") }),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-										type: "url",
-										value: url,
-										disabled: busy || !form.getSnapshot().writable,
-										onChange: (event) => setUrl(event.currentTarget.value)
-									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("chromeEndpointHint") })
-								]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("chromeOrigin") }),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-										type: "text",
-										value: origin,
-										disabled: busy || !form.getSnapshot().writable,
-										onChange: (event) => setOrigin(event.currentTarget.value)
-									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("chromeOriginHint") })
-								]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("token") }),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-										type: "password",
-										autoComplete: "new-password",
-										value: token,
-										disabled: busy || !tokenWritable,
-										onChange: (event) => setToken(event.currentTarget.value)
-									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t(tokenLabel) })
-								]
-							})
-						]
-					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("footer", {
-						className: mcp_settings_module_css_default.cardFooter,
-						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", {
-								className: mcp_settings_module_css_default.status,
-								role: "status",
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("status") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", {
-									"data-state": status.state,
-									children: status.state === "ready" && status.toolCount !== void 0 ? t("chromeStatus.readyCount").replace("{count}", String(status.toolCount)) : t(`chromeStatus.${status.state}`)
-								})]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: mcp_settings_module_css_default.actions,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "primary",
-									disabled: busy || !form.getSnapshot().writable,
-									onClick: () => {
-										save();
-									},
-									children: t("save")
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "outline",
-									disabled: busy,
-									onClick: () => {
-										check();
-									},
-									children: busy ? t("checking") : t("check")
-								})]
-							}),
-							failure !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-								className: mcp_settings_module_css_default.error,
-								role: "alert",
-								children: t(`chromeError.${failure}`)
-							})
-						]
-					})
-				]
-			});
-		}
-		//#endregion
-		//#region src/client/CogneeCard.tsx
-		const CREDENTIAL = "DSH_COGNEE_MCP_TOKEN";
-		/** Settings screen for VISION-LIAO's endpoint, separate credential, and readiness. */
-		function CogneeCard({ form, remote, t }) {
-			const snapshot = form.getSnapshot();
-			const [enabled, setEnabled] = (0, react.useState)(snapshot.value?.enabled ?? false);
-			const [endpoint, setEndpoint] = (0, react.useState)(snapshot.value?.endpoint ?? "");
-			const [token, setToken] = (0, react.useState)("");
-			const [tokenConfigured, setTokenConfigured] = (0, react.useState)(false);
-			const [tokenWritable, setTokenWritable] = (0, react.useState)(false);
-			const [status, setStatus] = (0, react.useState)("not-configured");
-			const [busy, setBusy] = (0, react.useState)(false);
-			const [failed, setFailed] = (0, react.useState)(false);
-			(0, react.useEffect)(() => form.subscribe(() => {
-				const value = form.getSnapshot().value;
-				if (value !== void 0) {
-					setEnabled(value.enabled ?? false);
-					setEndpoint(value.endpoint ?? "");
-				}
-			}), [form]);
-			(0, react.useEffect)(() => {
-				let active = true;
-				remote.credentials.describe([CREDENTIAL]).then((reply) => {
-					const credential = reply.ok ? reply.value[CREDENTIAL] : void 0;
-					if (active && credential !== void 0) {
-						setTokenConfigured(credential.configured);
-						setTokenWritable(credential.writable);
-					}
-				}).catch(() => {
-					if (active) setFailed(true);
-				});
-				return () => {
-					active = false;
-				};
-			}, [remote]);
-			const check = async () => {
-				setBusy(true);
-				setFailed(false);
-				try {
-					const reply = await remote.cognee.status();
-					if (!reply.ok) throw new Error("status unavailable");
-					setStatus(reply.value.state);
-				} catch {
-					setFailed(true);
-				} finally {
-					setBusy(false);
-				}
-			};
-			const save = async () => {
-				setBusy(true);
-				setFailed(false);
-				try {
-					if ((await Promise.all([form.set("enabled", enabled), form.set("endpoint", endpoint)])).some((value) => !value)) throw new Error("settings refused");
-					if (token !== "") {
-						if (!(await remote.credentials.set(CREDENTIAL, token)).ok) throw new Error("credential refused");
-						setToken("");
-						setTokenConfigured(true);
-					}
-					await check();
-				} catch {
-					setFailed(true);
-				} finally {
-					setBusy(false);
-				}
-			};
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
-				className: mcp_settings_module_css_default.card,
-				"aria-label": t("cogneeTitle"),
-				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-						className: mcp_settings_module_css_default.cardHeader,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: mcp_settings_module_css_default.cardIdentity,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: mcp_settings_module_css_default.cardIcon,
-								"aria-hidden": "true",
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDataOutlineRegular, { size: 24 })
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: mcp_settings_module_css_default.cardCopy,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
-									className: mcp_settings_module_css_default.cardTitle,
-									children: t("cogneeTitle")
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-									className: mcp_settings_module_css_default.cardDescription,
-									children: t("cogneeDescription")
-								})]
-							})]
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: mcp_settings_module_css_default.enableControl,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: mcp_settings_module_css_default.enableLabel,
-								children: t("enabled")
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
-								checked: enabled,
-								label: t("enabled"),
-								disabled: busy,
-								onChange: setEnabled
-							})]
-						})]
-					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
-						className: mcp_settings_module_css_default.fieldGroup,
-						"aria-labelledby": "vision-liao-connection-settings",
-						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", {
-								className: mcp_settings_module_css_default.fieldGroupTitle,
-								id: "vision-liao-connection-settings",
-								children: t("connectionSettings")
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("endpoint") }),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-										value: endpoint,
-										disabled: busy,
-										onChange: (event) => {
-											setEndpoint(event.currentTarget.value);
-										}
-									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("endpointHint") })
-								]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("token") }),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-										type: "password",
-										autoComplete: "new-password",
-										value: token,
-										disabled: busy || !tokenWritable,
-										onChange: (event) => {
-											setToken(event.currentTarget.value);
-										}
-									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t(tokenConfigured ? "tokenSet" : "tokenUnset") })
-								]
-							})
-						]
-					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("footer", {
-						className: mcp_settings_module_css_default.cardFooter,
-						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", {
-								className: mcp_settings_module_css_default.status,
-								role: "status",
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("status") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", {
-									"data-state": status,
-									children: t(`status.${status}`)
-								})]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: mcp_settings_module_css_default.actions,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "primary",
-									disabled: busy || !form.getSnapshot().writable,
-									onClick: () => {
-										save();
-									},
-									children: t("save")
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "outline",
-									disabled: busy,
-									onClick: () => {
-										check();
-									},
-									children: busy ? t("checking") : t("check")
-								})]
-							}),
-							failed && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-								className: mcp_settings_module_css_default.error,
-								role: "alert",
-								children: t("error")
-							})
-						]
-					})
-				]
-			});
-		}
-		//#endregion
-		//#region ../../../deepseek-harness/packages/util/crypto/src/index.ts
+		//#region ../../util/crypto/lib/index.js
 		/**
 		* Random v4 UUID, minted from `crypto.getRandomValues`.
 		* @returns the UUID string.
@@ -688,14 +271,16 @@ window.__ModuleLoader__.load({
 			return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 		}
 		//#endregion
-		//#region src/client/ManagedMcpServers.tsx
+		//#region lib/types/client/ManagedMcpServers.js
 		function emptyDraft() {
 			return {
 				id: randomUUID(),
 				serverName: "",
 				enabled: true,
+				purpose: "model-tools",
 				transport: "streamable-http",
 				url: "",
+				headers: [],
 				command: "",
 				args: "",
 				cwd: "",
@@ -708,8 +293,13 @@ window.__ModuleLoader__.load({
 				id: server.id,
 				serverName: server.serverName,
 				enabled: server.enabled,
+				purpose: server.purpose ?? "model-tools",
 				transport: server.transport,
 				url: server.transport === "streamable-http" ? server.url : "",
+				headers: server.transport === "streamable-http" ? Object.entries(server.headers ?? {}).map(([name, value]) => ({
+					name,
+					value
+				})) : [],
 				command: server.transport === "stdio" ? server.command : "",
 				args: server.transport === "stdio" ? server.args.join("\n") : "",
 				cwd: server.transport === "stdio" ? server.cwd : "",
@@ -732,7 +322,6 @@ window.__ModuleLoader__.load({
 			const [checkState, setCheckState] = (0, react.useState)();
 			(0, react.useEffect)(() => {
 				let active = true;
-				let timer;
 				const refresh = async () => {
 					try {
 						const reply = await remote.mcpClientStatus.list();
@@ -740,14 +329,14 @@ window.__ModuleLoader__.load({
 					} catch (error) {
 						if (active) setStatuses([]);
 					}
-					if (active) timer = setTimeout(() => {
-						refresh();
-					}, 5e3);
 				};
 				refresh();
+				const timer = setInterval(() => {
+					refresh();
+				}, 5e3);
 				return () => {
 					active = false;
-					clearTimeout(timer);
+					clearInterval(timer);
 				};
 			}, [remote]);
 			const saveServers = async (next) => {
@@ -769,13 +358,29 @@ window.__ModuleLoader__.load({
 					return;
 				}
 				const refs = {};
-				for (const row of draft.secrets) {
+				const headers = {};
+				const headerNames = /* @__PURE__ */ new Set();
+				for (const row of draft.headers) {
 					const name = row.name.trim();
-					const ref = row.ref.trim();
-					if (!(draft.transport === "streamable-http" ? /^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) : /^[A-Za-z_][A-Za-z0-9_]*$/u.test(name)) || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref) || Object.hasOwn(refs, name)) {
+					const value = row.value;
+					const normalized = name.toLowerCase();
+					if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || /[\r\n]/u.test(value) || /^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name) || headerNames.has(normalized)) {
 						setFailure("invalid");
 						return;
 					}
+					headerNames.add(normalized);
+					headers[name] = value;
+				}
+				for (const row of draft.secrets) {
+					const name = row.name.trim();
+					const ref = row.ref.trim();
+					const validName = draft.transport === "streamable-http" ? /^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) : /^[A-Za-z_][A-Za-z0-9_]*$/u.test(name);
+					const normalized = name.toLowerCase();
+					if (!validName || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref) || headerNames.has(normalized)) {
+						setFailure("invalid");
+						return;
+					}
+					headerNames.add(normalized);
 					refs[name] = ref;
 				}
 				setFailure(void 0);
@@ -791,17 +396,24 @@ window.__ModuleLoader__.load({
 					setFailure("credential");
 					return;
 				}
+				if (draft.purpose === "project-memory" && draft.transport !== "streamable-http") {
+					setFailure("invalid");
+					return;
+				}
 				return draft.transport === "streamable-http" ? {
 					id: draft.id,
 					serverName,
 					enabled: draft.enabled,
+					purpose: draft.purpose,
 					transport: "streamable-http",
 					url: draft.url.trim(),
+					headers,
 					headerRefs: refs
 				} : {
 					id: draft.id,
 					serverName,
 					enabled: draft.enabled,
+					purpose: draft.purpose,
 					transport: "stdio",
 					command: draft.command.trim(),
 					args: draft.args.split(/\r?\n/u).filter((value) => value.trim() !== ""),
@@ -870,17 +482,17 @@ window.__ModuleLoader__.load({
 			};
 			const statusFor = (server) => statuses.find((status) => status.serverName === server.serverName);
 			const isEditingExisting = servers.some((server) => server.id === draft.id);
-			const editor = /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+			const editor = (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.fieldGroup,
 				"aria-label": t("managed.editor"),
 				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", {
+					(0, react_jsx_runtime.jsx)("h4", {
 						className: mcp_settings_module_css_default.fieldGroupTitle,
 						children: t("managed.editor")
 					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+					(0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("serverName") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+						children: [(0, react_jsx_runtime.jsx)("span", { children: t("serverName") }), (0, react_jsx_runtime.jsx)("input", {
 							value: draft.serverName,
 							disabled: busy,
 							onChange: (event) => setDraft({
@@ -889,9 +501,31 @@ window.__ModuleLoader__.load({
 							})
 						})]
 					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+					(0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("transport") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+						children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.purpose") }), (0, react_jsx_runtime.jsxs)("select", {
+							value: draft.purpose,
+							disabled: busy,
+							onChange: (event) => {
+								const purpose = event.currentTarget.value;
+								setDraft({
+									...draft,
+									purpose,
+									transport: purpose === "project-memory" ? "streamable-http" : draft.transport
+								});
+							},
+							children: [(0, react_jsx_runtime.jsx)("option", {
+								value: "model-tools",
+								children: t("managed.purpose.model-tools")
+							}), (0, react_jsx_runtime.jsx)("option", {
+								value: "project-memory",
+								children: t("managed.purpose.project-memory")
+							})]
+						})]
+					}),
+					(0, react_jsx_runtime.jsxs)("label", {
+						className: mcp_settings_module_css_default.field,
+						children: [(0, react_jsx_runtime.jsx)("span", { children: t("transport") }), (0, react_jsx_runtime.jsxs)("select", {
 							value: draft.transport,
 							disabled: busy,
 							onChange: (event) => setDraft({
@@ -899,20 +533,20 @@ window.__ModuleLoader__.load({
 								transport: event.currentTarget.value,
 								secrets: []
 							}),
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+							children: [(0, react_jsx_runtime.jsx)("option", {
 								value: "streamable-http",
 								children: t("transport.streamable-http")
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+							}), (0, react_jsx_runtime.jsx)("option", {
 								value: "stdio",
 								children: t("transport.stdio")
 							})]
 						})]
 					}),
-					draft.transport === "streamable-http" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+					draft.transport === "streamable-http" ? (0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
 						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.endpoint") }),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+							(0, react_jsx_runtime.jsx)("span", { children: t("managed.endpoint") }),
+							(0, react_jsx_runtime.jsx)("input", {
 								type: "url",
 								value: draft.url,
 								disabled: busy,
@@ -921,12 +555,12 @@ window.__ModuleLoader__.load({
 									url: event.currentTarget.value
 								})
 							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("endpointHint") })
+							(0, react_jsx_runtime.jsx)("small", { children: t("endpointHint") })
 						]
-					}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+					}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+						(0, react_jsx_runtime.jsxs)("label", {
 							className: mcp_settings_module_css_default.field,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.command") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+							children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.command") }), (0, react_jsx_runtime.jsx)("input", {
 								value: draft.command,
 								disabled: busy,
 								onChange: (event) => setDraft({
@@ -935,9 +569,9 @@ window.__ModuleLoader__.load({
 								})
 							})]
 						}),
-						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+						(0, react_jsx_runtime.jsxs)("label", {
 							className: mcp_settings_module_css_default.field,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.args") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
+							children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.args") }), (0, react_jsx_runtime.jsx)("textarea", {
 								rows: 3,
 								value: draft.args,
 								disabled: busy,
@@ -947,9 +581,9 @@ window.__ModuleLoader__.load({
 								})
 							})]
 						}),
-						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+						(0, react_jsx_runtime.jsxs)("label", {
 							className: mcp_settings_module_css_default.field,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.cwd") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+							children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.cwd") }), (0, react_jsx_runtime.jsx)("input", {
 								value: draft.cwd,
 								disabled: busy,
 								onChange: (event) => setDraft({
@@ -959,16 +593,73 @@ window.__ModuleLoader__.load({
 							})]
 						})
 					] }),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					(0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.serverList,
 						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: draft.transport === "streamable-http" ? t("managed.headers") : t("managed.environment") }),
-							draft.secrets.map((row, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							draft.transport === "streamable-http" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+								(0, react_jsx_runtime.jsx)("h4", { children: t("managed.headers") }),
+								draft.headers.map((row, index) => (0, react_jsx_runtime.jsxs)("div", {
+									className: mcp_settings_module_css_default.secretRow,
+									children: [
+										(0, react_jsx_runtime.jsxs)("label", {
+											className: mcp_settings_module_css_default.field,
+											children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.headerName") }), (0, react_jsx_runtime.jsx)("input", {
+												value: row.name,
+												disabled: busy,
+												onChange: (event) => setDraft({
+													...draft,
+													headers: draft.headers.map((item, rowIndex) => rowIndex === index ? {
+														...item,
+														name: event.currentTarget.value
+													} : item)
+												})
+											})]
+										}),
+										(0, react_jsx_runtime.jsxs)("label", {
+											className: mcp_settings_module_css_default.field,
+											children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.headerValue") }), (0, react_jsx_runtime.jsx)("input", {
+												value: row.value,
+												disabled: busy,
+												onChange: (event) => setDraft({
+													...draft,
+													headers: draft.headers.map((item, rowIndex) => rowIndex === index ? {
+														...item,
+														value: event.currentTarget.value
+													} : item)
+												})
+											})]
+										}),
+										(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+											variant: "outline",
+											disabled: busy,
+											onClick: () => setDraft({
+												...draft,
+												headers: draft.headers.filter((_item, rowIndex) => rowIndex !== index)
+											}),
+											children: t("managed.removeHeader")
+										})
+									]
+								}, `header-${index}`)),
+								(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									variant: "outline",
+									disabled: busy,
+									onClick: () => setDraft({
+										...draft,
+										headers: [...draft.headers, {
+											name: "",
+											value: ""
+										}]
+									}),
+									children: t("managed.addHeader")
+								})
+							] }),
+							(0, react_jsx_runtime.jsx)("h4", { children: draft.transport === "streamable-http" ? t("managed.credentials") : t("managed.environment") }),
+							draft.secrets.map((row, index) => (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.secretRow,
 								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+									(0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: draft.transport === "streamable-http" ? t("managed.headerName") : t("managed.envName") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+										children: [(0, react_jsx_runtime.jsx)("span", { children: draft.transport === "streamable-http" ? t("managed.headerName") : t("managed.envName") }), (0, react_jsx_runtime.jsx)("input", {
 											value: row.name,
 											disabled: busy,
 											onChange: (event) => setDraft({
@@ -980,9 +671,9 @@ window.__ModuleLoader__.load({
 											})
 										})]
 									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+									(0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.credentialRef") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+										children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.credentialRef") }), (0, react_jsx_runtime.jsx)("input", {
 											value: row.ref,
 											disabled: busy,
 											onChange: (event) => setDraft({
@@ -994,9 +685,9 @@ window.__ModuleLoader__.load({
 											})
 										})]
 									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+									(0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+										children: [(0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }), (0, react_jsx_runtime.jsx)("input", {
 											type: "password",
 											autoComplete: "new-password",
 											value: row.value,
@@ -1010,7 +701,7 @@ window.__ModuleLoader__.load({
 											})
 										})]
 									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 										variant: "outline",
 										disabled: busy,
 										onClick: () => setDraft({
@@ -1021,7 +712,7 @@ window.__ModuleLoader__.load({
 									})
 								]
 							}, index)),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+							(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 								variant: "outline",
 								disabled: busy,
 								onClick: () => setDraft({
@@ -1036,19 +727,19 @@ window.__ModuleLoader__.load({
 							})
 						]
 					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("footer", {
+					(0, react_jsx_runtime.jsxs)("footer", {
 						className: mcp_settings_module_css_default.cardFooter,
 						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							(0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.actions,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "primary",
 									disabled: busy || !snapshot.writable,
 									onClick: () => {
 										saveDraft();
 									},
 									children: t("save")
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "outline",
 									disabled: busy,
 									onClick: () => {
@@ -1057,12 +748,12 @@ window.__ModuleLoader__.load({
 									children: busy ? t("checking") : t("check")
 								})]
 							}),
-							checkState !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+							checkState !== void 0 && (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.status,
 								role: "status",
 								children: checkState
 							}),
-							failure !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+							failure !== void 0 && (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.error,
 								role: "alert",
 								children: managedFailureLabel(t, failure)
@@ -1071,28 +762,28 @@ window.__ModuleLoader__.load({
 					})
 				]
 			});
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+			return (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.card,
 				"aria-label": t("managed.title"),
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
+				children: [(0, react_jsx_runtime.jsxs)("header", {
 					className: mcp_settings_module_css_default.cardHeader,
-					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					children: [(0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.cardIdentity,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						children: [(0, react_jsx_runtime.jsx)("span", {
 							className: mcp_settings_module_css_default.cardIcon,
 							"aria-hidden": "true",
-							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 24 })
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 24 })
+						}), (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.cardCopy,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
+							children: [(0, react_jsx_runtime.jsx)("h3", {
 								className: mcp_settings_module_css_default.cardTitle,
 								children: t("managed.title")
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+							}), (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.cardDescription,
 								children: t("managed.description")
 							})]
 						})]
-					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+					}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 						variant: "primary",
 						disabled: busy || !snapshot.writable,
 						"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
@@ -1108,39 +799,39 @@ window.__ModuleLoader__.load({
 						},
 						children: t("managed.add")
 					})]
-				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				}), (0, react_jsx_runtime.jsxs)("div", {
 					className: mcp_settings_module_css_default.serverList,
 					children: [
-						servers.length === 0 && activeEditorId !== draft.id && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.empty") }),
+						servers.length === 0 && activeEditorId !== draft.id && (0, react_jsx_runtime.jsx)("p", { children: t("managed.empty") }),
 						servers.map((server) => {
 							const status = statusFor(server);
 							const state = !server.enabled ? "disabled" : status?.state ?? "disconnected";
-							return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
+							return (0, react_jsx_runtime.jsxs)("article", {
 								className: `${mcp_settings_module_css_default.serverCard} ${activeEditorId === server.id ? mcp_settings_module_css_default.serverCardEditing : ""}`,
 								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									(0, react_jsx_runtime.jsxs)("div", {
 										className: mcp_settings_module_css_default.serverHeading,
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+										children: [(0, react_jsx_runtime.jsxs)("div", {
 											className: mcp_settings_module_css_default.serverIdentity,
-											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											children: [(0, react_jsx_runtime.jsx)("span", {
 												className: mcp_settings_module_css_default.serverIcon,
 												"aria-hidden": "true",
-												children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 22 })
-											}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: server.serverName }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", { children: [
+												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 22 })
+											}), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("strong", { children: server.serverName }), (0, react_jsx_runtime.jsxs)("p", { children: [
 												t(server.transport === "stdio" ? "transport.stdio" : "transport.streamable-http"),
 												" · ",
-												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+												(0, react_jsx_runtime.jsx)("span", {
 													className: mcp_settings_module_css_default.serverState,
 													"data-state": state,
 													children: managedStateLabel(t, state)
 												})
 											] })] })]
-										}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+										}), (0, react_jsx_runtime.jsxs)("div", {
 											className: mcp_settings_module_css_default.enableControl,
-											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											children: [(0, react_jsx_runtime.jsx)("span", {
 												className: mcp_settings_module_css_default.enableLabel,
 												children: t("managed.enabled")
-											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
+											}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 												checked: server.enabled,
 												label: t("managed.enabled"),
 												disabled: busy || !snapshot.writable,
@@ -1150,14 +841,14 @@ window.__ModuleLoader__.load({
 											})]
 										})]
 									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", { children: [
+									(0, react_jsx_runtime.jsxs)("p", { children: [
 										t("toolCount"),
 										": ",
 										status?.toolCount ?? 0
 									] }),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									(0, react_jsx_runtime.jsxs)("div", {
 										className: mcp_settings_module_css_default.actions,
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 											variant: "outline",
 											disabled: busy || !snapshot.writable,
 											"aria-expanded": activeEditorId === server.id,
@@ -1171,7 +862,7 @@ window.__ModuleLoader__.load({
 												setCheckState(void 0);
 											},
 											children: t("managed.edit")
-										}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 											variant: "outline",
 											disabled: busy || !snapshot.writable,
 											onClick: () => {
@@ -1184,7 +875,7 @@ window.__ModuleLoader__.load({
 								]
 							}, server.id);
 						}),
-						!isEditingExisting && activeEditorId === draft.id && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("article", {
+						!isEditingExisting && activeEditorId === draft.id && (0, react_jsx_runtime.jsx)("article", {
 							className: `${mcp_settings_module_css_default.serverCard} ${mcp_settings_module_css_default.serverCardEditing}`,
 							children: editor
 						})
@@ -1228,63 +919,123 @@ window.__ModuleLoader__.load({
 			}
 		}
 		//#endregion
-		//#region src/client/McpConnectionsPage.tsx
+		//#region lib/types/client/McpConnectionsPage.js
 		/** Show each managed connection on the shared MCP settings page when served. */
-		function McpConnectionsPage({ cogneeForm, chromeForm, managedForm, remote, t }) {
-			const cognee = (0, react.useSyncExternalStore)(cogneeForm.subscribe.bind(cogneeForm), cogneeForm.getSnapshot.bind(cogneeForm));
-			const chrome = (0, react.useSyncExternalStore)(chromeForm.subscribe.bind(chromeForm), chromeForm.getSnapshot.bind(chromeForm));
-			const managed = (0, react.useSyncExternalStore)(managedForm.subscribe.bind(managedForm), managedForm.getSnapshot.bind(managedForm));
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+		function McpConnectionsPage({ managedForm, remote, t }) {
+			return (0, react_jsx_runtime.jsxs)("div", {
 				className: mcp_settings_module_css_default.connections,
-				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-						className: mcp_settings_module_css_default.pageHeader,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							className: mcp_settings_module_css_default.pageIcon,
-							"aria-hidden": "true",
-							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSettingsOutlineMedium, { size: 24 })
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: mcp_settings_module_css_default.pageCopy,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h2", {
-								className: mcp_settings_module_css_default.pageTitle,
-								children: t("pageTitle")
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-								className: mcp_settings_module_css_default.pageDescription,
-								children: t("pageDescription")
-							})]
+				children: [(0, react_jsx_runtime.jsxs)("header", {
+					className: mcp_settings_module_css_default.pageHeader,
+					children: [(0, react_jsx_runtime.jsx)("span", {
+						className: mcp_settings_module_css_default.pageIcon,
+						"aria-hidden": "true",
+						children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSettingsOutlineMedium, { size: 24 })
+					}), (0, react_jsx_runtime.jsxs)("div", {
+						className: mcp_settings_module_css_default.pageCopy,
+						children: [(0, react_jsx_runtime.jsx)("h2", {
+							className: mcp_settings_module_css_default.pageTitle,
+							children: t("pageTitle")
+						}), (0, react_jsx_runtime.jsx)("p", {
+							className: mcp_settings_module_css_default.pageDescription,
+							children: t("pageDescription")
 						})]
-					}),
-					cognee.status === "ready" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(CogneeCard, {
-						form: cogneeForm,
-						remote,
-						t
-					}),
-					chrome.status === "ready" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChromeCard, {
-						form: chromeForm,
-						remote,
-						t
-					}),
-					managed.status === "ready" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ManagedMcpServers, {
-						form: managedForm,
-						remote,
-						t
-					})
-				]
+					})]
+				}), (0, react_jsx_runtime.jsx)(ManagedMcpServers, {
+					form: managedForm,
+					remote,
+					t
+				})]
 			});
 		}
 		//#endregion
-		//#region src/client/locales.ts
-		/** English strings for VISION-LIAO and MCP card settings. */
+		//#region lib/types/client/migration.js
+		/** Move legacy endpoint settings into the single managed MCP list.
+		* @param cogneeForm - Legacy Cognee settings form.
+		* @param chromeForm - Legacy Chrome settings form.
+		* @param managedForm - Canonical managed server list form.
+		* @returns Whether an old configuration was migrated.
+		*/
+		async function runLegacyMcpMigration(cogneeForm, chromeForm, managedForm) {
+			await Promise.all([
+				waitForFirstSnapshot(cogneeForm),
+				waitForFirstSnapshot(chromeForm),
+				waitForFirstSnapshot(managedForm)
+			]);
+			const cognee = cogneeForm.getSnapshot().value ?? {};
+			const chrome = chromeForm.getSnapshot().value ?? {};
+			if (!Boolean(cognee.enabled || cognee.endpoint || chrome.enabled || chrome.url)) return false;
+			const servers = [...managedForm.getSnapshot().value?.servers ?? []];
+			if (chrome.url?.trim() && !servers.some((server) => server.serverName === "chrome")) {
+				const url = safeEndpoint(chrome.url);
+				if (url === void 0) throw new TypeError("legacy Chrome endpoint is not a supported HTTP endpoint");
+				servers.push({
+					id: "chrome",
+					serverName: "chrome",
+					enabled: chrome.enabled ?? false,
+					purpose: "model-tools",
+					transport: "streamable-http",
+					url: url.href,
+					headers: { Origin: url.origin },
+					headerRefs: { Authorization: "DSH_CHROME_MCP_TOKEN" }
+				});
+			}
+			if (cognee.endpoint?.trim() && !servers.some((server) => server.serverName === "cognee")) {
+				const url = safeEndpoint(cognee.endpoint);
+				if (url === void 0) throw new TypeError("legacy Cognee endpoint is not a supported HTTP endpoint");
+				const ref = /^[A-Za-z_][A-Za-z0-9_]*$/u.test(cognee.credentialRef ?? "") ? cognee.credentialRef : "DSH_COGNEE_MCP_TOKEN";
+				servers.push({
+					id: "cognee",
+					serverName: "cognee",
+					enabled: cognee.enabled ?? false,
+					purpose: "project-memory",
+					transport: "streamable-http",
+					url: url.href,
+					headers: {},
+					headerRefs: { Authorization: ref }
+				});
+			}
+			if (!await managedForm.set("servers", servers)) throw new Error("managed MCP settings refused the migration");
+			if ((await Promise.all([
+				cogneeForm.set("enabled", false),
+				cogneeForm.set("endpoint", ""),
+				chromeForm.set("enabled", false),
+				chromeForm.set("url", "")
+			])).some((accepted) => !accepted)) throw new Error("legacy MCP settings could not be cleared");
+			return true;
+		}
+		function waitForFirstSnapshot(form) {
+			if (form.getSnapshot().status !== "loading") return Promise.resolve();
+			return new Promise((resolve) => {
+				const unsubscribe = form.subscribe(() => {
+					if (form.getSnapshot().status === "loading") return;
+					unsubscribe();
+					resolve();
+				});
+			});
+		}
+		function safeEndpoint(input) {
+			try {
+				const url = new URL(input);
+				const host = url.hostname.toLowerCase().replace(/^\[|\]$/gu, "");
+				const loopback = host === "localhost" || host === "::1" || /^127(?:\.\d{1,3}){3}$/u.test(host);
+				if (url.username || url.password || url.protocol !== "https:" && !(url.protocol === "http:" && loopback)) return void 0;
+				return url;
+			} catch {
+				return;
+			}
+		}
+		//#endregion
+		//#region lib/types/client/locales.js
+		/** English strings for Cognee and MCP card settings. */
 		const en = {
 			title: "MCP",
 			pageTitle: "MCP settings",
-			pageDescription: "Configure and manage MCP service connections.",
-			cogneeTitle: "VISION-LIAO",
-			cogneeDescription: "Configure the VISION-LIAO MCP connection and project memory.",
+			pageDescription: "Configure every MCP server in one managed list.",
+			cogneeDescription: "Configure the Cognee MCP connection and project memory.",
 			chromeDescription: "Connect Chrome browser tools through MCP.",
-			endpoint: "VISION-LIAO MCP endpoint",
+			endpoint: "Cognee MCP endpoint",
 			endpointHint: "Use HTTPS, or HTTP on this computer only.",
-			enabled: "Use VISION-LIAO project memory",
+			enabled: "Use Cognee project memory",
 			token: "Bearer token",
 			tokenSet: "Token is configured",
 			tokenUnset: "Token is not configured",
@@ -1293,19 +1044,17 @@ window.__ModuleLoader__.load({
 			check: "Check connection",
 			checking: "Checking…",
 			status: "Connection status",
-			error: "Could not save or check the VISION-LIAO connection.",
+			error: "Could not save or check the Cognee connection.",
 			"status.not-configured": "Endpoint is not configured",
 			"status.disabled": "Disabled",
 			"status.authorization-required": "Authorization required",
 			"status.connection-failed": "Connection failed",
-			"status.incompatible-tools": "VISION-LIAO tools are incompatible",
+			"status.incompatible-tools": "Cognee tools are incompatible",
 			"status.ready": "Connected; required tools are available",
 			connectionSettings: "Connection settings",
 			chromeTitle: "Chrome MCP",
 			chromeEndpoint: "Chrome MCP endpoint",
 			chromeEndpointHint: "Use HTTPS; HTTP is allowed only for localhost or loopback addresses.",
-			chromeOrigin: "Origin request header",
-			chromeOriginHint: "Leave blank to derive it from the endpoint; for example, http://127.0.0.1.",
 			chromeEnabled: "Enable Chrome browser tools",
 			"chromeError.save": "Could not save the Chrome MCP settings. Check that settings are writable and try again.",
 			"chromeError.credential": "Could not access the Chrome MCP credential store.",
@@ -1343,21 +1092,28 @@ window.__ModuleLoader__.load({
 			"connection.disconnected": "Disconnected",
 			"transport.stdio": "Local process",
 			"transport.streamable-http": "Streamable HTTP",
-			"managed.title": "Managed MCP servers",
-			"managed.description": "Manage third-party MCP servers and their connection status.",
+			"managed.title": "MCP servers",
+			"managed.description": "Configure server connections, purpose, credentials, and live status in one list.",
 			"managed.add": "Add server",
-			"managed.empty": "No managed MCP servers are configured.",
+			"managed.empty": "No MCP servers are configured.",
 			"managed.enabled": "Enabled",
 			"managed.edit": "Edit",
 			"managed.delete": "Delete",
 			"managed.editor": "Server settings",
+			"managed.purpose": "Purpose",
+			"managed.purpose.model-tools": "Tools for the model",
+			"managed.purpose.project-memory": "Internal project memory",
 			"managed.endpoint": "MCP endpoint",
 			"managed.command": "Executable",
 			"managed.args": "Arguments (one per line)",
 			"managed.cwd": "Working directory",
-			"managed.headers": "Secret HTTP headers",
+			"managed.headers": "HTTP headers",
+			"managed.credentials": "Credential references",
 			"managed.environment": "Secret environment variables",
 			"managed.headerName": "Header name",
+			"managed.headerValue": "Header value",
+			"managed.addHeader": "Add header",
+			"managed.removeHeader": "Remove header",
 			"managed.envName": "Environment variable",
 			"managed.credentialRef": "Credential reference",
 			"managed.secret": "Secret value",
@@ -1378,17 +1134,16 @@ window.__ModuleLoader__.load({
 			"managed.error.check": "Could not check this MCP server.",
 			"managed.error.invalid": "Complete the required fields and use unique names."
 		};
-		/** Simplified Chinese strings for VISION-LIAO and MCP card settings. */
+		/** Simplified Chinese strings for Cognee and MCP card settings. */
 		const zh = {
 			title: "MCP",
 			pageTitle: "MCP 设置",
-			pageDescription: "配置和管理 MCP 服务连接。",
-			cogneeTitle: "VISION-LIAO",
-			cogneeDescription: "配置 VISION-LIAO MCP 连接与项目记忆。",
+			pageDescription: "在一个托管列表中配置所有 MCP 服务器。",
+			cogneeDescription: "配置 Cognee MCP 连接与项目记忆。",
 			chromeDescription: "通过 MCP 连接 Chrome 浏览器工具。",
-			endpoint: "VISION-LIAO MCP 地址",
+			endpoint: "Cognee MCP 地址",
 			endpointHint: "请使用 HTTPS；HTTP 仅允许本机回环地址。",
-			enabled: "启用 VISION-LIAO 项目记忆",
+			enabled: "启用 Cognee 项目记忆",
 			token: "Bearer 令牌",
 			tokenSet: "已配置令牌",
 			tokenUnset: "尚未配置令牌",
@@ -1397,19 +1152,17 @@ window.__ModuleLoader__.load({
 			check: "检查连接",
 			checking: "正在检查…",
 			status: "连接状态",
-			error: "无法保存或检查 VISION-LIAO 连接。",
+			error: "无法保存或检查 Cognee 连接。",
 			"status.not-configured": "尚未配置地址",
 			"status.disabled": "已停用",
 			"status.authorization-required": "需要授权",
 			"status.connection-failed": "连接失败",
-			"status.incompatible-tools": "VISION-LIAO 工具不兼容",
+			"status.incompatible-tools": "Cognee 工具不兼容",
 			"status.ready": "已连接，所需工具可用",
 			connectionSettings: "连接设置",
 			chromeTitle: "Chrome MCP",
 			chromeEndpoint: "Chrome MCP 地址",
 			chromeEndpointHint: "请使用 HTTPS；HTTP 仅允许 localhost 或本机回环地址。",
-			chromeOrigin: "Origin 请求头",
-			chromeOriginHint: "留空时根据地址自动生成；例如 http://127.0.0.1。",
 			chromeEnabled: "启用 Chrome 浏览器工具",
 			"chromeError.save": "无法保存 Chrome MCP 设置，请确认设置可写后重试。",
 			"chromeError.credential": "无法访问 Chrome MCP 凭据存储。",
@@ -1447,21 +1200,28 @@ window.__ModuleLoader__.load({
 			"connection.disconnected": "已断开",
 			"transport.stdio": "本地进程",
 			"transport.streamable-http": "Streamable HTTP",
-			"managed.title": "受管 MCP 服务",
-			"managed.description": "管理第三方 MCP 服务及其连接状态。",
-			"managed.add": "添加服务",
-			"managed.empty": "尚未配置受管 MCP 服务。",
+			"managed.title": "MCP 服务器",
+			"managed.description": "在同一列表中配置服务器连接、用途、凭据和实时状态。",
+			"managed.add": "添加服务器",
+			"managed.empty": "尚未配置 MCP 服务器。",
 			"managed.enabled": "启用",
 			"managed.edit": "编辑",
 			"managed.delete": "删除",
 			"managed.editor": "服务设置",
+			"managed.purpose": "用途",
+			"managed.purpose.model-tools": "向模型提供工具",
+			"managed.purpose.project-memory": "内部项目记忆",
 			"managed.endpoint": "MCP 地址",
 			"managed.command": "可执行文件",
 			"managed.args": "参数（每行一个）",
 			"managed.cwd": "工作目录",
-			"managed.headers": "HTTP 秘密请求头",
+			"managed.headers": "HTTP 请求头",
+			"managed.credentials": "凭据引用",
 			"managed.environment": "秘密环境变量",
 			"managed.headerName": "请求头名称",
+			"managed.headerValue": "请求头值",
+			"managed.addHeader": "添加请求头",
+			"managed.removeHeader": "移除请求头",
 			"managed.envName": "环境变量名称",
 			"managed.credentialRef": "凭据引用",
 			"managed.secret": "秘密值",
@@ -1483,14 +1243,12 @@ window.__ModuleLoader__.load({
 			"managed.error.invalid": "请填写必填项，并确保名称唯一。"
 		};
 		//#endregion
-		//#region src/client/index.ts
+		//#region lib/types/client/index.js
 		const inject = [
 			"slots",
 			"locale",
 			"remote",
 			"remote.credentials",
-			"remote.cognee",
-			"remote.chromeMcp",
 			"remote.mcpClientStatus",
 			"remote.mcpServerManager",
 			"configForms"
@@ -1503,24 +1261,31 @@ window.__ModuleLoader__.load({
 				en,
 				zh
 			}), "ui-settings-mcp: dictionaries");
-			const connectionsInjected = () => ({
-				cogneeForm: ctx.configForms.get("cognee-memory"),
-				chromeForm: ctx.configForms.get("mcp-chrome"),
-				managedForm: ctx.configForms.get("mcp-server-manager"),
-				remote: ctx.remote
-			});
-			ctx.effect(() => ctx.configForms.whileServed([
-				"cognee-memory",
-				"mcp-chrome",
-				"mcp-server-manager"
-			], () => ctx.slots.inject("settings.section", () => ctx.slots.register({
-				name: "settings.section",
-				id: "mcp",
-				order: 14,
-				label: () => t("title"),
-				locale: NS,
-				inject: connectionsInjected
-			}, McpConnectionsPage))), "ui-settings-mcp: connection settings section");
+			ctx.effect(() => ctx.configForms.whileServed(["mcp-server-manager"], () => {
+				let active = true;
+				let stopSection;
+				const cognee = ctx.configForms.get("cognee-memory");
+				const chrome = ctx.configForms.get("mcp-chrome");
+				const managed = ctx.configForms.get("mcp-server-manager");
+				runLegacyMcpMigration(cognee, chrome, managed).catch(() => void 0).finally(() => {
+					if (!active) return;
+					stopSection = ctx.slots.inject("settings.section", () => ctx.slots.register({
+						name: "settings.section",
+						id: "mcp",
+						order: 14,
+						label: () => t("title"),
+						locale: NS,
+						inject: () => ({
+							managedForm: managed,
+							remote: ctx.remote
+						})
+					}, McpConnectionsPage));
+				});
+				return () => {
+					active = false;
+					stopSection?.();
+				};
+			}), "ui-settings-mcp: connection settings section");
 			const appearanceInjected = () => ({
 				form: ctx.configForms.get("mcp-card-presentation"),
 				remote: ctx.remote
