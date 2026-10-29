@@ -17,7 +17,7 @@ kind: "package-bundle"
 
 ## 使用本包
 
-将 `@deepseek-ai/dsh-mcp-settings` 加入 profile manifest 的 `dsh.profile.bundles`。随附的 Web 和 Desktop profile 已包含它。通过 profile 的 Cordis patch 配置 MCP 服务器行。
+将 `@deepseek-ai/dsh-mcp-settings` 加入 profile manifest 的 `dsh.profile.bundles`。随附的 Web 和 Desktop profile 已包含它。可在 MCP 设置页配置服务器，也可通过 profile 的 Cordis patch 配置。设置页支持导入包含 `mcpServers` 对象和 `streamable-http` 条目的 JSON。
 
 ## 理解实现
 
@@ -33,7 +33,7 @@ kind: "package-bundle"
 
 ## 已知限制与延期工作
 
-- MCP 服务器配置需要编辑 profile Cordis patch；该 bundle 不提供设置页面。
+- JSON 导入支持 `streamable-http` 条目；stdio 服务可在设置页手动添加，或通过 Cordis patch 配置。
 
 ## 随仓库提供的依赖
 

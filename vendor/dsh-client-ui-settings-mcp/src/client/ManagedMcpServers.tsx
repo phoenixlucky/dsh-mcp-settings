@@ -50,8 +50,11 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const [draft, setDraft] = useState<Draft>(emptyDraft)
   const [activeEditorId, setActiveEditorId] = useState<string>()
   const [busy, setBusy] = useState(false)
-  const [failure, setFailure] = useState<'save' | 'credential' | 'check' | 'invalid'>()
+  const [failure, setFailure] = useState<'save' | 'credential' | 'check' | 'invalid' | 'import-invalid'>()
   const [checkState, setCheckState] = useState<string>()
+  const [importMode, setImportMode] = useState(false)
+  const [importJson, setImportJson] = useState('')
+  const [importState, setImportState] = useState<string>()
 
   useEffect(() => {
     let active = true
@@ -175,19 +178,78 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     try { await saveServers(servers.map(current => current.id === server.id ? { ...current, enabled } : current)) }
     catch { setFailure('save') } finally { setBusy(false) }
   }
+  const importServers = async () => {
+    setBusy(true); setFailure(undefined); setImportState(undefined)
+    try {
+      const parsed: unknown = JSON.parse(importJson)
+      if (!isRecord(parsed) || !isRecord(parsed.mcpServers)) throw new Error('invalid')
+      const existingNames = new Set(servers.map(server => server.serverName.toLowerCase()))
+      const importedNames = new Set<string>()
+      const candidates: { serverName: string; url: string; headers: Record<string, string>; secrets: Record<string, string> }[] = []
+      let skipped = 0
+      for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
+        if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) { skipped++; continue }
+        if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName) || !isRecord(raw)
+          || raw.type !== 'streamable-http' || typeof raw.url !== 'string' || !isAllowedEndpoint(raw.url)
+          || (raw.headers !== undefined && !isRecord(raw.headers))) throw new Error('invalid')
+        const headers = Object.create(null) as Record<string, string>
+        const secrets = Object.create(null) as Record<string, string>
+        const headerNames = new Set<string>()
+        for (const [name, value] of Object.entries(raw.headers ?? {})) {
+          const normalized = name.toLowerCase()
+          if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof value !== 'string'
+            || /[\r\n]/u.test(value) || headerNames.has(normalized)) throw new Error('invalid')
+          headerNames.add(normalized)
+          if (/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)) {
+            secrets[name] = value
+          } else headers[name] = value
+        }
+        importedNames.add(serverName.toLowerCase())
+        candidates.push({ serverName, url: raw.url, headers, secrets })
+      }
+      if (candidates.length === 0) {
+        if (skipped === 0) throw new Error('invalid')
+      }
+      const next: ManagedMcpServer[] = []
+      for (const candidate of candidates) {
+        const headerRefs = Object.create(null) as Record<string, string>
+        for (const [name, value] of Object.entries(candidate.secrets)) {
+          const ref = `MCP_IMPORT_${randomUUID().replaceAll('-', '')}`
+          try {
+            const reply = await remote.credentials.set(ref, value)
+            if (!reply.ok) { setFailure('credential'); return }
+          } catch {
+            setFailure('credential')
+            return
+          }
+          headerRefs[name] = ref
+        }
+        next.push({ id: randomUUID(), serverName: candidate.serverName, enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: candidate.url, headers: candidate.headers, headerRefs })
+      }
+      try { if (next.length > 0) await saveServers([...servers, ...next]) }
+      catch { setFailure('save'); return }
+      setImportJson('')
+      setImportState(t('managed.import.complete').replace('{imported}', String(next.length)).replace('{skipped}', String(skipped)))
+    } catch {
+      setImportState(undefined)
+      setFailure('import-invalid')
+    } finally { setBusy(false) }
+  }
   const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.serverName === server.serverName)
   const isEditingExisting = servers.some(server => server.id === draft.id)
   const editor = (
     <section className={css.fieldGroup} aria-label={t('managed.editor')}>
       <h4 className={css.fieldGroupTitle}>{t('managed.editor')}</h4>
-      <label className={css.field}><span>{t('serverName')}</span><input value={draft.serverName} disabled={busy} onChange={event => setDraft({ ...draft, serverName: event.currentTarget.value })} /></label>
-      <label className={css.field}><span>{t('managed.purpose')}</span><select value={draft.purpose} disabled={busy} onChange={event => {
-        const purpose = event.currentTarget.value as Draft['purpose']
-        setDraft({ ...draft, purpose, transport: purpose === 'project-memory' ? 'streamable-http' : draft.transport })
-      }}><option value="model-tools">{t('managed.purpose.model-tools')}</option><option value="project-memory">{t('managed.purpose.project-memory')}</option></select></label>
-      <label className={css.field}><span>{t('transport')}</span><select value={draft.transport} disabled={busy} onChange={event => setDraft({ ...draft, transport: event.currentTarget.value as Draft['transport'], secrets: [] })}>
-        <option value="streamable-http">{t('transport.streamable-http')}</option><option value="stdio">{t('transport.stdio')}</option>
-      </select></label>
+      <div className={css.formGrid}>
+        <label className={css.field}><span>{t('serverName')}</span><input value={draft.serverName} disabled={busy} onChange={event => setDraft({ ...draft, serverName: event.currentTarget.value })} /></label>
+        <label className={css.field}><span>{t('managed.purpose')}</span><select value={draft.purpose} disabled={busy} onChange={event => {
+          const purpose = event.currentTarget.value as Draft['purpose']
+          setDraft({ ...draft, purpose, transport: purpose === 'project-memory' ? 'streamable-http' : draft.transport })
+        }}><option value="model-tools">{t('managed.purpose.model-tools')}</option><option value="project-memory">{t('managed.purpose.project-memory')}</option></select></label>
+        <label className={css.field}><span>{t('transport')}</span><select value={draft.transport} disabled={busy} onChange={event => setDraft({ ...draft, transport: event.currentTarget.value as Draft['transport'], secrets: [] })}>
+          <option value="streamable-http">{t('transport.streamable-http')}</option><option value="stdio">{t('transport.stdio')}</option>
+        </select></label>
+      </div>
       {draft.transport === 'streamable-http'
         ? <label className={css.field}><span>{t('managed.endpoint')}</span><input type="url" value={draft.url} disabled={busy} onChange={event => setDraft({ ...draft, url: event.currentTarget.value })} /><small>{t('endpointHint')}</small></label>
         : <>
@@ -198,6 +260,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       <div className={css.serverList}>
         {draft.transport === 'streamable-http' && <>
           <h4>{t('managed.headers')}</h4>
+          <small>{t('managed.headersHint')}</small>
           {draft.headers.map((row, index) => <div className={css.secretRow} key={`header-${index}`}>
             <label className={css.field}><span>{t('managed.headerName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) })} /></label>
             <label className={css.field}><span>{t('managed.headerValue')}</span><input value={row.value} disabled={busy} onChange={event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, value: event.currentTarget.value } : item) })} /></label>
@@ -206,6 +269,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
           <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, headers: [...draft.headers, { name: '', value: '' }] })}>{t('managed.addHeader')}</Button>
         </>}
         <h4>{draft.transport === 'streamable-http' ? t('managed.credentials') : t('managed.environment')}</h4>
+        {draft.transport === 'streamable-http' && <small>{t('managed.credentialsHint')}</small>}
         {draft.secrets.map((row, index) => <div className={css.secretRow} key={index}>
           <label className={css.field}><span>{draft.transport === 'streamable-http' ? t('managed.headerName') : t('managed.envName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) })} /></label>
           <label className={css.field}><span>{t('managed.credentialRef')}</span><input value={row.ref} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, ref: event.currentTarget.value } : item) })} /></label>
@@ -231,7 +295,15 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         <span className={css.cardIcon} aria-hidden="true"><IconApiOutlineRegular size={24} /></span>
         <div className={css.cardCopy}><h3 className={css.cardTitle}>{t('managed.title')}</h3><p className={css.cardDescription}>{t('managed.description')}</p></div>
       </div>
+      <div className={css.actions}>
+      <Button variant="outline" disabled={busy || !snapshot.writable} aria-expanded={importMode} onClick={() => {
+        setImportMode(!importMode)
+        setActiveEditorId(undefined)
+        setImportState(undefined)
+        setFailure(undefined)
+      }}>{t('managed.import')}</Button>
       <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
+        setImportMode(false)
         if (!isEditingExisting && activeEditorId === draft.id) setActiveEditorId(undefined)
         else {
           const next = emptyDraft()
@@ -241,7 +313,15 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         setFailure(undefined)
         setCheckState(undefined)
       }}>{t('managed.add')}</Button>
+      </div>
     </header>
+    {importMode && <section className={css.fieldGroup} aria-label={t('managed.import')}>
+      <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => setImportJson(event.currentTarget.value)} placeholder={t('managed.import.placeholder')} /></label>
+      <small>{t('managed.import.hint')}</small>
+      <div className={css.actions}><Button variant="primary" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={() => { void importServers() }}>{busy ? t('checking') : t('managed.import.action')}</Button></div>
+      {importState !== undefined && <p className={css.status} role="status">{importState}</p>}
+      {failure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, failure)}</p>}
+    </section>}
     <div className={css.serverList}>
       {servers.length === 0 && activeEditorId !== draft.id && <p>{t('managed.empty')}</p>}
       {servers.map((server) => {
@@ -258,7 +338,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
               <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
             </div>
           </div>
-          <p>{t('toolCount')}: {status?.toolCount ?? 0}</p>
+          <p className={css.toolCount}>{t('toolCount')}: {status?.toolCount ?? 0}</p>
           <div className={css.actions}>
             <Button variant="outline" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
               if (activeEditorId === server.id) setActiveEditorId(undefined)
@@ -320,12 +400,17 @@ function managedCheckLabel(
 
 function managedFailureLabel(
   t: PropsLocale<'settings.mcp'>['t'],
-  failure: 'save' | 'credential' | 'check' | 'invalid',
+  failure: 'save' | 'credential' | 'check' | 'invalid' | 'import-invalid',
 ): string {
   switch (failure) {
     case 'save': return t('managed.error.save')
     case 'credential': return t('managed.error.credential')
     case 'check': return t('managed.error.check')
     case 'invalid': return t('managed.error.invalid')
+    case 'import-invalid': return t('managed.import.invalid')
   }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }

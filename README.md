@@ -17,7 +17,7 @@ This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The
 
 ## Use this package
 
-Add `@deepseek-ai/dsh-mcp-settings` to `dsh.profile.bundles` in the profile manifest. The shipped Web and Desktop profiles include it. Set MCP server rows in the profile's Cordis patch.
+Add `@deepseek-ai/dsh-mcp-settings` to `dsh.profile.bundles` in the profile manifest. The shipped Web and Desktop profiles include it. Configure servers in the MCP settings page or in the profile's Cordis patch. The settings page can import JSON with an `mcpServers` object and `streamable-http` entries.
 
 ## Understand the implementation
 
@@ -33,7 +33,7 @@ Model-facing MCP tools are available only when a `model-tools` row connects succ
 
 ## Known Limitations and Deferred Work
 
-- MCP server configuration requires editing the profile Cordis patch; this bundle does not provide a Settings page.
+- JSON import supports `streamable-http` entries. Add stdio servers through the settings page or Cordis patch.
 
 ## Vendored packages
 

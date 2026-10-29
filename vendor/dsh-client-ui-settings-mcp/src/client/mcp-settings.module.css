@@ -5,12 +5,12 @@
   --mcp-space-4: 16px;
   --mcp-space-5: 20px;
   --dsw-alias-button-primary-fill: var(--dsw-static-amber-600);
-  --mcp-card-fill: color-mix(in srgb, var(--dsw-static-amber-100) 28%, var(--dsw-alias-settings-card-fill));
-  --mcp-field-fill: color-mix(in srgb, var(--dsw-static-amber-100) 48%, var(--dsw-alias-bg-layer-1));
+  --mcp-card-fill: color-mix(in srgb, var(--dsw-static-amber-100) 12%, var(--dsw-alias-settings-card-fill));
+  --mcp-field-fill: var(--dsw-alias-bg-layer-1);
   --mcp-card-stroke: color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));
   display: grid;
   width: 100%;
-  max-width: none;
+  max-width: 76rem;
   margin-inline: auto;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--mcp-space-5);
@@ -19,7 +19,7 @@
 .pageHeader {
   display: flex;
   align-items: center;
-  gap: var(--mcp-space-3);
+  gap: var(--mcp-space-4);
   min-width: 0;
   padding: 0 var(--mcp-space-1) var(--mcp-space-2);
 }
@@ -57,15 +57,15 @@
   container-type: inline-size;
   display: grid;
   align-content: start;
-  gap: var(--mcp-space-3);
+  gap: var(--mcp-space-4);
   width: 100%;
   min-width: 0;
   padding: var(--mcp-space-4);
-  border: 0.5px solid var(--mcp-card-stroke);
+  border: 1px solid var(--mcp-card-stroke);
   border-radius: var(--dsw-radius-xl);
   background: var(--mcp-card-fill);
   color: var(--dsw-alias-label-primary);
-  box-shadow: none;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--dsw-alias-label-primary) 5%, transparent);
 }
 
 .cardHeader {
@@ -74,7 +74,8 @@
   justify-content: space-between;
   gap: var(--mcp-space-4);
   min-height: 3.5rem;
-  padding-inline: var(--mcp-space-1);
+  padding: 0 var(--mcp-space-1) var(--mcp-space-3);
+  border-bottom: 1px solid var(--mcp-card-stroke);
 }
 
 .cardIdentity {
@@ -141,22 +142,18 @@
   display: grid;
   min-width: 0;
   gap: var(--mcp-space-4);
-  padding: var(--mcp-space-4);
-  border: 0.5px solid var(--mcp-card-stroke);
+  padding: var(--mcp-space-5);
+  border: 1px solid var(--mcp-card-stroke);
   border-radius: var(--dsw-radius-xl);
-  background: var(--mcp-field-fill);
+  background: color-mix(in srgb, var(--dsw-alias-bg-layer-1) 78%, transparent);
 }
 
 .fieldGroupTitle {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  margin: 0;
+  padding-bottom: var(--mcp-space-3);
+  border-bottom: 1px solid var(--mcp-card-stroke);
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-l-20);
 }
 
 .field {
@@ -164,6 +161,18 @@
   gap: var(--mcp-space-2);
   color: var(--dsw-alias-label-primary);
   font: var(--dsw-font-base-strong-16);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mcp-space-4);
+}
+
+.formGrid .field {
+  grid-template-columns: minmax(7rem, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  column-gap: var(--mcp-space-3);
 }
 
 .field input {
@@ -224,7 +233,7 @@
   align-items: center;
   gap: var(--mcp-space-4);
   padding: var(--mcp-space-3) var(--mcp-space-1) 0;
-  border-top: 0.5px dashed var(--mcp-card-stroke);
+  border-top: 1px solid var(--mcp-card-stroke);
 }
 
 .status {
@@ -277,16 +286,27 @@
   color: var(--dsw-alias-label-primary);
 }
 
+.serverList > small {
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-base-16);
+}
+
 .serverCard {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: var(--mcp-space-4);
-  padding: var(--mcp-space-4);
-  border: 0.5px solid var(--mcp-card-stroke);
+  padding: var(--mcp-space-4) var(--mcp-space-5);
+  border: 1px solid var(--mcp-card-stroke);
   border-radius: var(--dsw-radius-xl);
-  background: var(--mcp-field-fill);
+  background: var(--dsw-alias-settings-card-fill);
   color: var(--dsw-alias-label-secondary);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.serverCard:not(.serverCardEditing):hover {
+  border-color: color-mix(in srgb, var(--dsw-static-amber-600) 38%, var(--mcp-card-stroke));
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent);
 }
 
 .serverCard strong {
@@ -309,6 +329,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--mcp-space-3);
+  min-width: 0;
 }
 
 .serverIdentity {
@@ -333,11 +354,12 @@
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  padding: 2px var(--mcp-space-2);
+  padding: var(--mcp-space-1) var(--mcp-space-2);
   border-radius: 999px;
-  background: var(--mcp-field-fill);
+  background: color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, var(--dsw-alias-settings-card-fill));
   color: var(--dsw-alias-label-secondary);
   font: var(--dsw-font-xs-13);
+  line-height: 1.2;
 }
 
 .serverState[data-state='connected'] {
@@ -347,6 +369,8 @@
 
 .serverCardEditing {
   grid-template-columns: minmax(0, 1fr);
+  border-color: color-mix(in srgb, var(--dsw-static-amber-600) 42%, var(--mcp-card-stroke));
+  background: color-mix(in srgb, var(--dsw-static-amber-100) 10%, var(--dsw-alias-settings-card-fill));
 }
 
 .serverCardEditing > p {
@@ -365,6 +389,22 @@
   grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
   align-items: end;
   gap: var(--mcp-space-3);
+}
+
+.toolCount {
+  width: fit-content;
+  padding: var(--mcp-space-2) var(--mcp-space-3);
+  border: 1px solid var(--mcp-card-stroke);
+  border-radius: var(--dsw-radius-md);
+  background: var(--mcp-field-fill);
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-s-14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .serverCard {
+    transition: none;
+  }
 }
 
 @container (max-width: 48rem) {
@@ -399,6 +439,15 @@
 
   .cardIdentity {
     flex: 1 1 100%;
+  }
+
+  .cardHeader > .actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .formGrid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .enableControl {

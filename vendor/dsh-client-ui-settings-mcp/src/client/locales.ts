@@ -48,6 +48,8 @@ export const en = {
   'managed.endpoint': 'MCP endpoint', 'managed.command': 'Executable', 'managed.args': 'Arguments (one per line)', 'managed.cwd': 'Working directory',
   'managed.headers': 'HTTP headers', 'managed.credentials': 'Credential references', 'managed.environment': 'Secret environment variables', 'managed.headerName': 'Header name',
   'managed.headerValue': 'Header value', 'managed.addHeader': 'Add header', 'managed.removeHeader': 'Remove header',
+  'managed.headersHint': 'Example: X-Client-Version → 1.0. Put Authorization and API keys under Credential references below.',
+  'managed.credentialsHint': 'Example: Header name Authorization · Credential reference MCP_NEW_TOKEN · Secret value Bearer <your token>.',
   'managed.envName': 'Environment variable', 'managed.credentialRef': 'Credential reference', 'managed.secret': 'Secret value',
   'managed.addSecret': 'Add secret mapping', 'managed.removeSecret': 'Remove', 'managed.checkReady': 'Connected; {count} tools found',
   'managed.check.authorization-required': 'Authorization required', 'managed.check.connection-failed': 'Connection failed',
@@ -56,6 +58,10 @@ export const en = {
   'managed.state.reconnecting': 'Reconnecting', 'managed.state.disconnected': 'Disconnected',
   'managed.error.save': 'Could not save the server settings.', 'managed.error.credential': 'Could not store a credential.',
   'managed.error.check': 'Could not check this MCP server.', 'managed.error.invalid': 'Complete the required fields and use unique names.',
+  'managed.import': 'Import JSON', 'managed.import.placeholder': 'Paste a configuration containing an mcpServers object.',
+  'managed.import.hint': 'Imports streamable-http servers. Secret headers are stored in the credential store; existing names are skipped.',
+  'managed.import.action': 'Import servers', 'managed.import.complete': 'Imported {imported} server(s); skipped {skipped} duplicate(s).',
+  'managed.import.invalid': 'Invalid JSON or unsupported server configuration. Check the mcpServers object and streamable-http entries.',
 } as const
 
 /** Simplified Chinese strings for Cognee and MCP card settings. */
@@ -108,6 +114,8 @@ export const zh: Record<keyof typeof en, string> = {
   'managed.endpoint': 'MCP 地址', 'managed.command': '可执行文件', 'managed.args': '参数（每行一个）', 'managed.cwd': '工作目录',
   'managed.headers': 'HTTP 请求头', 'managed.credentials': '凭据引用', 'managed.environment': '秘密环境变量', 'managed.headerName': '请求头名称',
   'managed.headerValue': '请求头值', 'managed.addHeader': '添加请求头', 'managed.removeHeader': '移除请求头',
+  'managed.headersHint': '示例：X-Client-Version → 1.0。Authorization 和 API Key 请填写在下方“凭据引用”中。',
+  'managed.credentialsHint': '示例：请求头名称 Authorization · 凭据引用 MCP_NEW_TOKEN · 秘密值 Bearer <你的令牌>。',
   'managed.envName': '环境变量名称', 'managed.credentialRef': '凭据引用', 'managed.secret': '秘密值',
   'managed.addSecret': '添加秘密映射', 'managed.removeSecret': '移除', 'managed.checkReady': '已连接，发现 {count} 个工具',
   'managed.check.authorization-required': '需要授权', 'managed.check.connection-failed': '连接失败',
@@ -116,4 +124,8 @@ export const zh: Record<keyof typeof en, string> = {
   'managed.state.reconnecting': '重连中', 'managed.state.disconnected': '已断开',
   'managed.error.save': '无法保存 MCP 服务设置。', 'managed.error.credential': '无法保存凭据。',
   'managed.error.check': '无法检查 MCP 服务连接。', 'managed.error.invalid': '请填写必填项，并确保名称唯一。',
+  'managed.import': '导入 JSON', 'managed.import.placeholder': '粘贴包含 mcpServers 对象的配置。',
+  'managed.import.hint': '支持导入 streamable-http 服务。敏感请求头会保存到凭据库；已有名称会跳过。',
+  'managed.import.action': '导入服务', 'managed.import.complete': '已导入 {imported} 个服务；跳过 {skipped} 个重复项。',
+  'managed.import.invalid': 'JSON 或服务器配置无效。请检查 mcpServers 对象及 streamable-http 配置。',
 }
