@@ -7,7 +7,7 @@ import type { ChromeConnectionCheck } from '@deepseek-ai/dsh-mcp-client'
 import css from './mcp-settings.module.css'
 
 const CREDENTIAL = 'DSH_CHROME_MCP_TOKEN'
-interface Config { enabled?: boolean; url?: string }
+interface Config { enabled?: boolean; url?: string; origin?: string }
 interface Injected { form: ConfigForm<Config>; remote: ClientContext['remote'] }
 
 /** Configure the managed Chrome MCP endpoint and its separately stored token. */
@@ -15,6 +15,7 @@ export function ChromeCard({ form, remote, t }: Injected & PropsLocale<'settings
   const snapshot = form.getSnapshot()
   const [enabled, setEnabled] = useState(snapshot.value?.enabled ?? false)
   const [url, setUrl] = useState(snapshot.value?.url ?? '')
+  const [origin, setOrigin] = useState(snapshot.value?.origin ?? '')
   const [token, setToken] = useState('')
   const [tokenConfigured, setTokenConfigured] = useState(false)
   const [tokenWritable, setTokenWritable] = useState(false)
@@ -24,7 +25,7 @@ export function ChromeCard({ form, remote, t }: Injected & PropsLocale<'settings
 
   useEffect(() => form.subscribe(() => {
     const value = form.getSnapshot().value
-    if (value !== undefined) { setEnabled(value.enabled ?? false); setUrl(value.url ?? '') }
+    if (value !== undefined) { setEnabled(value.enabled ?? false); setUrl(value.url ?? ''); setOrigin(value.origin ?? '') }
   }), [form])
   useEffect(() => {
     let active = true
@@ -61,6 +62,7 @@ export function ChromeCard({ form, remote, t }: Injected & PropsLocale<'settings
       const accepted = await form.mutate([
         { op: 'set', path: ['enabled'], value: enabled },
         { op: 'set', path: ['url'], value: url },
+        { op: 'set', path: ['origin'], value: origin },
       ])
       if (!accepted) { setFailure('save'); return }
       if (token !== '') {
@@ -87,6 +89,7 @@ export function ChromeCard({ form, remote, t }: Injected & PropsLocale<'settings
     <section className={css.fieldGroup} aria-labelledby="chrome-connection-settings">
       <h4 className={css.fieldGroupTitle} id="chrome-connection-settings">{t('connectionSettings')}</h4>
       <label className={css.field}><span>{t('chromeEndpoint')}</span><input type="url" value={url} disabled={busy || !form.getSnapshot().writable} onChange={event => setUrl(event.currentTarget.value)} /><small>{t('chromeEndpointHint')}</small></label>
+      <label className={css.field}><span>{t('chromeOrigin')}</span><input type="text" value={origin} disabled={busy || !form.getSnapshot().writable} onChange={event => setOrigin(event.currentTarget.value)} /><small>{t('chromeOriginHint')}</small></label>
       <label className={css.field}><span>{t('token')}</span><input type="password" autoComplete="new-password" value={token} disabled={busy || !tokenWritable} onChange={event => setToken(event.currentTarget.value)} /><small>{t(tokenLabel)}</small></label>
     </section>
     <footer className={css.cardFooter}>

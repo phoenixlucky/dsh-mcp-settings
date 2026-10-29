@@ -14,6 +14,8 @@ export interface ChromeConfig {
     enabled: Volatile<boolean>;
     /** HTTPS or loopback HTTP Streamable HTTP endpoint. */
     url: Volatile<string>;
+    /** Optional Origin request header; empty derives it from the endpoint. */
+    origin: Volatile<string>;
     /** Credential reference resolved only when starting the bridge. */
     credentialRef: Volatile<string>;
     /** Resolved path to the installed stdio bridge entry point. */
@@ -24,6 +26,7 @@ export interface ChromeConfig {
 type ChromeConfigInput = Partial<{
     enabled: boolean;
     url: string;
+    origin: string;
     credentialRef: string;
     bridgePath: string;
     requestTimeoutMs: number;
@@ -46,6 +49,7 @@ export declare class ChromeMcpService extends TypertRemoteService {
     static Config: z<Partial<{
         enabled: boolean;
         url: string;
+        origin: string;
         credentialRef: string;
         bridgePath: string;
         requestTimeoutMs: number;
@@ -77,7 +81,7 @@ interface ChromeController {
  * @param bridgePath - Installed bridge executable path.
  * @returns The generic MCP client's stdio settings.
  */
-export declare function createChromeClientConfig(endpoint: string, token: string | undefined, bridgePath: string): StdioConfig;
+export declare function createChromeClientConfig(endpoint: string, token: string | undefined, bridgePath: string, origin?: string): StdioConfig;
 /** Build the single Chrome connection controller used by the managed entry.
  * @param ctx - Owner context for config and credential events and safe diagnostics.
  * @param config - Managed Chrome endpoint and credential settings.

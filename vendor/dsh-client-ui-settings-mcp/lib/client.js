@@ -265,6 +265,7 @@ window.__ModuleLoader__.load({
 			const snapshot = form.getSnapshot();
 			const [enabled, setEnabled] = (0, react.useState)(snapshot.value?.enabled ?? false);
 			const [url, setUrl] = (0, react.useState)(snapshot.value?.url ?? "");
+			const [origin, setOrigin] = (0, react.useState)(snapshot.value?.origin ?? "");
 			const [token, setToken] = (0, react.useState)("");
 			const [tokenConfigured, setTokenConfigured] = (0, react.useState)(false);
 			const [tokenWritable, setTokenWritable] = (0, react.useState)(false);
@@ -276,6 +277,7 @@ window.__ModuleLoader__.load({
 				if (value !== void 0) {
 					setEnabled(value.enabled ?? false);
 					setUrl(value.url ?? "");
+					setOrigin(value.origin ?? "");
 				}
 			}), [form]);
 			(0, react.useEffect)(() => {
@@ -330,15 +332,23 @@ window.__ModuleLoader__.load({
 				setBusy(true);
 				setFailure(void 0);
 				try {
-					if (!await form.mutate([{
-						op: "set",
-						path: ["enabled"],
-						value: enabled
-					}, {
-						op: "set",
-						path: ["url"],
-						value: url
-					}])) {
+					if (!await form.mutate([
+						{
+							op: "set",
+							path: ["enabled"],
+							value: enabled
+						},
+						{
+							op: "set",
+							path: ["url"],
+							value: url
+						},
+						{
+							op: "set",
+							path: ["origin"],
+							value: origin
+						}
+					])) {
 						setFailure("save");
 						return;
 					}
@@ -413,6 +423,19 @@ window.__ModuleLoader__.load({
 										onChange: (event) => setUrl(event.currentTarget.value)
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("chromeEndpointHint") })
+								]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+								className: mcp_settings_module_css_default.field,
+								children: [
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("chromeOrigin") }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+										type: "text",
+										value: origin,
+										disabled: busy || !form.getSnapshot().writable,
+										onChange: (event) => setOrigin(event.currentTarget.value)
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("chromeOriginHint") })
 								]
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
@@ -1281,6 +1304,8 @@ window.__ModuleLoader__.load({
 			chromeTitle: "Chrome MCP",
 			chromeEndpoint: "Chrome MCP endpoint",
 			chromeEndpointHint: "Use HTTPS; HTTP is allowed only for localhost or loopback addresses.",
+			chromeOrigin: "Origin request header",
+			chromeOriginHint: "Leave blank to derive it from the endpoint; for example, http://127.0.0.1.",
 			chromeEnabled: "Enable Chrome browser tools",
 			"chromeError.save": "Could not save the Chrome MCP settings. Check that settings are writable and try again.",
 			"chromeError.credential": "Could not access the Chrome MCP credential store.",
@@ -1383,6 +1408,8 @@ window.__ModuleLoader__.load({
 			chromeTitle: "Chrome MCP",
 			chromeEndpoint: "Chrome MCP 地址",
 			chromeEndpointHint: "请使用 HTTPS；HTTP 仅允许 localhost 或本机回环地址。",
+			chromeOrigin: "Origin 请求头",
+			chromeOriginHint: "留空时根据地址自动生成；例如 http://127.0.0.1。",
 			chromeEnabled: "启用 Chrome 浏览器工具",
 			"chromeError.save": "无法保存 Chrome MCP 设置，请确认设置可写后重试。",
 			"chromeError.credential": "无法访问 Chrome MCP 凭据存储。",

@@ -46,6 +46,7 @@ export const CHROME_CREDENTIAL_REF = 'DSH_CHROME_MCP_TOKEN';
 export const Config = z.object({
     enabled: z.boolean().default(false).volatile(),
     url: z.string().default('').volatile(),
+    origin: z.string().default('').volatile(),
     credentialRef: z.string().pattern(/^[A-Za-z_][A-Za-z0-9_]*$/).default(CHROME_CREDENTIAL_REF).volatile(),
     bridgePath: z.string().default('@deepseek-ai/dsh-chrome-bridge/bridge'),
     requestTimeoutMs: z.number().step(1).min(1).max(120_000).default(10_000).volatile(),
@@ -114,7 +115,7 @@ export async function checkChromeConnection(ctx, config) {
         ]);
         if (controller.signal.aborted)
             return { state: 'timed-out' };
-        const transport = createTransport(createChromeClientConfig(endpoint, credential?.value, config.bridgePath));
+        const transport = createTransport(createChromeClientConfig(endpoint, credential?.value, config.bridgePath, config.origin.get()));
         client = new Client({ name: 'deepseek-harness-chrome-check', version: '0.2.1' });
         await client.connect(transport, { signal: controller.signal });
         const tools = await client.listTools({}, { signal: controller.signal });
@@ -143,7 +144,7 @@ export async function checkChromeConnection(ctx, config) {
  * @param bridgePath - Installed bridge executable path.
  * @returns The generic MCP client's stdio settings.
  */
-export function createChromeClientConfig(endpoint, token, bridgePath) {
+export function createChromeClientConfig(endpoint, token, bridgePath, origin = '') {
     let url;
     try {
         url = new URL(endpoint);
@@ -165,7 +166,7 @@ export function createChromeClientConfig(endpoint, token, bridgePath) {
         args: [bridgePath],
         env: {
             DSH_CHROME_MCP_URL: url.href,
-            DSH_CHROME_MCP_ORIGIN: `${url.protocol}//${url.hostname}`,
+            DSH_CHROME_MCP_ORIGIN: origin.trim() || `${url.protocol}//${url.hostname}`,
             ...(token === undefined ? {} : { DSH_CHROME_MCP_TOKEN: token }),
         },
         cwd: '',
@@ -195,7 +196,7 @@ export function createChromeConnectionController(ctx, config, credentials, start
             const endpoint = config.url.get().trim();
             const ref = credentialRef(config.credentialRef.get());
             const secret = await credentials.resolve(ref);
-            const nextDispose = await startClient(createChromeClientConfig(endpoint, secret?.value, config.bridgePath));
+            const nextDispose = await startClient(createChromeClientConfig(endpoint, secret?.value, config.bridgePath, config.origin.get()));
             if (disposed)
                 await nextDispose();
             else
@@ -207,7 +208,7 @@ export function createChromeConnectionController(ctx, config, credentials, start
         return tail;
     };
     const stopConfig = ctx.on('loader/volatile-update', (paths) => {
-        if (paths.some(([field]) => field === 'enabled' || field === 'url' || field === 'credentialRef'))
+        if (paths.some(([field]) => field === 'enabled' || field === 'url' || field === 'origin' || field === 'credentialRef'))
             return enqueue();
     });
     const stopCredential = ctx.on('credentials/reference-updated', (ref) => {
