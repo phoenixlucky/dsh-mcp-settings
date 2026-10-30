@@ -29,6 +29,7 @@
 
       <section class="toolbar" aria-label="配置文件操作">
         <div class="toolbar-group">
+          <button id="import-json-submit" class="button button-secondary" type="button">导入 JSON</button>
           <button id="export-json" class="button button-secondary" type="button">导出服务器 JSON</button>
           <button id="export-patch" class="button button-primary" type="button">导出 Cordis patch</button>
         </div>
@@ -41,9 +42,6 @@
           <textarea id="import-json-text" rows="8" spellcheck="false" placeholder='{"mcpServers":{"example":{"type":"streamable-http","url":"https://example.com/mcp"}}}'></textarea>
           <small>导入会替换当前全部本地草稿。敏感请求头请使用 credential 引用，不要粘贴明文密钥。</small>
         </label>
-        <div class="form-actions">
-          <button id="import-json-submit" class="button button-primary" type="button">导入 JSON</button>
-        </div>
       </section>
 
       <p id="app-message" class="app-message" role="status" aria-live="polite"></p>
