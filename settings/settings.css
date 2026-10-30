@@ -46,8 +46,8 @@ body {
 }
 
 button, input, select, textarea { font: inherit; }
-button, label.file-button { -webkit-tap-highlight-color: transparent; }
-button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .file-button:focus-within {
+button { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
   outline-offset: 2px;
 }
@@ -82,7 +82,6 @@ h1 { margin: 0; font-size: clamp(28px, 4vw, 38px); letter-spacing: -.04em; line-
 .button-secondary { border-color: var(--line); background: var(--surface); color: var(--ink); }
 .button-secondary:hover:not(:disabled) { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); background: var(--surface-soft); }
 .button-quiet { background: transparent; color: var(--muted); }
-.file-button { user-select: none; }
 .draft-count { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .app-message { min-height: 24px; margin: 0 0 8px; color: var(--muted); font-size: 12px; }
 .app-message[data-tone="error"] { color: var(--danger); }
@@ -159,7 +158,9 @@ h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
 .save-button { min-width: 116px; }
 .page-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 4px 0; color: var(--muted); font-size: 11px; }
 .danger-link { color: var(--danger); }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+.import-panel { margin-bottom: 12px; padding: 18px 20px; }
+.import-panel .field { margin-bottom: 0; }
+.import-panel .form-actions { margin-top: 16px; }
 
 @media (max-width: 780px) {
   .shell { width: min(100% - 28px, 620px); padding-top: 24px; }
@@ -177,7 +178,6 @@ h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
   .toolbar-group { display: grid; width: 100%; grid-template-columns: 1fr 1fr; }
   .toolbar-group .button:last-child { grid-column: 1 / -1; }
   .button { min-height: 42px; padding: 0 10px; font-size: 12px; }
-  .file-button { display: flex; }
   .panel-heading { padding: 16px; }
   .editor-panel form { padding: 16px; }
   .form-grid { grid-template-columns: 1fr; gap: 0; }

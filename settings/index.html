@@ -29,13 +29,23 @@
 
       <section class="toolbar" aria-label="配置文件操作">
         <div class="toolbar-group">
-          <label class="button button-secondary file-button">导入 JSON
-            <input id="import-file" class="visually-hidden" type="file" accept="application/json,.json">
-          </label>
+          <button id="import-json-toggle" class="button button-secondary" type="button" aria-expanded="false" aria-controls="import-json-panel">导入 JSON</button>
           <button id="export-json" class="button button-secondary" type="button">导出服务器 JSON</button>
           <button id="export-patch" class="button button-primary" type="button">导出 Cordis patch</button>
         </div>
         <span id="draft-count" class="draft-count">0 个服务</span>
+      </section>
+
+      <section id="import-json-panel" class="panel import-panel" aria-label="导入 JSON" hidden>
+        <label class="field" for="import-json-text">
+          <span>粘贴包含 mcpServers 的 JSON 配置</span>
+          <textarea id="import-json-text" rows="8" spellcheck="false" placeholder='{"mcpServers":{"example":{"type":"streamable-http","url":"https://example.com/mcp"}}}'></textarea>
+          <small>导入会替换当前全部本地草稿。敏感请求头请使用 credential 引用，不要粘贴明文密钥。</small>
+        </label>
+        <div class="form-actions">
+          <button id="cancel-import-json" class="button button-quiet" type="button">取消</button>
+          <button id="import-json-submit" class="button button-primary" type="button">导入</button>
+        </div>
       </section>
 
       <p id="app-message" class="app-message" role="status" aria-live="polite"></p>
