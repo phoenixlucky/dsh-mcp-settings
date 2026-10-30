@@ -21,7 +21,7 @@ After installing this bundle in a profile, manage servers from DSH Settings → 
 
 ## Understand the implementation
 
-`cordis.patch.yml` disables the built-in MCP settings page and inserts the managed server manager with an empty server list. This bundle's Client settings page edits that manager's server list directly, without a browser-local draft or a separate export/apply step. The manager starts configured servers after the profile loads.
+`cordis.patch.yml` disables the built-in MCP settings page and inserts the managed server manager with an empty server list. The bundle exports Host Typert metadata under its own package identity for connection checks, while the base MCP client supplies live status. The page edits the manager's server list directly, without a browser-local draft or a separate export/apply step. The manager starts configured servers after the profile loads.
 
 ## Model experience
 

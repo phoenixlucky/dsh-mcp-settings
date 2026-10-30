@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "Managed MCP server settings for adding MCP servers",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "publishConfig": {
     "access": "public"
   },
@@ -24,6 +24,14 @@
     "./client": {
       "default": "./vendor/dsh-client-ui-settings-mcp/lib/client.js"
     },
+    "./typert": {
+      "types": "./lib/typert.host.d.ts",
+      "default": "./lib/typert.host.js"
+    },
+    "./remote": {
+      "types": "./lib/typert.remote-client.d.ts",
+      "default": "./lib/typert.remote-client.js"
+    },
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json",
     "./locale/*.json": "./locale/*.json"
@@ -32,6 +40,10 @@
     "locale/*.json",
     "lib/index.js",
     "lib/managed.js",
+    "lib/typert.host.js",
+    "lib/typert.host.d.ts",
+    "lib/typert.remote-client.js",
+    "lib/typert.remote-client.d.ts",
     "cordis.patch.yml",
     "lib/types/**/*.d.ts",
     "vendor/dsh-mcp-client/package.json",
@@ -75,7 +87,8 @@
         "@deepseek-ai/dsh-client-ui-settings",
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-mcp-client/remote"
+        "@deepseek-ai/dsh-mcp-client/remote",
+        "@deepseek-ai/dsh-mcp-settings/remote"
       ],
       "platform": "web"
     }
