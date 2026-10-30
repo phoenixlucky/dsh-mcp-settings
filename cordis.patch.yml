@@ -1,6 +1,6 @@
 # Managed MCP server configuration.
 - insert:
     - id: mcp-server-manager
-      name: '@deepseek-ai/dsh-mcp-client/managed'
+      name: '@deepseek-ai/dsh-mcp-settings/managed'
       config:
         servers: []
