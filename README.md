@@ -9,32 +9,37 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-This bundle provides only the `mcp-server-manager` runtime for adding and managing Streamable HTTP and stdio MCP servers. Its server list starts empty, with no preconfigured or automatically started MCP services.
+This bundle provides the `mcp-server-manager` runtime for Streamable HTTP and stdio MCP servers. The default server list is empty; the bundle does not preconfigure or automatically start an MCP service.
 
 ## Compatibility
 
-This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The bundle vendors the MCP manager runtime.
+This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The MCP client runtime is included under `vendor/`.
 
-## Use this package
+## Configure MCP servers
 
-Add `@deepseek-ai/dsh-mcp-settings` to `dsh.profile.bundles` in the profile manifest. The shipped Web and Desktop profiles include it. Configure servers in the MCP settings page or in the profile's Cordis patch. The settings page can import JSON with an `mcpServers` object and `streamable-http` entries.
+This package includes a standalone page at `settings/index.html`. Open it from a checkout, or open `node_modules/@deepseek-ai/dsh-mcp-settings/settings/index.html` after installing the package. The page stores a draft in the browser; it does not connect to DSH or change a running profile.
+
+Add Streamable HTTP or stdio servers, set their purpose, and import or export configuration files. JSON import accepts the page's own `{ "servers": [...] }` export or an `mcpServers` object with HTTP `url` entries or stdio `command` entries. HTTP supports non-sensitive `headers` and managed `headerRefs`; stdio supports `args`, `cwd`, and managed `envRefs`.
+
+Credential values must be saved separately in DSH's credential store. Put only the credential reference name in `headerRefs` or `envRefs`. The page rejects inline authorization, cookie, proxy-authorization, and x-api-key header values, along with inline stdio `env` values.
+
+The page can export `dsh-mcp-servers.json` or `mcp-server-manager.patch.yml`. To apply the patch, add its id-targeted `mcp-server-manager` override to the profile's `cordis.patch.yml`, replacing any existing override for that id. The patch contains the full manager config because Cordis replaces the config as a whole. The profile must also include this bundle.
+
+The page validates configuration but cannot test a connection. A server starts after the patch is applied and the profile loads. A `project-memory` row requires a registered consumer; its MCP tools are not published to the model.
 
 ## Understand the implementation
 
-`cordis.patch.yml` inserts only the managed server manager with an empty server list. The manager connects to MCP services after they are added.
+`cordis.patch.yml` inserts only the managed server manager with an empty server list. The standalone page edits a local copy of that list and exports a profile override. The manager starts configured servers after the profile loads.
 
-## Dev Note
+## Model experience
 
-The bundle does not implement MCP services itself. Its `dsh.bundle.patch` manifest field supplies the profile rows, and the vendored client runtime plus the other dependencies make those services available to the profile resolver.
+Only a successfully connected server with purpose `model-tools` publishes tools for the model. Purpose `project-memory` is owned by its registered consumer and stays out of the model-facing tool catalog.
 
-## Model Experience
+## Known limitations
 
-Model-facing MCP tools are available only when a `model-tools` row connects successfully.
-
-## Known Limitations and Deferred Work
-
-- JSON import supports `streamable-http` entries. Add stdio servers through the settings page or Cordis patch.
+- The standalone page does not read or write a live DSH profile and does not test connections.
+- JSON import supports the documented `mcpServers` subset. Inline secrets are rejected; use DSH credential references instead.
 
 ## Vendored packages
 
-This repository includes the MCP client runtime under `vendor/`. The bundle uses relative `file:` dependencies, so the checkout can be moved or cloned to another location. From the directory containing the checkout, install it with `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings`.
+This repository includes the MCP client runtime under `vendor/`. The bundle uses relative `file:` dependencies, so the checkout can be moved or cloned. From the directory containing the checkout, install it with `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings`.

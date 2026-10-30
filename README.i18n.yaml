@@ -3,35 +3,29 @@
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write ../dsh-mcp/README.md
 /:
-  en: cb3f91d54eee30e5
-  zh: cb3f91d54eee30e5
-/description-optional-bundle-for-mcp-server-chrome-and-cognee-runtime-providers-configured-through-profile-patches-kind-package-bundle:
-  en: 620f01cdb76ea7a5
-  zh: 1bf9899e5d075922
+  en: fb30b50e8b6e4519
+  zh: 2d52851d5cdfaa98
 /deepseek-ai-dsh-mcp-settings:
   en: 7bc3d1076fc23548
   zh: ab52e2961043b8b6
 /deepseek-ai-dsh-mcp-settings/summary:
-  en: 11647767db11e545
-  zh: 4b541676d6a067fb
+  en: 1aa5609c24f699a6
+  zh: 399ac092cc23b0e5
 /deepseek-ai-dsh-mcp-settings/compatibility:
-  en: 0f1e089d8e95e351
-  zh: 1d6f0e0d5a397218
-/deepseek-ai-dsh-mcp-settings/use-this-package:
-  en: 180eb8a2319da75a
-  zh: cffeeb47327cf906
+  en: 1eb867838233abd4
+  zh: 5ac156a7df4dde2e
+/deepseek-ai-dsh-mcp-settings/configure-mcp-servers:
+  en: ca74bcebeb326b53
+  zh: 186a943a0b9a797d
 /deepseek-ai-dsh-mcp-settings/understand-the-implementation:
-  en: 5914aa0021c3385c
-  zh: fddf91e622c5ebaa
-/deepseek-ai-dsh-mcp-settings/dev-note:
-  en: 7892873bc884c3d6
-  zh: 2668b1333918d204
+  en: 08f5ae62908e1699
+  zh: 3937ee4796b5d701
 /deepseek-ai-dsh-mcp-settings/model-experience:
-  en: 9ace611d76caab01
-  zh: dfb37bdabe4102d6
-/deepseek-ai-dsh-mcp-settings/known-limitations-and-deferred-work:
-  en: 77aafb2018d24b65
-  zh: 99e8b95c8e2d7332
+  en: 47c01fe4d1ca852c
+  zh: d4c2967c9b3af7e6
+/deepseek-ai-dsh-mcp-settings/known-limitations:
+  en: d79b9892c976482d
+  zh: 31af9da14a4f4929
 /deepseek-ai-dsh-mcp-settings/vendored-packages:
-  en: 51cb5529f393c385
-  zh: d6d426d1f37462ad
+  en: 2a54701bea463e0e
+  zh: 79028cef5543dde0

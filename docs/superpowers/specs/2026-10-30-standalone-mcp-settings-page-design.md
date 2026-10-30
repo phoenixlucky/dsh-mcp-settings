@@ -10,7 +10,7 @@ Provide a usable MCP configuration interface from this repository without requir
 - The page lists configured servers and supports adding, editing, enabling, disabling, and removing Streamable HTTP and stdio entries.
 - The page edits the managed purpose (`model-tools` or `project-memory`) and preserves it across import, export, and subsequent edits.
 - Drafts persist in browser-local storage. Import and export provide explicit file-based backup and transfer.
-- Import accepts a documented `mcpServers` JSON subset and validates it before replacing the draft; a non-empty draft requires confirmation first.
+- Import accepts a documented `mcpServers` JSON subset or the page's own managed `{ servers: [...] }` export, and validates it before replacing the draft; a non-empty draft requires confirmation first.
 - Export provides the managed `servers` JSON and a Cordis profile patch that overrides the existing `mcp-server-manager` row by id and module name. It restates `servers` and `checkTimeoutMs` because Cordis replaces config wholesale.
 - Validation errors identify the affected field and leave the current draft intact.
 

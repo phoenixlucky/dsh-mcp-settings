@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "Managed MCP server settings for adding MCP servers",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "publishConfig": {
     "access": "public"
   },
@@ -27,6 +27,7 @@
   },
   "files": [
     "locale/*.json",
+    "settings/**",
     "lib/index.js",
     "lib/managed.js",
     "cordis.patch.yml",
