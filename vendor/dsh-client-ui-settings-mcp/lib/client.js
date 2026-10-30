@@ -4,9 +4,415 @@ window.__ModuleLoader__.load({
 		var module = { exports: {} };
 		var exports = module.exports;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+		let zod = require("zod");
 		let react = require("react");
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
 		let react_jsx_runtime = require("react/jsx-runtime");
+		//#region ../../node_modules/.pnpm/@deepseek-ai+dsh-typert-pro_a6e9a8aa967178344e20691a5993d5fa/node_modules/@deepseek-ai/dsh-typert-protocol/lib/types/remote-info.js
+		/** Lazy assembly of generated Remote definitions using caller-supplied Zod; no runtime imports. */
+		/**
+		* Retain one generated definition per endpoint without constructing parsers or projections.
+		* The class instance builds its shared descriptor/method index on first access;
+		* input schemas and JSON Schema projections are cached only when requested.
+		* @param spec - compiler-produced method facts and Zod factories.
+		* @param zod - the generated artifact's Zod runtime for named-input parsers.
+		* @returns a lazy, mountable info instance with no registration or transport effects.
+		*/
+		function createTypertRemoteInfo(spec, zod) {
+			return new RemoteInfo(spec, zod);
+		}
+		var RemoteInfo = class {
+			spec;
+			zod;
+			index;
+			constructor(spec, zod) {
+				this.spec = spec;
+				this.zod = zod;
+			}
+			get package() {
+				return this.spec.package;
+			}
+			get descriptors() {
+				return this.resolve().descriptors;
+			}
+			get methods() {
+				return this.resolve().methods;
+			}
+			resolve() {
+				if (this.index !== void 0) return this.index;
+				const zod = this.zod;
+				const descriptors = [];
+				const methods = Object.create(null);
+				for (const [endpoint, definition] of Object.entries(this.spec.methods)) {
+					const separator = endpoint.indexOf("/");
+					const namespace = endpoint.slice(0, separator);
+					const method = endpoint.slice(separator + 1);
+					const parameters = definition.parameters.map((parameter) => ({
+						...parameter,
+						wire: parameter.wire ?? parameter.name
+					}));
+					const descriptor = {
+						...definition,
+						id: `${this.spec.package}#${endpoint}`,
+						namespace,
+						method,
+						parameters,
+						result: definition.result.description === void 0 ? definition.result : new ResultValue(definition.result)
+					};
+					if (definition.invocation.kind === "direct") {
+						const inputs = [];
+						methods[endpoint] = Object.assign(descriptor, {
+							input(options) {
+								const strict = options?.strict === true;
+								return inputs[strict ? 1 : 0] ??= new NamedInput(parameters, strict, zod);
+							},
+							invoke(remote, input, signal) {
+								const named = input;
+								const values = parameters.map((parameter) => named[parameter.wire]);
+								if (definition.cancellation !== void 0) values.push(signal);
+								const receiver = Reflect.get(remote, namespace);
+								return Reflect.get(receiver, method).apply(receiver, values);
+							}
+						});
+					}
+					descriptors.push(descriptor);
+				}
+				return this.index = {
+					descriptors,
+					methods
+				};
+			}
+		};
+		function optional(parameter) {
+			return parameter.source === "json" && parameter.acceptsUndefined === true;
+		}
+		var NamedInput = class {
+			parameters;
+			strict;
+			zod;
+			schema;
+			projection;
+			constructor(parameters, strict, zod) {
+				this.parameters = parameters;
+				this.strict = strict;
+				this.zod = zod;
+			}
+			codec(parameter) {
+				return this.strict ? parameter.strictCodec : parameter.codec;
+			}
+			create = () => this.schema ??= this.zod.strictObject(Object.fromEntries(this.parameters.map((parameter) => {
+				const value = this.codec(parameter).create();
+				return [parameter.wire, optional(parameter) ? value.optional() : value.nonoptional()];
+			})));
+			get jsonSchema() {
+				return this.project().jsonSchema;
+			}
+			get jsonSchemaError() {
+				return this.project().jsonSchemaError;
+			}
+			project() {
+				if (this.projection !== void 0) return this.projection;
+				const unavailable = this.parameters.find((parameter) => this.codec(parameter).jsonSchema === void 0);
+				if (unavailable !== void 0) return this.projection = { jsonSchemaError: this.codec(unavailable).jsonSchemaError ?? `No JSON Schema for parameter ${unavailable.wire}` };
+				return this.projection = { jsonSchema: {
+					type: "object",
+					properties: Object.fromEntries(this.parameters.map((parameter) => [parameter.wire, {
+						...this.codec(parameter).jsonSchema,
+						...parameter.description === void 0 ? {} : { description: parameter.description }
+					}])),
+					required: this.parameters.filter((parameter) => !optional(parameter)).map((parameter) => parameter.wire),
+					additionalProperties: false
+				} };
+			}
+		};
+		var ResultValue = class {
+			spec;
+			projection;
+			constructor(spec) {
+				this.spec = spec;
+			}
+			get mode() {
+				return this.spec.mode;
+			}
+			get typeSymbol() {
+				return this.spec.typeSymbol;
+			}
+			get create() {
+				return this.spec.create;
+			}
+			get decode() {
+				return this.spec.decode;
+			}
+			get encode() {
+				return this.spec.encode;
+			}
+			get description() {
+				return this.spec.description;
+			}
+			get jsonSchemaError() {
+				return this.spec.jsonSchemaError;
+			}
+			get jsonSchema() {
+				if (this.projection === void 0) {
+					const schema = this.spec.jsonSchema;
+					this.projection = { value: schema === void 0 ? void 0 : {
+						...schema,
+						description: this.spec.description
+					} };
+				}
+				return this.projection.value;
+			}
+		};
+		//#endregion
+		//#region ../../node_modules/.pnpm/@deepseek-ai+dsh-mcp-client_36e5434467f07009774fd0c3f47f3628/node_modules/@deepseek-ai/dsh-mcp-client/lib/typert.remote-client.js
+		let _deepseek_ai_dsh_mcp_client_chromeMcp_checkChromeConnection_result$schema$value;
+		const _deepseek_ai_dsh_mcp_client_chromeMcp_checkChromeConnection_result$schema = () => _deepseek_ai_dsh_mcp_client_chromeMcp_checkChromeConnection_result$schema$value ??= zod.z.object({
+			"state": zod.z.union([
+				zod.z.literal("ready"),
+				zod.z.literal("not-configured"),
+				zod.z.literal("disabled"),
+				zod.z.literal("authorization-required"),
+				zod.z.literal("connection-failed"),
+				zod.z.literal("timed-out")
+			]),
+			"toolCount": zod.z.number().optional().describe("Discovered tools when the endpoint is ready.")
+		});
+		let _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema$value;
+		const _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema = () => _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema$value ??= zod.z.array(zod.z.object({
+			"id": zod.z.string().readonly(),
+			"serverName": zod.z.string().readonly(),
+			"transport": zod.z.union([zod.z.literal("streamable-http"), zod.z.literal("stdio")]).readonly(),
+			"source": zod.z.string().readonly(),
+			"state": zod.z.union([
+				zod.z.literal("connecting"),
+				zod.z.literal("connected"),
+				zod.z.literal("reconnecting"),
+				zod.z.literal("disconnected")
+			]).readonly(),
+			"toolCount": zod.z.number().readonly()
+		}));
+		let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema$value;
+		const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema = () => _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema$value ??= zod.z.union([zod.z.object({
+			"id": zod.z.string().describe("Stable settings identity."),
+			"serverName": zod.z.string().describe("Unique namespace for this server's model-facing tools."),
+			"enabled": zod.z.boolean().describe("Whether the server should be connected."),
+			"purpose": zod.z.union([zod.z.literal("model-tools"), zod.z.literal("project-memory")]).optional().describe("Consumer that owns this server connection."),
+			"transport": zod.z.literal("streamable-http").describe("Selects Streamable HTTP transport."),
+			"url": zod.z.string().describe("MCP endpoint."),
+			"headers": zod.z.record(zod.z.string(), zod.z.string()).optional().describe("Non-secret request headers. Authentication headers belong in `headerRefs`."),
+			"headerRefs": zod.z.record(zod.z.string(), zod.z.string()).describe("Header names mapped to credential references.")
+		}), zod.z.object({
+			"id": zod.z.string().describe("Stable settings identity."),
+			"serverName": zod.z.string().describe("Unique namespace for this server's model-facing tools."),
+			"enabled": zod.z.boolean().describe("Whether the server should be connected."),
+			"purpose": zod.z.union([zod.z.literal("model-tools"), zod.z.literal("project-memory")]).optional().describe("Consumer that owns this server connection."),
+			"transport": zod.z.literal("stdio").describe("Selects stdio transport."),
+			"command": zod.z.string().describe("Executable started directly."),
+			"args": zod.z.array(zod.z.string()).describe("Arguments passed directly."),
+			"cwd": zod.z.string().describe("Child working directory."),
+			"envRefs": zod.z.record(zod.z.string(), zod.z.string()).describe("Environment names mapped to credential references.")
+		})]);
+		let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value;
+		const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema = () => _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value ??= zod.z.union([
+			zod.z.object({ "state": zod.z.literal("authorization-required") }),
+			zod.z.object({ "state": zod.z.literal("connection-failed") }),
+			zod.z.object({ "state": zod.z.literal("timed-out") }),
+			zod.z.object({
+				"state": zod.z.literal("ready"),
+				"toolCount": zod.z.number()
+			})
+		]);
+		let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema$value;
+		const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema = () => _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema$value ??= zod.z.union([zod.z.strictObject({
+			"id": zod.z.string().describe("Stable settings identity."),
+			"serverName": zod.z.string().describe("Unique namespace for this server's model-facing tools."),
+			"enabled": zod.z.boolean().describe("Whether the server should be connected."),
+			"purpose": zod.z.union([zod.z.literal("model-tools"), zod.z.literal("project-memory")]).optional().describe("Consumer that owns this server connection."),
+			"transport": zod.z.literal("streamable-http").describe("Selects Streamable HTTP transport."),
+			"url": zod.z.string().describe("MCP endpoint."),
+			"headers": zod.z.record(zod.z.string(), zod.z.string()).optional().describe("Non-secret request headers. Authentication headers belong in `headerRefs`."),
+			"headerRefs": zod.z.record(zod.z.string(), zod.z.string()).describe("Header names mapped to credential references.")
+		}), zod.z.strictObject({
+			"id": zod.z.string().describe("Stable settings identity."),
+			"serverName": zod.z.string().describe("Unique namespace for this server's model-facing tools."),
+			"enabled": zod.z.boolean().describe("Whether the server should be connected."),
+			"purpose": zod.z.union([zod.z.literal("model-tools"), zod.z.literal("project-memory")]).optional().describe("Consumer that owns this server connection."),
+			"transport": zod.z.literal("stdio").describe("Selects stdio transport."),
+			"command": zod.z.string().describe("Executable started directly."),
+			"args": zod.z.array(zod.z.string()).describe("Arguments passed directly."),
+			"cwd": zod.z.string().describe("Child working directory."),
+			"envRefs": zod.z.record(zod.z.string(), zod.z.string()).describe("Environment names mapped to credential references.")
+		})]);
+		const TYPERT_REMOTE = createTypertRemoteInfo({
+			package: "@deepseek-ai/dsh-mcp-client",
+			methods: {
+				"chromeMcp/checkChromeConnection": {
+					service: "chromeMcp",
+					description: "Check endpoint authorization and list tools without running server tools.",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-mcp-client/types#ChromeConnectionCheck",
+						create: _deepseek_ai_dsh_mcp_client_chromeMcp_checkChromeConnection_result$schema,
+						description: "A client-safe connection state; the response never contains endpoint or credential values.",
+						jsonSchema: {
+							"type": "object",
+							"properties": {
+								"state": {
+									"type": "string",
+									"enum": [
+										"ready",
+										"not-configured",
+										"disabled",
+										"authorization-required",
+										"connection-failed",
+										"timed-out"
+									]
+								},
+								"toolCount": {
+									"type": "number",
+									"description": "Discovered tools when the endpoint is ready."
+								}
+							},
+							"required": ["state"],
+							"additionalProperties": true
+						}
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/chrome.ts",
+						"line": 84,
+						"column": 9
+					}
+				},
+				"mcpClientStatus/list": {
+					service: "mcpClientStatus",
+					description: "Return live connection summaries with credentials and command arguments omitted.",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-mcp-client#mcpClientStatus/list:result",
+						create: _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema,
+						description: "The current server status rows.",
+						jsonSchema: {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": { "type": "string" },
+									"serverName": { "type": "string" },
+									"transport": {
+										"type": "string",
+										"enum": ["streamable-http", "stdio"]
+									},
+									"source": { "type": "string" },
+									"state": {
+										"type": "string",
+										"enum": [
+											"connecting",
+											"connected",
+											"reconnecting",
+											"disconnected"
+										]
+									},
+									"toolCount": { "type": "number" }
+								},
+								"required": [
+									"id",
+									"serverName",
+									"transport",
+									"source",
+									"state",
+									"toolCount"
+								],
+								"additionalProperties": true
+							}
+						}
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/status.ts",
+						"line": 25,
+						"column": 3
+					}
+				},
+				"mcpServerManager/check": {
+					service: "mcpServerManager",
+					description: "Check a draft without publishing tools or invoking a server tool.",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "server",
+						description: "Draft server settings; credential references are resolved for this call only.",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-mcp-client/types#ManagedMcpServer",
+							create: _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema,
+							jsonSchemaError: "typert tool schema: selected dictionaries require string keys and unconstrained JSON values"
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-mcp-client/types#ManagedMcpServer",
+							create: _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema,
+							jsonSchemaError: "typert tool schema: selected dictionaries require string keys and unconstrained JSON values"
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-mcp-client/types#ManagedMcpCheck",
+						create: _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema,
+						description: "A safe result classification and discovered tool count on success.",
+						jsonSchema: { "oneOf": [
+							{
+								"type": "object",
+								"properties": { "state": {
+									"type": "string",
+									"const": "authorization-required"
+								} },
+								"required": ["state"],
+								"additionalProperties": true
+							},
+							{
+								"type": "object",
+								"properties": { "state": {
+									"type": "string",
+									"const": "connection-failed"
+								} },
+								"required": ["state"],
+								"additionalProperties": true
+							},
+							{
+								"type": "object",
+								"properties": { "state": {
+									"type": "string",
+									"const": "timed-out"
+								} },
+								"required": ["state"],
+								"additionalProperties": true
+							},
+							{
+								"type": "object",
+								"properties": {
+									"state": {
+										"type": "string",
+										"const": "ready"
+									},
+									"toolCount": { "type": "number" }
+								},
+								"required": ["state", "toolCount"],
+								"additionalProperties": true
+							}
+						] }
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/managed.ts",
+						"line": 122,
+						"column": 3
+					}
+				}
+			}
+		}, zod.z);
+		//#endregion
 		//#region src/client/mcpCardAppearance.ts
 		/** Validate a server key before it is used to address presentation settings.
 		* @param value - Candidate MCP `serverName`.
@@ -1296,13 +1702,12 @@ window.__ModuleLoader__.load({
 			"locale",
 			"remote",
 			"remote.credentials",
-			"remote.mcpClientStatus",
-			"remote.mcpServerManager",
 			"configForms"
 		];
 		const NS = "settings.mcp";
 		/** Register MCP settings while at least one managed MCP setting is available. */
-		function apply(ctx) {
+		async function apply(ctx) {
+			const unmountRemote = await ctx.remote.$mount(TYPERT_REMOTE);
 			const t = ctx.locale.bind(NS);
 			ctx.effect(() => ctx.locale.register(NS, {
 				en,
@@ -1337,6 +1742,9 @@ window.__ModuleLoader__.load({
 				locale: NS,
 				inject: appearanceInjected
 			}, McpCardSettings))), "ui-settings-mcp: MCP card appearance section");
+			return async () => {
+				await unmountRemote();
+			};
 		}
 		//#endregion
 		exports.apply = apply;

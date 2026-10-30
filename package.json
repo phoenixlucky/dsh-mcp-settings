@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "Managed MCP server settings for adding MCP servers",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "publishConfig": {
     "access": "public"
   },
@@ -75,7 +75,7 @@
         "@deepseek-ai/dsh-client-ui-settings",
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-mcp-client/managed"
+        "@deepseek-ai/dsh-mcp-client/remote"
       ],
       "platform": "web"
     }

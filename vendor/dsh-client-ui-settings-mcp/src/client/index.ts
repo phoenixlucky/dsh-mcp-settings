@@ -5,6 +5,7 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type {} from '@deepseek-ai/dsh-mcp-client/remote'
+import mcpRemote from '@deepseek-ai/dsh-mcp-client/remote'
 import { McpCardSettings } from './McpCardSettings.tsx'
 import { McpConnectionsPage } from './McpConnectionsPage.tsx'
 import type { McpCardAppearance } from './mcpCardAppearance.ts'
@@ -15,7 +16,7 @@ interface AppearanceSettings { servers?: Readonly<Record<string, McpCardAppearan
 
 export const inject = [
   'slots', 'locale', 'remote', 'remote.credentials',
-  'remote.mcpClientStatus', 'remote.mcpServerManager', 'configForms',
+  'configForms',
 ]
 const NS = 'settings.mcp'
 
@@ -24,7 +25,8 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
 }
 
 /** Register MCP settings while at least one managed MCP setting is available. */
-export function apply(ctx: ClientContext): void {
+export async function apply(ctx: ClientContext): Promise<() => Promise<void>> {
+  const unmountRemote = await ctx.remote.$mount(mcpRemote)
   const t = ctx.locale.bind(NS)
   ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'ui-settings-mcp: dictionaries')
   ctx.effect(() => ctx.configForms.whileServed(['mcp-server-manager'], () => {
@@ -40,4 +42,5 @@ export function apply(ctx: ClientContext): void {
   ctx.effect(() => ctx.configForms.whileServed(['mcp-card-presentation'], () => ctx.slots.inject('settings.section', () => ctx.slots.register({
     name: 'settings.section', id: 'mcp-card-appearance', order: 14.1, label: () => t('appearanceTitle'), locale: NS, inject: appearanceInjected,
   }, McpCardSettings))), 'ui-settings-mcp: MCP card appearance section')
+  return async () => { await unmountRemote() }
 }
