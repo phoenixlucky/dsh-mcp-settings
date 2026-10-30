@@ -1,7 +1,8 @@
-/**
- * @deepseek-ai/dsh-mcp-settings — MCP management settings for Web and Desktop profiles.
- * The package's behavior is declared by its `dsh.bundle.patch` manifest.
- * @module @deepseek-ai/dsh-mcp-settings
- */
+import type { Context } from '@deepseek-ai/cordis'
 
-export {}
+/** Keep the package's Client companion active in profiles that install this bundle. */
+export const name = 'mcp-settings-client'
+export const inject: string[] = []
+
+/** Host-side no-op; the Client companion provides the MCP settings page. */
+export function apply(_ctx: Context): void {}

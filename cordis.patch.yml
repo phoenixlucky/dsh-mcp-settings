@@ -1,5 +1,10 @@
 # Managed MCP server configuration.
 - insert:
+    # The bare package row activates the Client companion; its page is shown
+    # only while the managed server configuration is available.
+    - id: mcp-settings-client
+      name: '@deepseek-ai/dsh-mcp-settings'
+
     - id: mcp-server-manager
       name: '@deepseek-ai/dsh-mcp-settings/managed'
       config:
