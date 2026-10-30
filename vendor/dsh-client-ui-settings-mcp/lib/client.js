@@ -279,7 +279,6 @@ window.__ModuleLoader__.load({
 				id: randomUUID(),
 				serverName: "",
 				enabled: true,
-				purpose: "model-tools",
 				transport: "streamable-http",
 				url: "",
 				headers: [],
@@ -295,7 +294,6 @@ window.__ModuleLoader__.load({
 				id: server.id,
 				serverName: server.serverName,
 				enabled: server.enabled,
-				purpose: server.purpose ?? "model-tools",
 				transport: server.transport,
 				url: server.transport === "streamable-http" ? server.url : "",
 				headers: server.transport === "streamable-http" ? Object.entries(server.headers ?? {}).map(([name, value]) => ({
@@ -401,15 +399,11 @@ window.__ModuleLoader__.load({
 					setFailure("credential");
 					return;
 				}
-				if (draft.purpose === "project-memory" && draft.transport !== "streamable-http") {
-					setFailure("invalid");
-					return;
-				}
 				return draft.transport === "streamable-http" ? {
 					id: draft.id,
 					serverName,
 					enabled: draft.enabled,
-					purpose: draft.purpose,
+					purpose: "model-tools",
 					transport: "streamable-http",
 					url: draft.url.trim(),
 					headers,
@@ -418,7 +412,7 @@ window.__ModuleLoader__.load({
 					id: draft.id,
 					serverName,
 					enabled: draft.enabled,
-					purpose: draft.purpose,
+					purpose: "model-tools",
 					transport: "stdio",
 					command: draft.command.trim(),
 					args: draft.args.split(/\r?\n/u).filter((value) => value.trim() !== ""),
@@ -577,60 +571,35 @@ window.__ModuleLoader__.load({
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.formGrid,
-						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("serverName") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-									value: draft.serverName,
-									disabled: busy,
-									onChange: (event) => setDraft({
-										...draft,
-										serverName: event.currentTarget.value
-									})
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+							className: mcp_settings_module_css_default.field,
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("serverName") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+								value: draft.serverName,
+								disabled: busy,
+								onChange: (event) => setDraft({
+									...draft,
+									serverName: event.currentTarget.value
+								})
+							})]
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+							className: mcp_settings_module_css_default.field,
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("transport") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+								value: draft.transport,
+								disabled: busy,
+								onChange: (event) => setDraft({
+									...draft,
+									transport: event.currentTarget.value,
+									secrets: []
+								}),
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+									value: "streamable-http",
+									children: t("transport.streamable-http")
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+									value: "stdio",
+									children: t("transport.stdio")
 								})]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.purpose") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-									value: draft.purpose,
-									disabled: busy,
-									onChange: (event) => {
-										const purpose = event.currentTarget.value;
-										setDraft({
-											...draft,
-											purpose,
-											transport: purpose === "project-memory" ? "streamable-http" : draft.transport
-										});
-									},
-									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-										value: "model-tools",
-										children: t("managed.purpose.model-tools")
-									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-										value: "project-memory",
-										children: t("managed.purpose.project-memory")
-									})]
-								})]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("transport") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-									value: draft.transport,
-									disabled: busy,
-									onChange: (event) => setDraft({
-										...draft,
-										transport: event.currentTarget.value,
-										secrets: []
-									}),
-									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-										value: "streamable-http",
-										children: t("transport.streamable-http")
-									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-										value: "stdio",
-										children: t("transport.stdio")
-									})]
-								})]
-							})
-						]
+							})]
+						})]
 					}),
 					draft.transport === "streamable-http" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 						className: mcp_settings_module_css_default.field,
@@ -1103,124 +1072,13 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
-		//#region src/client/migration.ts
-		/** Move legacy endpoint settings into the single managed MCP list.
-		* @param cogneeForm - Legacy Cognee settings form.
-		* @param chromeForm - Legacy Chrome settings form.
-		* @param managedForm - Canonical managed server list form.
-		* @returns Whether an old configuration was migrated.
-		*/
-		async function runLegacyMcpMigration(cogneeForm, chromeForm, managedForm) {
-			await Promise.all([
-				waitForFirstSnapshot(cogneeForm),
-				waitForFirstSnapshot(chromeForm),
-				waitForFirstSnapshot(managedForm)
-			]);
-			const cognee = cogneeForm.getSnapshot().value ?? {};
-			const chrome = chromeForm.getSnapshot().value ?? {};
-			if (!Boolean(cognee.enabled || cognee.endpoint || chrome.enabled || chrome.url)) return false;
-			const servers = [...managedForm.getSnapshot().value?.servers ?? []];
-			if (chrome.url?.trim() && !servers.some((server) => server.serverName === "chrome")) {
-				const url = safeEndpoint(chrome.url);
-				if (url === void 0) throw new TypeError("legacy Chrome endpoint is not a supported HTTP endpoint");
-				servers.push({
-					id: "chrome",
-					serverName: "chrome",
-					enabled: chrome.enabled ?? false,
-					purpose: "model-tools",
-					transport: "streamable-http",
-					url: url.href,
-					headers: { Origin: url.origin },
-					headerRefs: { Authorization: "DSH_CHROME_MCP_TOKEN" }
-				});
-			}
-			if (cognee.endpoint?.trim() && !servers.some((server) => server.serverName === "cognee")) {
-				const url = safeEndpoint(cognee.endpoint);
-				if (url === void 0) throw new TypeError("legacy Cognee endpoint is not a supported HTTP endpoint");
-				const ref = /^[A-Za-z_][A-Za-z0-9_]*$/u.test(cognee.credentialRef ?? "") ? cognee.credentialRef : "DSH_COGNEE_MCP_TOKEN";
-				servers.push({
-					id: "cognee",
-					serverName: "cognee",
-					enabled: cognee.enabled ?? false,
-					purpose: "project-memory",
-					transport: "streamable-http",
-					url: url.href,
-					headers: {},
-					headerRefs: { Authorization: ref }
-				});
-			}
-			if (!await managedForm.set("servers", servers)) throw new Error("managed MCP settings refused the migration");
-			if ((await Promise.all([
-				cogneeForm.set("enabled", false),
-				cogneeForm.set("endpoint", ""),
-				chromeForm.set("enabled", false),
-				chromeForm.set("url", "")
-			])).some((accepted) => !accepted)) throw new Error("legacy MCP settings could not be cleared");
-			return true;
-		}
-		function waitForFirstSnapshot(form) {
-			if (form.getSnapshot().status !== "loading") return Promise.resolve();
-			return new Promise((resolve) => {
-				const unsubscribe = form.subscribe(() => {
-					if (form.getSnapshot().status === "loading") return;
-					unsubscribe();
-					resolve();
-				});
-			});
-		}
-		function safeEndpoint(input) {
-			try {
-				const url = new URL(input);
-				const host = url.hostname.toLowerCase().replace(/^\[|\]$/gu, "");
-				const loopback = host === "localhost" || host === "::1" || /^127(?:\.\d{1,3}){3}$/u.test(host);
-				if (url.username || url.password || url.protocol !== "https:" && !(url.protocol === "http:" && loopback)) return void 0;
-				return url;
-			} catch {
-				return;
-			}
-		}
-		//#endregion
 		//#region src/client/locales.ts
-		/** English strings for Cognee and MCP card settings. */
+		/** English strings for MCP server settings. */
 		const en = {
 			title: "MCP",
 			pageTitle: "MCP settings",
 			pageDescription: "Configure every MCP server in one managed list.",
-			cogneeDescription: "Configure the Cognee MCP connection and project memory.",
-			chromeDescription: "Connect Chrome browser tools through MCP.",
-			endpoint: "Cognee MCP endpoint",
 			endpointHint: "Use HTTPS, or HTTP on this computer only.",
-			enabled: "Use Cognee project memory",
-			token: "Bearer token",
-			tokenSet: "Token is configured",
-			tokenUnset: "Token is not configured",
-			credentialsUnavailable: "Credential storage is unavailable for this token.",
-			save: "Save",
-			check: "Check connection",
-			checking: "Checking…",
-			status: "Connection status",
-			error: "Could not save or check the Cognee connection.",
-			"status.not-configured": "Endpoint is not configured",
-			"status.disabled": "Disabled",
-			"status.authorization-required": "Authorization required",
-			"status.connection-failed": "Connection failed",
-			"status.incompatible-tools": "Cognee tools are incompatible",
-			"status.ready": "Connected; required tools are available",
-			connectionSettings: "Connection settings",
-			chromeTitle: "Chrome MCP",
-			chromeEndpoint: "Chrome MCP endpoint",
-			chromeEndpointHint: "Use HTTPS; HTTP is allowed only for localhost or loopback addresses.",
-			chromeEnabled: "Enable Chrome browser tools",
-			"chromeError.save": "Could not save the Chrome MCP settings. Check that settings are writable and try again.",
-			"chromeError.credential": "Could not access the Chrome MCP credential store.",
-			"chromeError.check": "Could not check the Chrome MCP connection. Verify the endpoint and try again.",
-			"chromeStatus.not-configured": "Endpoint is not configured",
-			"chromeStatus.disabled": "Disabled",
-			"chromeStatus.authorization-required": "Authorization required",
-			"chromeStatus.connection-failed": "Connection failed",
-			"chromeStatus.timed-out": "Connection check timed out",
-			"chromeStatus.ready": "Connected; tools are available",
-			"chromeStatus.readyCount": "Connected; {count} tools available",
 			appearanceTitle: "MCP card appearance",
 			serverName: "Server name",
 			serverNameHint: "Use the stable serverName from its MCP client entry.",
@@ -1255,9 +1113,6 @@ window.__ModuleLoader__.load({
 			"managed.edit": "Edit",
 			"managed.delete": "Delete",
 			"managed.editor": "Server settings",
-			"managed.purpose": "Purpose",
-			"managed.purpose.model-tools": "Tools for the model",
-			"managed.purpose.project-memory": "Internal project memory",
 			"managed.endpoint": "MCP endpoint",
 			"managed.command": "Executable",
 			"managed.args": "Arguments (one per line)",
@@ -1297,46 +1152,12 @@ window.__ModuleLoader__.load({
 			"managed.import.complete": "Imported {imported} server(s); skipped {skipped} duplicate(s).",
 			"managed.import.invalid": "Invalid JSON or unsupported server configuration. Check the mcpServers object and streamable-http entries."
 		};
-		/** Simplified Chinese strings for Cognee and MCP card settings. */
+		/** Simplified Chinese strings for MCP server settings. */
 		const zh = {
 			title: "MCP",
 			pageTitle: "MCP 设置",
 			pageDescription: "在一个托管列表中配置所有 MCP 服务器。",
-			cogneeDescription: "配置 Cognee MCP 连接与项目记忆。",
-			chromeDescription: "通过 MCP 连接 Chrome 浏览器工具。",
-			endpoint: "Cognee MCP 地址",
 			endpointHint: "请使用 HTTPS；HTTP 仅允许本机回环地址。",
-			enabled: "启用 Cognee 项目记忆",
-			token: "Bearer 令牌",
-			tokenSet: "已配置令牌",
-			tokenUnset: "尚未配置令牌",
-			credentialsUnavailable: "当前无法使用凭据存储来保存此令牌。",
-			save: "保存",
-			check: "检查连接",
-			checking: "正在检查…",
-			status: "连接状态",
-			error: "无法保存或检查 Cognee 连接。",
-			"status.not-configured": "尚未配置地址",
-			"status.disabled": "已停用",
-			"status.authorization-required": "需要授权",
-			"status.connection-failed": "连接失败",
-			"status.incompatible-tools": "Cognee 工具不兼容",
-			"status.ready": "已连接，所需工具可用",
-			connectionSettings: "连接设置",
-			chromeTitle: "Chrome MCP",
-			chromeEndpoint: "Chrome MCP 地址",
-			chromeEndpointHint: "请使用 HTTPS；HTTP 仅允许 localhost 或本机回环地址。",
-			chromeEnabled: "启用 Chrome 浏览器工具",
-			"chromeError.save": "无法保存 Chrome MCP 设置，请确认设置可写后重试。",
-			"chromeError.credential": "无法访问 Chrome MCP 凭据存储。",
-			"chromeError.check": "无法检查 Chrome MCP 连接，请确认地址后重试。",
-			"chromeStatus.not-configured": "尚未配置地址",
-			"chromeStatus.disabled": "已停用",
-			"chromeStatus.authorization-required": "需要授权",
-			"chromeStatus.connection-failed": "连接失败",
-			"chromeStatus.timed-out": "连接检查超时",
-			"chromeStatus.ready": "已连接，工具可用",
-			"chromeStatus.readyCount": "已连接，工具数量：{count}",
 			appearanceTitle: "MCP 卡片外观",
 			serverName: "服务名称",
 			serverNameHint: "填写 MCP 客户端配置中的稳定 serverName。",
@@ -1371,9 +1192,6 @@ window.__ModuleLoader__.load({
 			"managed.edit": "编辑",
 			"managed.delete": "删除",
 			"managed.editor": "服务设置",
-			"managed.purpose": "用途",
-			"managed.purpose.model-tools": "向模型提供工具",
-			"managed.purpose.project-memory": "内部项目记忆",
 			"managed.endpoint": "MCP 地址",
 			"managed.command": "可执行文件",
 			"managed.args": "参数（每行一个）",
@@ -1433,29 +1251,20 @@ window.__ModuleLoader__.load({
 				zh
 			}), "ui-settings-mcp: dictionaries");
 			ctx.effect(() => ctx.configForms.whileServed(["mcp-server-manager"], () => {
-				let active = true;
 				let stopSection;
-				const cognee = ctx.configForms.get("cognee-memory");
-				const chrome = ctx.configForms.get("mcp-chrome");
 				const managed = ctx.configForms.get("mcp-server-manager");
-				runLegacyMcpMigration(cognee, chrome, managed).catch(() => void 0).finally(() => {
-					if (!active) return;
-					stopSection = ctx.slots.inject("settings.section", () => ctx.slots.register({
-						name: "settings.section",
-						id: "mcp",
-						order: 14,
-						label: () => t("title"),
-						locale: NS,
-						inject: () => ({
-							managedForm: managed,
-							remote: ctx.remote
-						})
-					}, McpConnectionsPage));
-				});
-				return () => {
-					active = false;
-					stopSection?.();
-				};
+				stopSection = ctx.slots.inject("settings.section", () => ctx.slots.register({
+					name: "settings.section",
+					id: "mcp",
+					order: 14,
+					label: () => t("title"),
+					locale: NS,
+					inject: () => ({
+						managedForm: managed,
+						remote: ctx.remote
+					})
+				}, McpConnectionsPage));
+				return () => stopSection?.();
 			}), "ui-settings-mcp: connection settings section");
 			const appearanceInjected = () => ({
 				form: ctx.configForms.get("mcp-card-presentation"),

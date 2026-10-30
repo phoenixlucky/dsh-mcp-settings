@@ -1,15 +1,14 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Button, IconApiOutlineRegular, Switch } from '@deepseek-ai/dsh-client-ui-primitives';
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto';
 import css from './mcp-settings.module.css';
 function emptyDraft() {
-    return { id: randomUUID(), serverName: '', enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: '', headers: [], command: '', args: '', cwd: '', secrets: [] };
+    return { id: randomUUID(), serverName: '', enabled: true, transport: 'streamable-http', url: '', headers: [], command: '', args: '', cwd: '', secrets: [] };
 }
 function toDraft(server) {
     const secrets = server.transport === 'streamable-http' ? server.headerRefs : server.envRefs;
     return {
-        id: server.id, serverName: server.serverName, enabled: server.enabled, purpose: server.purpose ?? 'model-tools', transport: server.transport,
+        id: server.id, serverName: server.serverName, enabled: server.enabled, transport: server.transport,
         url: server.transport === 'streamable-http' ? server.url : '',
         headers: server.transport === 'streamable-http' ? Object.entries(server.headers ?? {}).map(([name, value]) => ({ name, value })) : [],
         command: server.transport === 'stdio' ? server.command : '',
@@ -28,6 +27,9 @@ export function ManagedMcpServers({ form, remote, t }) {
     const [busy, setBusy] = useState(false);
     const [failure, setFailure] = useState();
     const [checkState, setCheckState] = useState();
+    const [importMode, setImportMode] = useState(false);
+    const [importJson, setImportJson] = useState('');
+    const [importState, setImportState] = useState();
     useEffect(() => {
         let active = true;
         const refresh = async () => {
@@ -116,13 +118,9 @@ export function ManagedMcpServers({ form, remote, t }) {
             setFailure('credential');
             return undefined;
         }
-        if (draft.purpose === 'project-memory' && draft.transport !== 'streamable-http') {
-            setFailure('invalid');
-            return undefined;
-        }
         return draft.transport === 'streamable-http'
-            ? { id: draft.id, serverName, enabled: draft.enabled, purpose: draft.purpose, transport: 'streamable-http', url: draft.url.trim(), headers, headerRefs: refs }
-            : { id: draft.id, serverName, enabled: draft.enabled, purpose: draft.purpose, transport: 'stdio', command: draft.command.trim(), args: draft.args.split(/\r?\n/u).filter(value => value.trim() !== ''), cwd: draft.cwd, envRefs: refs };
+            ? { id: draft.id, serverName, enabled: draft.enabled, purpose: 'model-tools', transport: 'streamable-http', url: draft.url.trim(), headers, headerRefs: refs }
+            : { id: draft.id, serverName, enabled: draft.enabled, purpose: 'model-tools', transport: 'stdio', command: draft.command.trim(), args: draft.args.split(/\r?\n/u).filter(value => value.trim() !== ''), cwd: draft.cwd, envRefs: refs };
     };
     const saveDraft = async () => {
         const server = await prepareDraft();
@@ -191,38 +189,205 @@ export function ManagedMcpServers({ form, remote, t }) {
             setBusy(false);
         }
     };
+    const importServers = async () => {
+        setBusy(true);
+        setFailure(undefined);
+        setImportState(undefined);
+        try {
+            const parsed = JSON.parse(importJson);
+            if (!isRecord(parsed) || !isRecord(parsed.mcpServers))
+                throw new Error('invalid');
+            const existingNames = new Set(servers.map(server => server.serverName.toLowerCase()));
+            const importedNames = new Set();
+            const candidates = [];
+            let skipped = 0;
+            for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
+                if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) {
+                    skipped++;
+                    continue;
+                }
+                if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName) || !isRecord(raw)
+                    || raw.type !== 'streamable-http' || typeof raw.url !== 'string' || !isAllowedEndpoint(raw.url)
+                    || (raw.headers !== undefined && !isRecord(raw.headers)))
+                    throw new Error('invalid');
+                const headers = Object.create(null);
+                const secrets = Object.create(null);
+                const headerNames = new Set();
+                for (const [name, value] of Object.entries(raw.headers ?? {})) {
+                    const normalized = name.toLowerCase();
+                    if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof value !== 'string'
+                        || /[\r\n]/u.test(value) || headerNames.has(normalized))
+                        throw new Error('invalid');
+                    headerNames.add(normalized);
+                    if (/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)) {
+                        secrets[name] = value;
+                    }
+                    else
+                        headers[name] = value;
+                }
+                importedNames.add(serverName.toLowerCase());
+                candidates.push({ serverName, url: raw.url, headers, secrets });
+            }
+            if (candidates.length === 0) {
+                if (skipped === 0)
+                    throw new Error('invalid');
+            }
+            const next = [];
+            for (const candidate of candidates) {
+                const headerRefs = Object.create(null);
+                for (const [name, value] of Object.entries(candidate.secrets)) {
+                    const ref = `MCP_IMPORT_${randomUUID().replaceAll('-', '')}`;
+                    try {
+                        const reply = await remote.credentials.set(ref, value);
+                        if (!reply.ok) {
+                            setFailure('credential');
+                            return;
+                        }
+                    }
+                    catch {
+                        setFailure('credential');
+                        return;
+                    }
+                    headerRefs[name] = ref;
+                }
+                next.push({ id: randomUUID(), serverName: candidate.serverName, enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: candidate.url, headers: candidate.headers, headerRefs });
+            }
+            try {
+                if (next.length > 0)
+                    await saveServers([...servers, ...next]);
+            }
+            catch {
+                setFailure('save');
+                return;
+            }
+            setImportJson('');
+            setImportState(t('managed.import.complete').replace('{imported}', String(next.length)).replace('{skipped}', String(skipped)));
+        }
+        catch {
+            setImportState(undefined);
+            setFailure('import-invalid');
+        }
+        finally {
+            setBusy(false);
+        }
+    };
     const statusFor = (server) => statuses.find(status => status.serverName === server.serverName);
     const isEditingExisting = servers.some(server => server.id === draft.id);
-    const editor = (_jsxs("section", { className: css.fieldGroup, "aria-label": t('managed.editor'), children: [_jsx("h4", { className: css.fieldGroupTitle, children: t('managed.editor') }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('serverName') }), _jsx("input", { value: draft.serverName, disabled: busy, onChange: event => setDraft({ ...draft, serverName: event.currentTarget.value }) })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.purpose') }), _jsxs("select", { value: draft.purpose, disabled: busy, onChange: event => {
-                            const purpose = event.currentTarget.value;
-                            setDraft({ ...draft, purpose, transport: purpose === 'project-memory' ? 'streamable-http' : draft.transport });
-                        }, children: [_jsx("option", { value: "model-tools", children: t('managed.purpose.model-tools') }), _jsx("option", { value: "project-memory", children: t('managed.purpose.project-memory') })] })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('transport') }), _jsxs("select", { value: draft.transport, disabled: busy, onChange: event => setDraft({ ...draft, transport: event.currentTarget.value, secrets: [] }), children: [_jsx("option", { value: "streamable-http", children: t('transport.streamable-http') }), _jsx("option", { value: "stdio", children: t('transport.stdio') })] })] }), draft.transport === 'streamable-http'
-                ? _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.endpoint') }), _jsx("input", { type: "url", value: draft.url, disabled: busy, onChange: event => setDraft({ ...draft, url: event.currentTarget.value }) }), _jsx("small", { children: t('endpointHint') })] })
-                : _jsxs(_Fragment, { children: [_jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.command') }), _jsx("input", { value: draft.command, disabled: busy, onChange: event => setDraft({ ...draft, command: event.currentTarget.value }) })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.args') }), _jsx("textarea", { rows: 3, value: draft.args, disabled: busy, onChange: event => setDraft({ ...draft, args: event.currentTarget.value }) })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.cwd') }), _jsx("input", { value: draft.cwd, disabled: busy, onChange: event => setDraft({ ...draft, cwd: event.currentTarget.value }) })] })] }), _jsxs("div", { className: css.serverList, children: [draft.transport === 'streamable-http' && _jsxs(_Fragment, { children: [_jsx("h4", { children: t('managed.headers') }), draft.headers.map((row, index) => _jsxs("div", { className: css.secretRow, children: [_jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.headerName') }), _jsx("input", { value: row.name, disabled: busy, onChange: event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) }) })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.headerValue') }), _jsx("input", { value: row.value, disabled: busy, onChange: event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, value: event.currentTarget.value } : item) }) })] }), _jsx(Button, { variant: "outline", disabled: busy, onClick: () => setDraft({ ...draft, headers: draft.headers.filter((_item, rowIndex) => rowIndex !== index) }), children: t('managed.removeHeader') })] }, `header-${index}`)), _jsx(Button, { variant: "outline", disabled: busy, onClick: () => setDraft({ ...draft, headers: [...draft.headers, { name: '', value: '' }] }), children: t('managed.addHeader') })] }), _jsx("h4", { children: draft.transport === 'streamable-http' ? t('managed.credentials') : t('managed.environment') }), draft.secrets.map((row, index) => _jsxs("div", { className: css.secretRow, children: [_jsxs("label", { className: css.field, children: [_jsx("span", { children: draft.transport === 'streamable-http' ? t('managed.headerName') : t('managed.envName') }), _jsx("input", { value: row.name, disabled: busy, onChange: event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) }) })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.credentialRef') }), _jsx("input", { value: row.ref, disabled: busy, onChange: event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, ref: event.currentTarget.value } : item) }) })] }), _jsxs("label", { className: css.field, children: [_jsx("span", { children: t('managed.secret') }), _jsx("input", { type: "password", autoComplete: "new-password", value: row.value, disabled: busy, onChange: event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, value: event.currentTarget.value } : item) }) })] }), _jsx(Button, { variant: "outline", disabled: busy, onClick: () => setDraft({ ...draft, secrets: draft.secrets.filter((_item, rowIndex) => rowIndex !== index) }), children: t('managed.removeSecret') })] }, index)), _jsx(Button, { variant: "outline", disabled: busy, onClick: () => setDraft({ ...draft, secrets: [...draft.secrets, { name: '', ref: '', value: '' }] }), children: t('managed.addSecret') })] }), _jsxs("footer", { className: css.cardFooter, children: [_jsxs("div", { className: css.actions, children: [_jsx(Button, { variant: "primary", disabled: busy || !snapshot.writable, onClick: () => { void saveDraft(); }, children: t('save') }), _jsx(Button, { variant: "outline", disabled: busy, onClick: () => { void checkDraft(); }, children: busy ? t('checking') : t('check') })] }), checkState !== undefined && _jsx("p", { className: css.status, role: "status", children: checkState }), failure !== undefined && _jsx("p", { className: css.error, role: "alert", children: managedFailureLabel(t, failure) })] })] }));
-    return _jsxs("section", { className: css.card, "aria-label": t('managed.title'), children: [_jsxs("header", { className: css.cardHeader, children: [_jsxs("div", { className: css.cardIdentity, children: [_jsx("span", { className: css.cardIcon, "aria-hidden": "true", children: _jsx(IconApiOutlineRegular, { size: 24 }) }), _jsxs("div", { className: css.cardCopy, children: [_jsx("h3", { className: css.cardTitle, children: t('managed.title') }), _jsx("p", { className: css.cardDescription, children: t('managed.description') })] })] }), _jsx(Button, { variant: "primary", disabled: busy || !snapshot.writable, "aria-expanded": !isEditingExisting && activeEditorId === draft.id, onClick: () => {
-                            if (!isEditingExisting && activeEditorId === draft.id)
-                                setActiveEditorId(undefined);
-                            else {
-                                const next = emptyDraft();
-                                setDraft(next);
-                                setActiveEditorId(next.id);
-                            }
-                            setFailure(undefined);
-                            setCheckState(undefined);
-                        }, children: t('managed.add') })] }), _jsxs("div", { className: css.serverList, children: [servers.length === 0 && activeEditorId !== draft.id && _jsx("p", { children: t('managed.empty') }), servers.map((server) => {
-                        const status = statusFor(server);
-                        const state = !server.enabled ? 'disabled' : status?.state ?? 'disconnected';
-                        return _jsxs("article", { className: `${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`, children: [_jsxs("div", { className: css.serverHeading, children: [_jsxs("div", { className: css.serverIdentity, children: [_jsx("span", { className: css.serverIcon, "aria-hidden": "true", children: _jsx(IconApiOutlineRegular, { size: 22 }) }), _jsxs("div", { children: [_jsx("strong", { children: server.serverName }), _jsxs("p", { children: [t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http'), " \u00B7 ", _jsx("span", { className: css.serverState, "data-state": state, children: managedStateLabel(t, state) })] })] })] }), _jsxs("div", { className: css.enableControl, children: [_jsx("span", { className: css.enableLabel, children: t('managed.enabled') }), _jsx(Switch, { checked: server.enabled, label: t('managed.enabled'), disabled: busy || !snapshot.writable, onChange: (value) => { void toggle(server, value); } })] })] }), _jsxs("p", { children: [t('toolCount'), ": ", status?.toolCount ?? 0] }), _jsxs("div", { className: css.actions, children: [_jsx(Button, { variant: "outline", disabled: busy || !snapshot.writable, "aria-expanded": activeEditorId === server.id, onClick: () => {
-                                                if (activeEditorId === server.id)
-                                                    setActiveEditorId(undefined);
-                                                else {
-                                                    setDraft(toDraft(server));
-                                                    setActiveEditorId(server.id);
-                                                }
-                                                setFailure(undefined);
-                                                setCheckState(undefined);
-                                            }, children: t('managed.edit') }), _jsx(Button, { variant: "outline", disabled: busy || !snapshot.writable, onClick: () => { void remove(server.id); }, children: t('managed.delete') })] }), activeEditorId === server.id && editor] }, server.id);
-                    }), !isEditingExisting && activeEditorId === draft.id && _jsx("article", { className: `${css.serverCard} ${css.serverCardEditing}`, children: editor })] })] });
+    const editor = (<section className={css.fieldGroup} aria-label={t('managed.editor')}>
+      <h4 className={css.fieldGroupTitle}>{t('managed.editor')}</h4>
+      <div className={css.formGrid}>
+        <label className={css.field}><span>{t('serverName')}</span><input value={draft.serverName} disabled={busy} onChange={event => setDraft({ ...draft, serverName: event.currentTarget.value })}/></label>
+        <label className={css.field}><span>{t('transport')}</span><select value={draft.transport} disabled={busy} onChange={event => setDraft({ ...draft, transport: event.currentTarget.value, secrets: [] })}>
+          <option value="streamable-http">{t('transport.streamable-http')}</option><option value="stdio">{t('transport.stdio')}</option>
+        </select></label>
+      </div>
+      {draft.transport === 'streamable-http'
+            ? <label className={css.field}><span>{t('managed.endpoint')}</span><input type="url" value={draft.url} disabled={busy} onChange={event => setDraft({ ...draft, url: event.currentTarget.value })}/><small>{t('endpointHint')}</small></label>
+            : <>
+          <label className={css.field}><span>{t('managed.command')}</span><input value={draft.command} disabled={busy} onChange={event => setDraft({ ...draft, command: event.currentTarget.value })}/></label>
+          <label className={css.field}><span>{t('managed.args')}</span><textarea rows={3} value={draft.args} disabled={busy} onChange={event => setDraft({ ...draft, args: event.currentTarget.value })}/></label>
+          <label className={css.field}><span>{t('managed.cwd')}</span><input value={draft.cwd} disabled={busy} onChange={event => setDraft({ ...draft, cwd: event.currentTarget.value })}/></label>
+        </>}
+      <div className={css.serverList}>
+        {draft.transport === 'streamable-http' && <>
+          <h4>{t('managed.headers')}</h4>
+          <small>{t('managed.headersHint')}</small>
+          {draft.headers.map((row, index) => <div className={css.secretRow} key={`header-${index}`}>
+            <label className={css.field}><span>{t('managed.headerName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) })}/></label>
+            <label className={css.field}><span>{t('managed.headerValue')}</span><input value={row.value} disabled={busy} onChange={event => setDraft({ ...draft, headers: draft.headers.map((item, rowIndex) => rowIndex === index ? { ...item, value: event.currentTarget.value } : item) })}/></label>
+            <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, headers: draft.headers.filter((_item, rowIndex) => rowIndex !== index) })}>{t('managed.removeHeader')}</Button>
+          </div>)}
+          <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, headers: [...draft.headers, { name: '', value: '' }] })}>{t('managed.addHeader')}</Button>
+        </>}
+        <h4>{draft.transport === 'streamable-http' ? t('managed.credentials') : t('managed.environment')}</h4>
+        {draft.transport === 'streamable-http' && <small>{t('managed.credentialsHint')}</small>}
+        {draft.secrets.map((row, index) => <div className={css.secretRow} key={index}>
+          <label className={css.field}><span>{draft.transport === 'streamable-http' ? t('managed.headerName') : t('managed.envName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) })}/></label>
+          <label className={css.field}><span>{t('managed.credentialRef')}</span><input value={row.ref} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, ref: event.currentTarget.value } : item) })}/></label>
+          <label className={css.field}><span>{t('managed.secret')}</span><input type="password" autoComplete="new-password" value={row.value} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, value: event.currentTarget.value } : item) })}/></label>
+          <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.filter((_item, rowIndex) => rowIndex !== index) })}>{t('managed.removeSecret')}</Button>
+        </div>)}
+        <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: [...draft.secrets, { name: '', ref: '', value: '' }] })}>{t('managed.addSecret')}</Button>
+      </div>
+      <footer className={css.cardFooter}>
+        <div className={css.actions}>
+          <Button variant="primary" disabled={busy || !snapshot.writable} onClick={() => { void saveDraft(); }}>{t('save')}</Button>
+          <Button variant="outline" disabled={busy} onClick={() => { void checkDraft(); }}>{busy ? t('checking') : t('check')}</Button>
+        </div>
+        {checkState !== undefined && <p className={css.status} role="status">{checkState}</p>}
+        {failure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, failure)}</p>}
+      </footer>
+    </section>);
+    return <section className={css.card} aria-label={t('managed.title')}>
+    <header className={css.cardHeader}>
+      <div className={css.cardIdentity}>
+        <span className={css.cardIcon} aria-hidden="true"><IconApiOutlineRegular size={24}/></span>
+        <div className={css.cardCopy}><h3 className={css.cardTitle}>{t('managed.title')}</h3><p className={css.cardDescription}>{t('managed.description')}</p></div>
+      </div>
+      <div className={css.actions}>
+      <Button variant="outline" disabled={busy || !snapshot.writable} aria-expanded={importMode} onClick={() => {
+            setImportMode(!importMode);
+            setActiveEditorId(undefined);
+            setImportState(undefined);
+            setFailure(undefined);
+        }}>{t('managed.import')}</Button>
+      <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
+            setImportMode(false);
+            if (!isEditingExisting && activeEditorId === draft.id)
+                setActiveEditorId(undefined);
+            else {
+                const next = emptyDraft();
+                setDraft(next);
+                setActiveEditorId(next.id);
+            }
+            setFailure(undefined);
+            setCheckState(undefined);
+        }}>{t('managed.add')}</Button>
+      </div>
+    </header>
+    {importMode && <section className={css.fieldGroup} aria-label={t('managed.import')}>
+      <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => setImportJson(event.currentTarget.value)} placeholder={t('managed.import.placeholder')}/></label>
+      <small>{t('managed.import.hint')}</small>
+      <div className={css.actions}><Button variant="primary" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={() => { void importServers(); }}>{busy ? t('checking') : t('managed.import.action')}</Button></div>
+      {importState !== undefined && <p className={css.status} role="status">{importState}</p>}
+      {failure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, failure)}</p>}
+    </section>}
+    <div className={css.serverList}>
+      {servers.length === 0 && activeEditorId !== draft.id && <p>{t('managed.empty')}</p>}
+      {servers.map((server) => {
+            const status = statusFor(server);
+            const state = !server.enabled ? 'disabled' : status?.state ?? 'disconnected';
+            return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
+          <div className={css.serverHeading}>
+            <div className={css.serverIdentity}>
+              <span className={css.serverIcon} aria-hidden="true"><IconApiOutlineRegular size={22}/></span>
+              <div><strong>{server.serverName}</strong><p>{t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')} · <span className={css.serverState} data-state={state}>{managedStateLabel(t, state)}</span></p></div>
+            </div>
+            <div className={css.enableControl}>
+              <span className={css.enableLabel}>{t('managed.enabled')}</span>
+              <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value); }}/>
+            </div>
+          </div>
+          <p className={css.toolCount}>{t('toolCount')}: {status?.toolCount ?? 0}</p>
+          <div className={css.actions}>
+            <Button variant="outline" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
+                    if (activeEditorId === server.id)
+                        setActiveEditorId(undefined);
+                    else {
+                        setDraft(toDraft(server));
+                        setActiveEditorId(server.id);
+                    }
+                    setFailure(undefined);
+                    setCheckState(undefined);
+                }}>{t('managed.edit')}</Button>
+            <Button variant="outline" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id); }}>{t('managed.delete')}</Button>
+          </div>
+          {activeEditorId === server.id && editor}
+        </article>;
+        })}
+      {!isEditingExisting && activeEditorId === draft.id && <article className={`${css.serverCard} ${css.serverCardEditing}`}>{editor}</article>}
+    </div>
+  </section>;
 }
 function isAllowedEndpoint(input) {
     try {
@@ -261,6 +426,10 @@ function managedFailureLabel(t, failure) {
         case 'credential': return t('managed.error.credential');
         case 'check': return t('managed.error.check');
         case 'invalid': return t('managed.error.invalid');
+        case 'import-invalid': return t('managed.import.invalid');
     }
+}
+function isRecord(value) {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 //# sourceMappingURL=ManagedMcpServers.js.map

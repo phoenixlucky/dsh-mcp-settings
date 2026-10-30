@@ -1,5 +1,5 @@
 ---
-description: "Optional bundle for MCP server, Chrome, and Cognee runtime providers configured through profile patches."
+description: "Optional bundle for adding and managing MCP servers through profile patches."
 kind: "package-bundle"
 ---
 
@@ -9,11 +9,11 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-This bundle provides MCP runtime providers for profile configuration. Configure Streamable HTTP and stdio servers through the `mcp-server-manager` Cordis row, including Chrome as a normal HTTP server. Cognee project memory uses an internal `project-memory` row purpose and does not expose Cognee tools to the model. The default `new-gold` endpoint remains enabled at `http://127.0.0.1:12888/new-gold`.
+This bundle provides only the `mcp-server-manager` runtime for adding and managing Streamable HTTP and stdio MCP servers. Its server list starts empty, with no preconfigured or automatically started MCP services.
 
 ## Compatibility
 
-This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The bundle vendors the MCP manager and Cognee consumer.
+This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The bundle vendors the MCP manager runtime.
 
 ## Use this package
 
@@ -21,7 +21,7 @@ Add `@deepseek-ai/dsh-mcp-settings` to `dsh.profile.bundles` in the profile mani
 
 ## Understand the implementation
 
-`cordis.patch.yml` inserts the managed server manager, the internal Cognee memory provider, and a disabled-by-default Chrome compatibility plugin. The Chrome plugin stops when a managed `chrome` row exists.
+`cordis.patch.yml` inserts only the managed server manager with an empty server list. The manager connects to MCP services after they are added.
 
 ## Dev Note
 
@@ -29,7 +29,7 @@ The bundle does not implement MCP services itself. Its `dsh.bundle.patch` manife
 
 ## Model Experience
 
-Model-facing MCP tools are available only when a `model-tools` row connects successfully. Cognee memory remains optional and uses only its internal allow-listed operations. New Chrome connections use the same managed HTTP transport and header configuration as other MCP servers.
+Model-facing MCP tools are available only when a `model-tools` row connects successfully.
 
 ## Known Limitations and Deferred Work
 
@@ -37,4 +37,4 @@ Model-facing MCP tools are available only when a `model-tools` row connects succ
 
 ## Vendored packages
 
-This repository includes the Cognee provider and MCP client runtime under `vendor/`. The bundle uses relative `file:` dependencies, so the checkout can be moved or cloned to another location. From the directory containing the checkout, install it with `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings`.
+This repository includes the MCP client runtime under `vendor/`. The bundle uses relative `file:` dependencies, so the checkout can be moved or cloned to another location. From the directory containing the checkout, install it with `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings`.

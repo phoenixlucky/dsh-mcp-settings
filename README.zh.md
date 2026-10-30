@@ -1,5 +1,5 @@
 ---
-description: "可选 bundle，通过 profile patch 配置 MCP 服务器、Chrome 和 Cognee 运行提供方。"
+description: "可选 bundle，通过 profile patch 配置并添加 MCP 服务器。"
 kind: "package-bundle"
 ---
 
@@ -9,11 +9,11 @@ kind: "package-bundle"
 
 ## 概述
 
-该 bundle 提供 MCP 运行时提供方，供 profile 配置使用。通过 `mcp-server-manager` Cordis 项配置 Streamable HTTP 与 stdio 服务，Chrome 也作为普通 HTTP 服务器配置。Cognee 项目记忆通过内部 `project-memory` 用途运行，不会向模型公开 Cognee 工具。默认 `new-gold` 地址仍在 `http://127.0.0.1:12888/new-gold` 启用。
+该 bundle 只提供 `mcp-server-manager`，用于添加和管理 Streamable HTTP 与 stdio MCP 服务器。默认服务器列表为空，不会预置或启动任何 MCP 服务。
 
 ## 兼容性
 
-此版本要求 DSH `0.2.2-alpha.2` 或后续稳定版 `0.2.x`。本包随附 MCP 管理器和 Cognee 消费者。
+此版本要求 DSH `0.2.2-alpha.2` 或后续稳定版 `0.2.x`。本包随附 MCP 管理器运行时。
 
 ## 使用本包
 
@@ -21,7 +21,7 @@ kind: "package-bundle"
 
 ## 理解实现
 
-`cordis.patch.yml` 插入托管服务器管理器、内部 Cognee 记忆提供方，以及默认禁用的 Chrome 兼容插件。托管列表中出现 `chrome` 行后，该插件会停止。
+`cordis.patch.yml` 只插入托管服务器管理器，服务器列表初始为空。添加服务器后，管理器按配置连接 MCP 服务。
 
 ## 开发备注
 
@@ -29,7 +29,7 @@ kind: "package-bundle"
 
 ## Model Experience
 
-只有用途为 `model-tools` 的 MCP 行成功连接后，模型才能使用对应工具。Cognee 记忆保持可选，并仅执行内部允许列表中的操作。新 Chrome 连接与其他 MCP 服务使用相同的托管 HTTP 传输和请求头配置。
+只有用途为 `model-tools` 的 MCP 行成功连接后，模型才能使用对应工具。
 
 ## 已知限制与延期工作
 
@@ -37,4 +37,4 @@ kind: "package-bundle"
 
 ## 随仓库提供的依赖
 
-本仓库在 `vendor/` 中包含 Cognee provider 和 MCP client 运行包。bundle 使用相对 `file:` 依赖，因此可以移动或克隆到其他目录。从仓库所在目录运行 `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings` 即可安装。
+本仓库在 `vendor/` 中包含 MCP client 运行包。bundle 使用相对 `file:` 依赖，因此可以移动或克隆到其他目录。从仓库所在目录运行 `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings` 即可安装。

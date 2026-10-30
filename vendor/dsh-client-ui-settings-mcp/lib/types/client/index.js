@@ -1,6 +1,5 @@
 import { McpCardSettings } from "./McpCardSettings.js";
 import { McpConnectionsPage } from "./McpConnectionsPage.js";
-import { runLegacyMcpMigration } from "./migration.js";
 import { en, zh } from "./locales.js";
 export const inject = [
     'slots', 'locale', 'remote', 'remote.credentials',
@@ -12,20 +11,13 @@ export function apply(ctx) {
     const t = ctx.locale.bind(NS);
     ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'ui-settings-mcp: dictionaries');
     ctx.effect(() => ctx.configForms.whileServed(['mcp-server-manager'], () => {
-        let active = true;
         let stopSection;
-        const cognee = ctx.configForms.get('cognee-memory');
-        const chrome = ctx.configForms.get('mcp-chrome');
         const managed = ctx.configForms.get('mcp-server-manager');
-        void runLegacyMcpMigration(cognee, chrome, managed).catch(() => undefined).finally(() => {
-            if (!active)
-                return;
-            stopSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
-                name: 'settings.section', id: 'mcp', order: 14, label: () => t('title'), locale: NS,
-                inject: () => ({ managedForm: managed, remote: ctx.remote }),
-            }, McpConnectionsPage));
-        });
-        return () => { active = false; stopSection?.(); };
+        stopSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
+            name: 'settings.section', id: 'mcp', order: 14, label: () => t('title'), locale: NS,
+            inject: () => ({ managedForm: managed, remote: ctx.remote }),
+        }, McpConnectionsPage));
+        return () => stopSection?.();
     }), 'ui-settings-mcp: connection settings section');
     const appearanceInjected = () => ({ form: ctx.configForms.get('mcp-card-presentation'), remote: ctx.remote });
     ctx.effect(() => ctx.configForms.whileServed(['mcp-card-presentation'], () => ctx.slots.inject('settings.section', () => ctx.slots.register({

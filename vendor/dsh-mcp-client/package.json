@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-mcp-client",
-  "description": "MCP client runtime with a unified managed server list and a temporary Chrome migration shim",
+  "description": "MCP client runtime with a unified managed server list",
   "version": "0.2.2-alpha.2",
   "type": "module",
   "main": "lib/index.js",
@@ -13,10 +13,6 @@
     "./types": {
       "types": "./lib/types/types.d.ts",
       "default": "./lib/types/types.js"
-    },
-    "./chrome": {
-      "types": "./lib/types/chrome.d.ts",
-      "default": "./lib/types/chrome.js"
     },
     "./managed": {
       "types": "./lib/types/managed.d.ts",

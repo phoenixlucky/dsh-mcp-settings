@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
-  "description": "Unified managed MCP server settings with legacy Chrome and Cognee migration support",
-  "version": "1.0.10",
+  "description": "Managed MCP server settings for adding MCP servers",
+  "version": "1.0.11",
   "publishConfig": {
     "access": "public"
   },
@@ -26,16 +26,26 @@
     "lib/index.js",
     "cordis.patch.yml",
     "lib/types/**/*.d.ts",
-    "vendor/dsh-mcp-cognee-memory/package.json",
-    "vendor/dsh-mcp-cognee-memory/lib/index.js",
-    "vendor/dsh-mcp-cognee-memory/lib/typert.host.js",
-    "vendor/dsh-mcp-cognee-memory/lib/typert.remote-client.js",
-    "vendor/dsh-mcp-cognee-memory/lib/types/types.js",
-    "vendor/dsh-mcp-cognee-memory/lib/types/**/*.d.ts",
     "vendor/dsh-mcp-client/package.json",
-    "vendor/dsh-mcp-client/lib/*.js",
-    "vendor/dsh-mcp-client/lib/types/**/*.js",
-    "vendor/dsh-mcp-client/lib/types/**/*.d.ts",
+    "vendor/dsh-mcp-client/lib/index.js",
+    "vendor/dsh-mcp-client/lib/managed.js",
+    "vendor/dsh-mcp-client/lib/types-*.js",
+    "vendor/dsh-mcp-client/lib/types/connection.js",
+    "vendor/dsh-mcp-client/lib/types/index.js",
+    "vendor/dsh-mcp-client/lib/types/managed.js",
+    "vendor/dsh-mcp-client/lib/types/server-context.js",
+    "vendor/dsh-mcp-client/lib/types/status.js",
+    "vendor/dsh-mcp-client/lib/types/tools.js",
+    "vendor/dsh-mcp-client/lib/types/transport.js",
+    "vendor/dsh-mcp-client/lib/types/types.js",
+    "vendor/dsh-mcp-client/lib/types/connection.d.ts",
+    "vendor/dsh-mcp-client/lib/types/index.d.ts",
+    "vendor/dsh-mcp-client/lib/types/managed.d.ts",
+    "vendor/dsh-mcp-client/lib/types/server-context.d.ts",
+    "vendor/dsh-mcp-client/lib/types/status.d.ts",
+    "vendor/dsh-mcp-client/lib/types/tools.d.ts",
+    "vendor/dsh-mcp-client/lib/types/transport.d.ts",
+    "vendor/dsh-mcp-client/lib/types/types.d.ts",
     "vendor/dsh-mcp-client/lib/typert.host.js",
     "vendor/dsh-mcp-client/lib/typert.host.d.ts",
     "vendor/dsh-mcp-client/lib/typert.remote-client.js",
@@ -52,8 +62,7 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-mcp-client": "file:vendor/dsh-mcp-client",
-    "@deepseek-ai/dsh-mcp-cognee-memory": "file:vendor/dsh-mcp-cognee-memory"
+    "@deepseek-ai/dsh-mcp-client": "file:vendor/dsh-mcp-client"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "~4.0.6-alpha.1"

@@ -7,7 +7,6 @@ import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type {} from '@deepseek-ai/dsh-mcp-client/remote'
 import { McpCardSettings } from './McpCardSettings.tsx'
 import { McpConnectionsPage } from './McpConnectionsPage.tsx'
-import { runLegacyMcpMigration } from './migration.ts'
 import type { McpCardAppearance } from './mcpCardAppearance.ts'
 import { en, zh } from './locales.ts'
 
@@ -29,19 +28,13 @@ export function apply(ctx: ClientContext): void {
   const t = ctx.locale.bind(NS)
   ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'ui-settings-mcp: dictionaries')
   ctx.effect(() => ctx.configForms.whileServed(['mcp-server-manager'], () => {
-    let active = true
     let stopSection: (() => void) | undefined
-    const cognee = ctx.configForms.get<{ enabled?: boolean; endpoint?: string; credentialRef?: string }>('cognee-memory')
-    const chrome = ctx.configForms.get<{ enabled?: boolean; url?: string }>('mcp-chrome')
     const managed = ctx.configForms.get<ManagedSettings>('mcp-server-manager')
-    void runLegacyMcpMigration(cognee, chrome, managed).catch(() => undefined).finally(() => {
-      if (!active) return
-      stopSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
-        name: 'settings.section', id: 'mcp', order: 14, label: () => t('title'), locale: NS,
-        inject: () => ({ managedForm: managed, remote: ctx.remote }),
-      }, McpConnectionsPage))
-    })
-    return () => { active = false; stopSection?.() }
+    stopSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
+      name: 'settings.section', id: 'mcp', order: 14, label: () => t('title'), locale: NS,
+      inject: () => ({ managedForm: managed, remote: ctx.remote }),
+    }, McpConnectionsPage))
+    return () => stopSection?.()
   }), 'ui-settings-mcp: connection settings section')
   const appearanceInjected = () => ({ form: ctx.configForms.get<AppearanceSettings>('mcp-card-presentation'), remote: ctx.remote })
   ctx.effect(() => ctx.configForms.whileServed(['mcp-card-presentation'], () => ctx.slots.inject('settings.section', () => ctx.slots.register({

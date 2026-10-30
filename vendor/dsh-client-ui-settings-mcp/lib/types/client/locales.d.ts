@@ -1,43 +1,9 @@
-/** English strings for Cognee and MCP card settings. */
+/** English strings for MCP server settings. */
 export declare const en: {
     readonly title: "MCP";
     readonly pageTitle: "MCP settings";
     readonly pageDescription: "Configure every MCP server in one managed list.";
-    readonly cogneeDescription: "Configure the Cognee MCP connection and project memory.";
-    readonly chromeDescription: "Connect Chrome browser tools through MCP.";
-    readonly endpoint: "Cognee MCP endpoint";
     readonly endpointHint: "Use HTTPS, or HTTP on this computer only.";
-    readonly enabled: "Use Cognee project memory";
-    readonly token: "Bearer token";
-    readonly tokenSet: "Token is configured";
-    readonly tokenUnset: "Token is not configured";
-    readonly credentialsUnavailable: "Credential storage is unavailable for this token.";
-    readonly save: "Save";
-    readonly check: "Check connection";
-    readonly checking: "Checking…";
-    readonly status: "Connection status";
-    readonly error: "Could not save or check the Cognee connection.";
-    readonly 'status.not-configured': "Endpoint is not configured";
-    readonly 'status.disabled': "Disabled";
-    readonly 'status.authorization-required': "Authorization required";
-    readonly 'status.connection-failed': "Connection failed";
-    readonly 'status.incompatible-tools': "Cognee tools are incompatible";
-    readonly 'status.ready': "Connected; required tools are available";
-    readonly connectionSettings: "Connection settings";
-    readonly chromeTitle: "Chrome MCP";
-    readonly chromeEndpoint: "Chrome MCP endpoint";
-    readonly chromeEndpointHint: "Use HTTPS; HTTP is allowed only for localhost or loopback addresses.";
-    readonly chromeEnabled: "Enable Chrome browser tools";
-    readonly 'chromeError.save': "Could not save the Chrome MCP settings. Check that settings are writable and try again.";
-    readonly 'chromeError.credential': "Could not access the Chrome MCP credential store.";
-    readonly 'chromeError.check': "Could not check the Chrome MCP connection. Verify the endpoint and try again.";
-    readonly 'chromeStatus.not-configured': "Endpoint is not configured";
-    readonly 'chromeStatus.disabled': "Disabled";
-    readonly 'chromeStatus.authorization-required': "Authorization required";
-    readonly 'chromeStatus.connection-failed': "Connection failed";
-    readonly 'chromeStatus.timed-out': "Connection check timed out";
-    readonly 'chromeStatus.ready': "Connected; tools are available";
-    readonly 'chromeStatus.readyCount': "Connected; {count} tools available";
     readonly appearanceTitle: "MCP card appearance";
     readonly serverName: "Server name";
     readonly serverNameHint: "Use the stable serverName from its MCP client entry.";
@@ -72,9 +38,6 @@ export declare const en: {
     readonly 'managed.edit': "Edit";
     readonly 'managed.delete': "Delete";
     readonly 'managed.editor': "Server settings";
-    readonly 'managed.purpose': "Purpose";
-    readonly 'managed.purpose.model-tools': "Tools for the model";
-    readonly 'managed.purpose.project-memory': "Internal project memory";
     readonly 'managed.endpoint': "MCP endpoint";
     readonly 'managed.command': "Executable";
     readonly 'managed.args': "Arguments (one per line)";
@@ -86,6 +49,8 @@ export declare const en: {
     readonly 'managed.headerValue': "Header value";
     readonly 'managed.addHeader': "Add header";
     readonly 'managed.removeHeader': "Remove header";
+    readonly 'managed.headersHint': "Example: X-Client-Version → 1.0. Put Authorization and API keys under Credential references below.";
+    readonly 'managed.credentialsHint': "Example: Header name Authorization · Credential reference MCP_NEW_TOKEN · Secret value Bearer <your token>.";
     readonly 'managed.envName': "Environment variable";
     readonly 'managed.credentialRef': "Credential reference";
     readonly 'managed.secret': "Secret value";
@@ -105,7 +70,13 @@ export declare const en: {
     readonly 'managed.error.credential': "Could not store a credential.";
     readonly 'managed.error.check': "Could not check this MCP server.";
     readonly 'managed.error.invalid': "Complete the required fields and use unique names.";
+    readonly 'managed.import': "Import JSON";
+    readonly 'managed.import.placeholder': "Paste a configuration containing an mcpServers object.";
+    readonly 'managed.import.hint': "Imports streamable-http servers. Secret headers are stored in the credential store; existing names are skipped.";
+    readonly 'managed.import.action': "Import servers";
+    readonly 'managed.import.complete': "Imported {imported} server(s); skipped {skipped} duplicate(s).";
+    readonly 'managed.import.invalid': "Invalid JSON or unsupported server configuration. Check the mcpServers object and streamable-http entries.";
 };
-/** Simplified Chinese strings for Cognee and MCP card settings. */
+/** Simplified Chinese strings for MCP server settings. */
 export declare const zh: Record<keyof typeof en, string>;
 //# sourceMappingURL=locales.d.ts.map

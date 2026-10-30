@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-client-ui-settings-mcp",
-  "description": "Unified managed MCP server settings and legacy Chrome/Cognee migration for DeepSeek Harness",
+  "description": "Managed MCP server settings for DeepSeek Harness",
   "version": "0.2.2-alpha.2",
   "publishConfig": {
     "access": "public"
@@ -30,8 +30,6 @@
         "@deepseek-ai/dsh-client-ui-settings",
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-mcp-cognee-memory",
-        "@deepseek-ai/dsh-mcp-client/chrome",
         "@deepseek-ai/dsh-mcp-client/managed"
       ],
       "platform": "web"

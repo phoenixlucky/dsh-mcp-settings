@@ -15,7 +15,6 @@ interface Draft {
   id: string
   serverName: string
   enabled: boolean
-  purpose: 'model-tools' | 'project-memory'
   transport: 'streamable-http' | 'stdio'
   url: string
   headers: HeaderRow[]
@@ -26,13 +25,13 @@ interface Draft {
 }
 
 function emptyDraft(): Draft {
-  return { id: randomUUID(), serverName: '', enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: '', headers: [], command: '', args: '', cwd: '', secrets: [] }
+  return { id: randomUUID(), serverName: '', enabled: true, transport: 'streamable-http', url: '', headers: [], command: '', args: '', cwd: '', secrets: [] }
 }
 
 function toDraft(server: ManagedMcpServer): Draft {
   const secrets = server.transport === 'streamable-http' ? server.headerRefs : server.envRefs
   return {
-    id: server.id, serverName: server.serverName, enabled: server.enabled, purpose: server.purpose ?? 'model-tools', transport: server.transport,
+    id: server.id, serverName: server.serverName, enabled: server.enabled, transport: server.transport,
     url: server.transport === 'streamable-http' ? server.url : '',
     headers: server.transport === 'streamable-http' ? Object.entries(server.headers ?? {}).map(([name, value]) => ({ name, value })) : [],
     command: server.transport === 'stdio' ? server.command : '',
@@ -132,13 +131,9 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       setFailure('credential')
       return undefined
     }
-    if (draft.purpose === 'project-memory' && draft.transport !== 'streamable-http') {
-      setFailure('invalid')
-      return undefined
-    }
     return draft.transport === 'streamable-http'
-      ? { id: draft.id, serverName, enabled: draft.enabled, purpose: draft.purpose, transport: 'streamable-http', url: draft.url.trim(), headers, headerRefs: refs }
-      : { id: draft.id, serverName, enabled: draft.enabled, purpose: draft.purpose, transport: 'stdio', command: draft.command.trim(), args: draft.args.split(/\r?\n/u).filter(value => value.trim() !== ''), cwd: draft.cwd, envRefs: refs }
+      ? { id: draft.id, serverName, enabled: draft.enabled, purpose: 'model-tools', transport: 'streamable-http', url: draft.url.trim(), headers, headerRefs: refs }
+      : { id: draft.id, serverName, enabled: draft.enabled, purpose: 'model-tools', transport: 'stdio', command: draft.command.trim(), args: draft.args.split(/\r?\n/u).filter(value => value.trim() !== ''), cwd: draft.cwd, envRefs: refs }
   }
   const saveDraft = async (): Promise<ManagedMcpServer | undefined> => {
     const server = await prepareDraft()
@@ -242,10 +237,6 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       <h4 className={css.fieldGroupTitle}>{t('managed.editor')}</h4>
       <div className={css.formGrid}>
         <label className={css.field}><span>{t('serverName')}</span><input value={draft.serverName} disabled={busy} onChange={event => setDraft({ ...draft, serverName: event.currentTarget.value })} /></label>
-        <label className={css.field}><span>{t('managed.purpose')}</span><select value={draft.purpose} disabled={busy} onChange={event => {
-          const purpose = event.currentTarget.value as Draft['purpose']
-          setDraft({ ...draft, purpose, transport: purpose === 'project-memory' ? 'streamable-http' : draft.transport })
-        }}><option value="model-tools">{t('managed.purpose.model-tools')}</option><option value="project-memory">{t('managed.purpose.project-memory')}</option></select></label>
         <label className={css.field}><span>{t('transport')}</span><select value={draft.transport} disabled={busy} onChange={event => setDraft({ ...draft, transport: event.currentTarget.value as Draft['transport'], secrets: [] })}>
           <option value="streamable-http">{t('transport.streamable-http')}</option><option value="stdio">{t('transport.stdio')}</option>
         </select></label>
