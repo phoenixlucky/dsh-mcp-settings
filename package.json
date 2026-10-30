@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "Managed MCP server settings for adding MCP servers",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "publishConfig": {
     "access": "public"
   },
@@ -81,12 +81,26 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-mcp-client": "file:vendor/dsh-mcp-client"
+    "@deepseek-ai/dsh-util-values": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/schemastery": "~3.18.5",
+    "@modelcontextprotocol/client": "2.2.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "~4.0.6-alpha.1"
+    "@deepseek-ai/cordis": "~4.0.6-alpha.1",
+    "@deepseek-ai/cordis-plugin-loader": "~1.0.7-alpha.1",
+    "@deepseek-ai/dsh-attachment": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-credentials": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-llm": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-mcp-resources": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-scope": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-subprocess": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-system-prompt": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-timeout": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-tools": ">=0.2.2-alpha.2 <0.3.0",
+    "@deepseek-ai/dsh-typert-protocol": ">=0.2.2-alpha.2 <0.3.0"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "~4.0.6-alpha.1"
+    "@deepseek-ai/cordis": "~4.0.6-alpha.1",
+    "@deepseek-ai/dsh-mcp-client": "file:vendor/dsh-mcp-client"
   }
 }
