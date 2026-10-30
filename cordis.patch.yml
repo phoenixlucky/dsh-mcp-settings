@@ -1,4 +1,8 @@
 # Managed MCP server configuration.
+- id: ui-settings-mcp
+  # This bundle provides its own MCP page under the same settings namespace.
+  disabled: true
+
 - insert:
     # The bare package row activates the Client companion; its page is shown
     # only while the managed server configuration is available.
