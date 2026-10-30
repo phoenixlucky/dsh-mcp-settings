@@ -17,19 +17,11 @@ This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The
 
 ## Configure MCP servers
 
-This package includes a standalone page at `settings/index.html`. Open it from a checkout, or open `node_modules/@deepseek-ai/dsh-mcp-settings/settings/index.html` after installing the package. The page stores a draft in the browser; it does not connect to DSH or change a running profile.
-
-Add Streamable HTTP or stdio servers, set their purpose, and import or export configuration files. JSON import accepts the page's own `{ "servers": [...] }` export or an `mcpServers` object with HTTP `url` entries or stdio `command` entries. HTTP supports non-sensitive `headers` and managed `headerRefs`; stdio supports `args`, `cwd`, and managed `envRefs`.
-
-Credential values must be saved separately in DSH's credential store. Put only the credential reference name in `headerRefs` or `envRefs`. The page rejects inline authorization, cookie, proxy-authorization, and x-api-key header values, along with inline stdio `env` values.
-
-The page can export `dsh-mcp-servers.json` or `mcp-server-manager.patch.yml`. To apply the patch, add its id-targeted `mcp-server-manager` override to the profile's `cordis.patch.yml`, replacing any existing override for that id. The patch contains the full manager config because Cordis replaces the config as a whole. The profile must also include this bundle.
-
-The page validates configuration but cannot test a connection. A server starts after the patch is applied and the profile loads. A `project-memory` row requires a registered consumer; its MCP tools are not published to the model.
+After installing this bundle in a profile, manage servers from DSH Settings → MCP Servers. Add Streamable HTTP or stdio servers there, or paste an `mcpServers` JSON configuration and select **Import JSON**. JSON import accepts Streamable HTTP entries; sensitive headers such as `Authorization` are saved in DSH's credential store.
 
 ## Understand the implementation
 
-`cordis.patch.yml` inserts only the managed server manager with an empty server list. The standalone page edits a local copy of that list and exports a profile override. The manager starts configured servers after the profile loads.
+`cordis.patch.yml` inserts only the managed server manager with an empty server list. The settings page edits that manager's server list. The manager starts configured servers after the profile loads.
 
 ## Model experience
 
@@ -37,8 +29,7 @@ Only a successfully connected server with purpose `model-tools` publishes tools 
 
 ## Known limitations
 
-- The standalone page does not read or write a live DSH profile and does not test connections.
-- JSON import supports the documented `mcpServers` subset. Inline secrets are rejected; use DSH credential references instead.
+- JSON import supports Streamable HTTP entries from an `mcpServers` object. Add stdio servers from the settings form.
 
 ## Vendored packages
 

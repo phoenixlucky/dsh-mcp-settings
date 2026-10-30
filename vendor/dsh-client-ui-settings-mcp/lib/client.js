@@ -319,8 +319,8 @@ window.__ModuleLoader__.load({
 			const [activeEditorId, setActiveEditorId] = (0, react.useState)();
 			const [busy, setBusy] = (0, react.useState)(false);
 			const [failure, setFailure] = (0, react.useState)();
+			const [importFailure, setImportFailure] = (0, react.useState)();
 			const [checkState, setCheckState] = (0, react.useState)();
-			const [importMode, setImportMode] = (0, react.useState)(false);
 			const [importJson, setImportJson] = (0, react.useState)("");
 			const [importState, setImportState] = (0, react.useState)();
 			(0, react.useEffect)(() => {
@@ -481,7 +481,7 @@ window.__ModuleLoader__.load({
 			};
 			const importServers = async () => {
 				setBusy(true);
-				setFailure(void 0);
+				setImportFailure(void 0);
 				setImportState(void 0);
 				try {
 					const parsed = JSON.parse(importJson);
@@ -524,11 +524,11 @@ window.__ModuleLoader__.load({
 							const ref = `MCP_IMPORT_${randomUUID().replaceAll("-", "")}`;
 							try {
 								if (!(await remote.credentials.set(ref, value)).ok) {
-									setFailure("credential");
+									setImportFailure("credential");
 									return;
 								}
 							} catch {
-								setFailure("credential");
+								setImportFailure("credential");
 								return;
 							}
 							headerRefs[name] = ref;
@@ -547,14 +547,14 @@ window.__ModuleLoader__.load({
 					try {
 						if (next.length > 0) await saveServers([...servers, ...next]);
 					} catch {
-						setFailure("save");
+						setImportFailure("save");
 						return;
 					}
 					setImportJson("");
 					setImportState(t("managed.import.complete").replace("{imported}", String(next.length)).replace("{skipped}", String(skipped)));
 				} catch {
 					setImportState(void 0);
-					setFailure("import-invalid");
+					setImportFailure("import-invalid");
 				} finally {
 					setBusy(false);
 				}
@@ -849,21 +849,17 @@ window.__ModuleLoader__.load({
 							className: mcp_settings_module_css_default.actions,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 								variant: "outline",
-								disabled: busy || !snapshot.writable,
-								"aria-expanded": importMode,
+								disabled: busy || !snapshot.writable || importJson.trim() === "",
+								"aria-controls": "managed-mcp-import",
 								onClick: () => {
-									setImportMode(!importMode);
-									setActiveEditorId(void 0);
-									setImportState(void 0);
-									setFailure(void 0);
+									importServers();
 								},
-								children: t("managed.import")
+								children: busy ? t("checking") : t("managed.import")
 							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 								variant: "primary",
 								disabled: busy || !snapshot.writable,
 								"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
 								onClick: () => {
-									setImportMode(false);
 									if (!isEditingExisting && activeEditorId === draft.id) setActiveEditorId(void 0);
 									else {
 										const next = emptyDraft();
@@ -877,7 +873,8 @@ window.__ModuleLoader__.load({
 							})]
 						})]
 					}),
-					importMode && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+						id: "managed-mcp-import",
 						className: mcp_settings_module_css_default.fieldGroup,
 						"aria-label": t("managed.import"),
 						children: [
@@ -892,26 +889,15 @@ window.__ModuleLoader__.load({
 								})]
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("managed.import.hint") }),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: mcp_settings_module_css_default.actions,
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "primary",
-									disabled: busy || !snapshot.writable || importJson.trim() === "",
-									onClick: () => {
-										importServers();
-									},
-									children: busy ? t("checking") : t("managed.import.action")
-								})
-							}),
 							importState !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.status,
 								role: "status",
 								children: importState
 							}),
-							failure !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+							importFailure !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.error,
 								role: "alert",
-								children: managedFailureLabel(t, failure)
+								children: managedFailureLabel(t, importFailure)
 							})
 						]
 					}),

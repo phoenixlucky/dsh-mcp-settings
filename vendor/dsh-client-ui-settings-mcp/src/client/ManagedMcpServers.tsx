@@ -50,8 +50,8 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const [activeEditorId, setActiveEditorId] = useState<string>()
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<'save' | 'credential' | 'check' | 'invalid' | 'import-invalid'>()
+  const [importFailure, setImportFailure] = useState<'save' | 'credential' | 'import-invalid'>()
   const [checkState, setCheckState] = useState<string>()
-  const [importMode, setImportMode] = useState(false)
   const [importJson, setImportJson] = useState('')
   const [importState, setImportState] = useState<string>()
 
@@ -174,7 +174,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     catch { setFailure('save') } finally { setBusy(false) }
   }
   const importServers = async () => {
-    setBusy(true); setFailure(undefined); setImportState(undefined)
+    setBusy(true); setImportFailure(undefined); setImportState(undefined)
     try {
       const parsed: unknown = JSON.parse(importJson)
       if (!isRecord(parsed) || !isRecord(parsed.mcpServers)) throw new Error('invalid')
@@ -212,9 +212,9 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
           const ref = `MCP_IMPORT_${randomUUID().replaceAll('-', '')}`
           try {
             const reply = await remote.credentials.set(ref, value)
-            if (!reply.ok) { setFailure('credential'); return }
+            if (!reply.ok) { setImportFailure('credential'); return }
           } catch {
-            setFailure('credential')
+            setImportFailure('credential')
             return
           }
           headerRefs[name] = ref
@@ -222,12 +222,12 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         next.push({ id: randomUUID(), serverName: candidate.serverName, enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: candidate.url, headers: candidate.headers, headerRefs })
       }
       try { if (next.length > 0) await saveServers([...servers, ...next]) }
-      catch { setFailure('save'); return }
+      catch { setImportFailure('save'); return }
       setImportJson('')
       setImportState(t('managed.import.complete').replace('{imported}', String(next.length)).replace('{skipped}', String(skipped)))
     } catch {
       setImportState(undefined)
-      setFailure('import-invalid')
+      setImportFailure('import-invalid')
     } finally { setBusy(false) }
   }
   const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.serverName === server.serverName)
@@ -287,14 +287,8 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         <div className={css.cardCopy}><h3 className={css.cardTitle}>{t('managed.title')}</h3><p className={css.cardDescription}>{t('managed.description')}</p></div>
       </div>
       <div className={css.actions}>
-      <Button variant="outline" disabled={busy || !snapshot.writable} aria-expanded={importMode} onClick={() => {
-        setImportMode(!importMode)
-        setActiveEditorId(undefined)
-        setImportState(undefined)
-        setFailure(undefined)
-      }}>{t('managed.import')}</Button>
+      <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} aria-controls="managed-mcp-import" onClick={() => { void importServers() }}>{busy ? t('checking') : t('managed.import')}</Button>
       <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
-        setImportMode(false)
         if (!isEditingExisting && activeEditorId === draft.id) setActiveEditorId(undefined)
         else {
           const next = emptyDraft()
@@ -306,13 +300,12 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       }}>{t('managed.add')}</Button>
       </div>
     </header>
-    {importMode && <section className={css.fieldGroup} aria-label={t('managed.import')}>
+    <section id="managed-mcp-import" className={css.fieldGroup} aria-label={t('managed.import')}>
       <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => setImportJson(event.currentTarget.value)} placeholder={t('managed.import.placeholder')} /></label>
       <small>{t('managed.import.hint')}</small>
-      <div className={css.actions}><Button variant="primary" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={() => { void importServers() }}>{busy ? t('checking') : t('managed.import.action')}</Button></div>
       {importState !== undefined && <p className={css.status} role="status">{importState}</p>}
-      {failure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, failure)}</p>}
-    </section>}
+      {importFailure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, importFailure)}</p>}
+    </section>
     <div className={css.serverList}>
       {servers.length === 0 && activeEditorId !== draft.id && <p>{t('managed.empty')}</p>}
       {servers.map((server) => {
