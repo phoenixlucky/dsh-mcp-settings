@@ -19,7 +19,6 @@ const elements = {
   form: $('#server-form'),
   formErrors: $('#form-errors'),
   httpFields: $('#http-fields'),
-  importJsonPanel: $('#import-json-panel'),
   importJsonText: $('#import-json-text'),
   purpose: $('#purpose'),
   purposeNote: $('#purpose-note'),
@@ -289,8 +288,6 @@ function importJson(text) {
     const saved = saveDraft();
     renderServerList();
     resetForm();
-    elements.importJsonPanel.hidden = true;
-    $('#import-json-toggle').setAttribute('aria-expanded', 'false');
     elements.importJsonText.value = '';
     if (saved) showMessage(`已导入 ${state.servers.length} 个服务到本地草稿。`, 'success');
   } catch {
@@ -576,19 +573,6 @@ elements.clearDraft.addEventListener('click', () => {
   resetForm();
   renderServerList();
   if (saved) showMessage('本地草稿已清空。', 'success');
-});
-
-$('#import-json-toggle').addEventListener('click', (event) => {
-  const button = event.currentTarget;
-  elements.importJsonPanel.hidden = !elements.importJsonPanel.hidden;
-  button.setAttribute('aria-expanded', String(!elements.importJsonPanel.hidden));
-  if (!elements.importJsonPanel.hidden) elements.importJsonText.focus();
-});
-
-$('#cancel-import-json').addEventListener('click', () => {
-  elements.importJsonPanel.hidden = true;
-  $('#import-json-toggle').setAttribute('aria-expanded', 'false');
-  $('#import-json-toggle').focus();
 });
 
 $('#import-json-submit').addEventListener('click', () => {
