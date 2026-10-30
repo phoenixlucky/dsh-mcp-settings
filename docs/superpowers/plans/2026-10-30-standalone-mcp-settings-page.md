@@ -64,7 +64,7 @@
 - [x] Create accessible semantic markup for the server list, editor, import/export controls, and live validation messages.
 - [x] Style the page locally for desktop and narrow screens; labels, keyboard focus, and button names remain visible and clear.
 - [x] Implement add/edit/remove/enable actions for HTTP and stdio rows, including `purpose`, non-secret `headers`, `headerRefs`, `args`, `cwd`, and `envRefs`; explain that `project-memory` requires a registered consumer and does not publish model tools.
-- [x] Implement validation for required fields, unique ids/names, HTTP URL policy (HTTPS or loopback HTTP, with no URL credentials), header names/values and secret-name collisions, credential reference names, and stdio environment-reference names.
+- [x] Implement validation for required fields, unique ids/names, HTTP URL policy (HTTPS or loopback/private IPv4 HTTP, with no URL credentials), header names/values and secret-name collisions, credential reference names, and stdio environment-reference names.
 - [x] Load and save versioned drafts in local storage; malformed or unavailable storage shows a non-blocking message and leaves editing usable.
 - [ ] Open the page in a browser and manually verify create, edit, delete, toggle, purpose selection, transport switch, persistence, focus order, and narrow layout. Not run: no regular browser provider is available in this session.
 

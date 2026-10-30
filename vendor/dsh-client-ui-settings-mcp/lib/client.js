@@ -1472,7 +1472,8 @@ window.__ModuleLoader__.load({
 				const url = new URL(input);
 				const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/gu, "");
 				const loopback = hostname === "localhost" || /^127(?:\.\d{1,3}){3}$/u.test(hostname) || hostname === "::1";
-				return url.username === "" && url.password === "" && (url.protocol === "https:" || url.protocol === "http:" && loopback);
+				const privateIpv4 = /^10(?:\.\d{1,3}){3}$/u.test(hostname) || /^192\.168(?:\.\d{1,3}){2}$/u.test(hostname) || /^172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2}$/u.test(hostname);
+				return url.username === "" && url.password === "" && (url.protocol === "https:" || url.protocol === "http:" && (loopback || privateIpv4));
 			} catch (error) {
 				return false;
 			}
@@ -1542,7 +1543,7 @@ window.__ModuleLoader__.load({
 			title: "MCP",
 			pageTitle: "MCP settings",
 			pageDescription: "Configure every MCP server in one managed list.",
-			endpointHint: "Use HTTPS, or HTTP on this computer only.",
+			endpointHint: "Use HTTPS, or HTTP on localhost or a private IPv4 address.",
 			appearanceTitle: "MCP card appearance",
 			serverName: "Server name",
 			serverNameHint: "Use the stable serverName from its MCP client entry.",
@@ -1621,7 +1622,7 @@ window.__ModuleLoader__.load({
 			title: "MCP",
 			pageTitle: "MCP 设置",
 			pageDescription: "在一个托管列表中配置所有 MCP 服务器。",
-			endpointHint: "请使用 HTTPS；HTTP 仅允许本机回环地址。",
+			endpointHint: "请使用 HTTPS；HTTP 仅允许本机回环地址或私有 IPv4 地址。",
 			appearanceTitle: "MCP 卡片外观",
 			serverName: "服务名称",
 			serverNameHint: "填写 MCP 客户端配置中的稳定 serverName。",

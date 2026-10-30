@@ -395,8 +395,11 @@ function isAllowedEndpoint(input) {
         const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/gu, '');
         const loopback = hostname === 'localhost'
             || /^127(?:\.\d{1,3}){3}$/u.test(hostname) || hostname === '::1';
+        const privateIpv4 = /^10(?:\.\d{1,3}){3}$/u.test(hostname)
+            || /^192\.168(?:\.\d{1,3}){2}$/u.test(hostname)
+            || /^172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2}$/u.test(hostname);
         return url.username === '' && url.password === ''
-            && (url.protocol === 'https:' || (url.protocol === 'http:' && loopback));
+            && (url.protocol === 'https:' || (url.protocol === 'http:' && (loopback || privateIpv4)));
     }
     catch (error) {
         void error;

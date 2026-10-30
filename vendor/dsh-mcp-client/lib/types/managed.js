@@ -362,8 +362,10 @@ function validateHttpUrl(input) {
         || (isIP(address) === 4 && address.startsWith('127.'))
         || address === '::1'
         || (address.startsWith('::ffff:') && isIP(address.slice(7)) === 4 && address.slice(7).startsWith('127.'));
-    if (url.username !== '' || url.password !== '' || !(url.protocol === 'https:' || (url.protocol === 'http:' && loopback))) {
-        throw new TypeError('MCP endpoint must use HTTPS or HTTP on a loopback address, without URL credentials');
+    const privateIpv4 = isIP(address) === 4 && (address.startsWith('10.') || address.startsWith('192.168.')
+        || /^172\.(?:1[6-9]|2\d|3[01])\./u.test(address));
+    if (url.username !== '' || url.password !== '' || !(url.protocol === 'https:' || (url.protocol === 'http:' && (loopback || privateIpv4)))) {
+        throw new TypeError('MCP endpoint must use HTTPS or HTTP on a loopback/private IPv4 address, without URL credentials');
     }
     return url;
 }
