@@ -17,11 +17,11 @@ kind: "package-bundle"
 
 ## 配置 MCP 服务
 
-将本 bundle 安装到 profile 后，可在 DSH「设置 → MCP 服务器」中管理服务。在此添加 Streamable HTTP 或 stdio 服务，也可以粘贴 `mcpServers` JSON 并点击「导入 JSON」。JSON 导入支持 Streamable HTTP 条目；`Authorization` 等敏感请求头会保存到 DSH credential store。
+将本 bundle 安装到 profile 后，可在 DSH「设置 → MCP 服务器」中管理服务。该设置页面由本 bundle 提供，并直接写入托管服务器配置。你可以添加 Streamable HTTP 或 stdio 服务，也可以在始终显示的文本框中粘贴 `mcpServers` JSON，再点击「导入 JSON」。`Authorization` 等敏感请求头会保存到 DSH credential store。
 
 ## 理解实现
 
-`cordis.patch.yml` 只插入一个初始服务列表为空的托管管理器。设置页面编辑管理器中的服务列表；profile 加载后，管理器会启动已配置的服务。
+`cordis.patch.yml` 插入一个初始服务列表为空的托管管理器。本 bundle 的 Client 设置页面直接编辑该管理器中的服务列表，不需要浏览器本地草稿或单独导出、应用；profile 加载后，管理器会启动已配置的服务。
 
 ## 模型可用工具
 
@@ -29,7 +29,7 @@ kind: "package-bundle"
 
 ## 已知限制
 
-- JSON 导入支持 `mcpServers` 对象中的 Streamable HTTP 条目。stdio 服务请从设置表单添加。
+- JSON 导入支持 `mcpServers` 对象中的 Streamable HTTP 条目，也支持 `servers` 数组中的托管服务器条目。stdio 服务可从设置表单添加，或使用托管格式导入。
 
 ## 随仓库提供的依赖
 

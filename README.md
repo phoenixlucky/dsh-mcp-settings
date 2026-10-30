@@ -17,11 +17,11 @@ This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The
 
 ## Configure MCP servers
 
-After installing this bundle in a profile, manage servers from DSH Settings → MCP Servers. Add Streamable HTTP or stdio servers there, or paste an `mcpServers` JSON configuration and select **Import JSON**. JSON import accepts Streamable HTTP entries; sensitive headers such as `Authorization` are saved in DSH's credential store.
+After installing this bundle in a profile, manage servers from DSH Settings → MCP Servers. The page is provided by this bundle and writes directly to its managed server settings. Add Streamable HTTP or stdio servers there, or paste an `mcpServers` JSON configuration into the visible text box and select **Import JSON**. Sensitive headers such as `Authorization` are saved in DSH's credential store.
 
 ## Understand the implementation
 
-`cordis.patch.yml` inserts only the managed server manager with an empty server list. The settings page edits that manager's server list. The manager starts configured servers after the profile loads.
+`cordis.patch.yml` inserts the managed server manager with an empty server list. This bundle's Client settings page edits that manager's server list directly, without a browser-local draft or a separate export/apply step. The manager starts configured servers after the profile loads.
 
 ## Model experience
 
@@ -29,7 +29,7 @@ Only a successfully connected server with purpose `model-tools` publishes tools 
 
 ## Known limitations
 
-- JSON import supports Streamable HTTP entries from an `mcpServers` object. Add stdio servers from the settings form.
+- JSON import accepts Streamable HTTP entries from an `mcpServers` object or managed server entries from a `servers` array. Add stdio servers from the settings form or import them in the managed format.
 
 ## Vendored packages
 

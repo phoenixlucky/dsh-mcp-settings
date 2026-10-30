@@ -177,37 +177,83 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     setBusy(true); setImportFailure(undefined); setImportState(undefined)
     try {
       const parsed: unknown = JSON.parse(importJson)
-      if (!isRecord(parsed) || !isRecord(parsed.mcpServers)) throw new Error('invalid')
+      if (!isRecord(parsed) || (parsed.mcpServers !== undefined && parsed.servers !== undefined)) throw new Error('invalid')
       const existingNames = new Set(servers.map(server => server.serverName.toLowerCase()))
       const importedNames = new Set<string>()
-      const candidates: { serverName: string; url: string; headers: Record<string, string>; secrets: Record<string, string> }[] = []
+      const candidates: { server: Omit<ManagedMcpServer, 'id'>; secrets: Record<string, string> }[] = []
       let skipped = 0
-      for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
-        if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) { skipped++; continue }
-        if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName) || !isRecord(raw)
-          || raw.type !== 'streamable-http' || typeof raw.url !== 'string' || !isAllowedEndpoint(raw.url)
-          || (raw.headers !== undefined && !isRecord(raw.headers))) throw new Error('invalid')
-        const headers = Object.create(null) as Record<string, string>
-        const secrets = Object.create(null) as Record<string, string>
-        const headerNames = new Set<string>()
-        for (const [name, value] of Object.entries(raw.headers ?? {})) {
-          const normalized = name.toLowerCase()
-          if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof value !== 'string'
-            || /[\r\n]/u.test(value) || headerNames.has(normalized)) throw new Error('invalid')
-          headerNames.add(normalized)
-          if (/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)) {
-            secrets[name] = value
-          } else headers[name] = value
-        }
+      const append = (serverName: string, server: Omit<ManagedMcpServer, 'id'>, secrets: Record<string, string>) => {
+        if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName)) throw new Error('invalid')
+        if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) { skipped++; return }
         importedNames.add(serverName.toLowerCase())
-        candidates.push({ serverName, url: raw.url, headers, secrets })
+        candidates.push({ server, secrets })
       }
+      if (isRecord(parsed.mcpServers)) {
+        for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
+          if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) { skipped++; continue }
+          if (!isRecord(raw) || raw.type !== 'streamable-http' || typeof raw.url !== 'string' || !isAllowedEndpoint(raw.url)
+            || (raw.headers !== undefined && !isRecord(raw.headers))) throw new Error('invalid')
+          const headers = Object.create(null) as Record<string, string>
+          const secrets = Object.create(null) as Record<string, string>
+          const headerNames = new Set<string>()
+          for (const [name, value] of Object.entries(raw.headers ?? {})) {
+            const normalized = name.toLowerCase()
+            if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof value !== 'string'
+              || /[\r\n]/u.test(value) || headerNames.has(normalized)) throw new Error('invalid')
+            headerNames.add(normalized)
+            if (/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)) secrets[name] = value
+            else headers[name] = value
+          }
+          append(serverName, { serverName, enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: raw.url, headers, headerRefs: {} }, secrets)
+        }
+      } else if (Array.isArray(parsed.servers)) {
+        for (const raw of parsed.servers) {
+          if (!isRecord(raw) || typeof raw.serverName !== 'string') throw new Error('invalid')
+          const serverName = raw.serverName
+          if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) { skipped++; continue }
+          if (typeof raw.enabled !== 'boolean' || (raw.purpose !== undefined && raw.purpose !== 'model-tools' && raw.purpose !== 'project-memory')) throw new Error('invalid')
+          const purpose = raw.purpose ?? 'model-tools'
+          if (raw.transport === 'streamable-http' && typeof raw.url === 'string' && isAllowedEndpoint(raw.url)
+            && (raw.headers === undefined || isRecord(raw.headers)) && (raw.headerRefs === undefined || isRecord(raw.headerRefs))) {
+            const headers = Object.create(null) as Record<string, string>
+            const headerRefs = Object.create(null) as Record<string, string>
+            const secrets = Object.create(null) as Record<string, string>
+            const headerNames = new Set<string>()
+            for (const [name, value] of Object.entries(raw.headers ?? {})) {
+              const normalized = name.toLowerCase()
+              if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof value !== 'string'
+                || /[\r\n]/u.test(value) || headerNames.has(normalized)) throw new Error('invalid')
+              headerNames.add(normalized)
+              if (/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)) secrets[name] = value
+              else headers[name] = value
+            }
+            for (const [name, ref] of Object.entries(raw.headerRefs ?? {})) {
+              const normalized = name.toLowerCase()
+              if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof ref !== 'string'
+                || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref) || headerNames.has(normalized)) throw new Error('invalid')
+              headerNames.add(normalized)
+              headerRefs[name] = ref
+            }
+            append(serverName, { serverName, enabled: raw.enabled, purpose, transport: 'streamable-http', url: raw.url, headers, headerRefs }, secrets)
+          } else if (raw.transport === 'stdio' && typeof raw.command === 'string' && raw.command.trim() !== ''
+            && Array.isArray(raw.args) && raw.args.every(value => typeof value === 'string') && typeof raw.cwd === 'string'
+            && (raw.envRefs === undefined || isRecord(raw.envRefs))) {
+            const envRefs = Object.create(null) as Record<string, string>
+            for (const [name, ref] of Object.entries(raw.envRefs ?? {})) {
+              if (!/^[A-Za-z_][A-Za-z0-9_]*$/u.test(name) || typeof ref !== 'string' || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref)) throw new Error('invalid')
+              envRefs[name] = ref
+            }
+            append(serverName, { serverName, enabled: raw.enabled, purpose, transport: 'stdio', command: raw.command.trim(), args: raw.args as string[], cwd: raw.cwd, envRefs }, {})
+          } else throw new Error('invalid')
+        }
+      } else throw new Error('invalid')
       if (candidates.length === 0) {
         if (skipped === 0) throw new Error('invalid')
       }
       const next: ManagedMcpServer[] = []
       for (const candidate of candidates) {
-        const headerRefs = Object.create(null) as Record<string, string>
+        const server = candidate.server
+        const refs = server.transport === 'streamable-http' ? { ...server.headerRefs } : { ...server.envRefs }
         for (const [name, value] of Object.entries(candidate.secrets)) {
           const ref = `MCP_IMPORT_${randomUUID().replaceAll('-', '')}`
           try {
@@ -217,9 +263,11 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
             setImportFailure('credential')
             return
           }
-          headerRefs[name] = ref
+          refs[name] = ref
         }
-        next.push({ id: randomUUID(), serverName: candidate.serverName, enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: candidate.url, headers: candidate.headers, headerRefs })
+        next.push(server.transport === 'streamable-http'
+          ? { ...server, id: randomUUID(), headerRefs: refs }
+          : { ...server, id: randomUUID(), envRefs: refs })
       }
       try { if (next.length > 0) await saveServers([...servers, ...next]) }
       catch { setImportFailure('save'); return }
@@ -287,7 +335,6 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         <div className={css.cardCopy}><h3 className={css.cardTitle}>{t('managed.title')}</h3><p className={css.cardDescription}>{t('managed.description')}</p></div>
       </div>
       <div className={css.actions}>
-      <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} aria-controls="managed-mcp-import" onClick={() => { void importServers() }}>{busy ? t('checking') : t('managed.import')}</Button>
       <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
         if (!isEditingExisting && activeEditorId === draft.id) setActiveEditorId(undefined)
         else {
@@ -303,6 +350,9 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     <section id="managed-mcp-import" className={css.fieldGroup} aria-label={t('managed.import')}>
       <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => setImportJson(event.currentTarget.value)} placeholder={t('managed.import.placeholder')} /></label>
       <small>{t('managed.import.hint')}</small>
+      <div className={css.actions}>
+        <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={() => { void importServers() }}>{busy ? t('checking') : t('managed.import')}</Button>
+      </div>
       {importState !== undefined && <p className={css.status} role="status">{importState}</p>}
       {importFailure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, importFailure)}</p>}
     </section>

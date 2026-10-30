@@ -31,7 +31,7 @@ export function apply(ctx: ClientContext): void {
     let stopSection: (() => void) | undefined
     const managed = ctx.configForms.get<ManagedSettings>('mcp-server-manager')
     stopSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
-      name: 'settings.section', id: 'mcp', order: 14, label: () => t('title'), locale: NS,
+      name: 'settings.section', id: 'mcp', order: 14, priority: -1, label: () => t('title'), locale: NS,
       inject: () => ({ managedForm: managed, remote: ctx.remote }),
     }, McpConnectionsPage))
     return () => stopSection?.()

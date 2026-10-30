@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "@deepseek-ai/dsh-client-ui-settings-mcp",
+	id: "@deepseek-ai/dsh-mcp-settings",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;
@@ -40,10 +40,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
 		const css = ".oetn4G_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 12%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:var(--dsw-alias-bg-layer-1);--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:76rem;margin-inline:auto;display:grid}.oetn4G_pageHeader{align-items:center;gap:var(--mcp-space-4);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.oetn4G_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_card{align-content:start;gap:var(--mcp-space-4);width:100%;min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:0 1px 2px color-mix(in srgb, var(--dsw-alias-label-primary) 5%, transparent);display:grid;container-type:inline-size}.oetn4G_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);display:flex}.oetn4G_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.oetn4G_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.oetn4G_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.oetn4G_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:color-mix(in srgb, var(--dsw-alias-bg-layer-1) 78%, transparent);display:grid}.oetn4G_fieldGroupTitle{padding-bottom:var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.oetn4G_formGrid{gap:var(--mcp-space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_formGrid .oetn4G_field{align-items:center;column-gap:var(--mcp-space-3);grid-template-columns:minmax(7rem,.8fr) minmax(0,1.2fr)}.oetn4G_field input,.oetn4G_field textarea,.oetn4G_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.oetn4G_field textarea:focus-visible,.oetn4G_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field textarea:disabled,.oetn4G_field select:disabled{opacity:.6}.oetn4G_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field input:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:1px solid var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.oetn4G_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.oetn4G_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.oetn4G_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.oetn4G_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4) var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;transition:border-color .14s,box-shadow .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 38%, var(--mcp-card-stroke));box-shadow:0 2px 8px color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent)}.oetn4G_serverCard strong{color:var(--dsw-alias-label-primary)}.oetn4G_serverCard p{margin:0}.oetn4G_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.oetn4G_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_serverState{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-2);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, var(--dsw-alias-settings-card-fill));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;line-height:1.2;display:inline-flex}.oetn4G_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_serverCardEditing{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 42%, var(--mcp-card-stroke));background:color-mix(in srgb, var(--dsw-static-amber-100) 10%, var(--dsw-alias-settings-card-fill));grid-template-columns:minmax(0,1fr)}.oetn4G_serverCardEditing>p{white-space:normal;border:0;padding:0}.oetn4G_serverCardEditing>.oetn4G_actions,.oetn4G_serverCardEditing>section{grid-column:1/-1}.oetn4G_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_toolCount{width:fit-content;padding:var(--mcp-space-2) var(--mcp-space-3);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14)}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}@container (width<=48rem){.oetn4G_serverCard:not(.oetn4G_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_serverHeading{grid-column:1/-1}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.oetn4G_cardHeader{flex-wrap:wrap;align-items:flex-start}.oetn4G_cardIdentity{flex:100%}.oetn4G_cardHeader>.oetn4G_actions{justify-content:flex-start;width:100%}.oetn4G_formGrid{grid-template-columns:minmax(0,1fr)}.oetn4G_enableControl{flex:auto;justify-content:space-between;max-width:100%}.oetn4G_serverCard:not(.oetn4G_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-start}}@container (width>=38rem){.oetn4G_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.oetn4G_field small{grid-column:2}.oetn4G_secretRow .oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_secretRow .oetn4G_field small{grid-column:1}}@container (width<=32rem){.oetn4G_card{padding:var(--mcp-space-3)}.oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_field small{grid-column:1}.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}.oetn4G_actions{justify-content:flex-start}.oetn4G_secretRow{grid-template-columns:minmax(0,1fr)}.oetn4G_serverHeading{flex-wrap:wrap;align-items:flex-start}.oetn4G_serverCard>.oetn4G_actions{justify-content:flex-start}.oetn4G_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard>p{white-space:normal;border:0;padding:0}}";
-		const tagId = "@deepseek-ai/dsh-client-ui-settings-mcp/mcp-settings.module.css";
+		const tagId = "@deepseek-ai/dsh-mcp-settings/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-settings-mcp";
+			tag.dataset.plugin = "@deepseek-ai/dsh-mcp-settings";
 			tag.dataset.pluginCss = tagId;
 			tag.textContent = css;
 			document.head.appendChild(tag);
@@ -485,17 +485,29 @@ window.__ModuleLoader__.load({
 				setImportState(void 0);
 				try {
 					const parsed = JSON.parse(importJson);
-					if (!isRecord(parsed) || !isRecord(parsed.mcpServers)) throw new Error("invalid");
+					if (!isRecord(parsed) || parsed.mcpServers !== void 0 && parsed.servers !== void 0) throw new Error("invalid");
 					const existingNames = new Set(servers.map((server) => server.serverName.toLowerCase()));
 					const importedNames = /* @__PURE__ */ new Set();
 					const candidates = [];
 					let skipped = 0;
-					for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
+					const append = (serverName, server, secrets) => {
+						if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName)) throw new Error("invalid");
+						if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) {
+							skipped++;
+							return;
+						}
+						importedNames.add(serverName.toLowerCase());
+						candidates.push({
+							server,
+							secrets
+						});
+					};
+					if (isRecord(parsed.mcpServers)) for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
 						if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) {
 							skipped++;
 							continue;
 						}
-						if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName) || !isRecord(raw) || raw.type !== "streamable-http" || typeof raw.url !== "string" || !isAllowedEndpoint(raw.url) || raw.headers !== void 0 && !isRecord(raw.headers)) throw new Error("invalid");
+						if (!isRecord(raw) || raw.type !== "streamable-http" || typeof raw.url !== "string" || !isAllowedEndpoint(raw.url) || raw.headers !== void 0 && !isRecord(raw.headers)) throw new Error("invalid");
 						const headers = Object.create(null);
 						const secrets = Object.create(null);
 						const headerNames = /* @__PURE__ */ new Set();
@@ -506,20 +518,78 @@ window.__ModuleLoader__.load({
 							if (/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)) secrets[name] = value;
 							else headers[name] = value;
 						}
-						importedNames.add(serverName.toLowerCase());
-						candidates.push({
+						append(serverName, {
 							serverName,
+							enabled: true,
+							purpose: "model-tools",
+							transport: "streamable-http",
 							url: raw.url,
 							headers,
-							secrets
-						});
+							headerRefs: {}
+						}, secrets);
 					}
+					else if (Array.isArray(parsed.servers)) for (const raw of parsed.servers) {
+						if (!isRecord(raw) || typeof raw.serverName !== "string") throw new Error("invalid");
+						const serverName = raw.serverName;
+						if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) {
+							skipped++;
+							continue;
+						}
+						if (typeof raw.enabled !== "boolean" || raw.purpose !== void 0 && raw.purpose !== "model-tools" && raw.purpose !== "project-memory") throw new Error("invalid");
+						const purpose = raw.purpose ?? "model-tools";
+						if (raw.transport === "streamable-http" && typeof raw.url === "string" && isAllowedEndpoint(raw.url) && (raw.headers === void 0 || isRecord(raw.headers)) && (raw.headerRefs === void 0 || isRecord(raw.headerRefs))) {
+							const headers = Object.create(null);
+							const headerRefs = Object.create(null);
+							const secrets = Object.create(null);
+							const headerNames = /* @__PURE__ */ new Set();
+							for (const [name, value] of Object.entries(raw.headers ?? {})) {
+								const normalized = name.toLowerCase();
+								if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof value !== "string" || /[\r\n]/u.test(value) || headerNames.has(normalized)) throw new Error("invalid");
+								headerNames.add(normalized);
+								if (/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)) secrets[name] = value;
+								else headers[name] = value;
+							}
+							for (const [name, ref] of Object.entries(raw.headerRefs ?? {})) {
+								const normalized = name.toLowerCase();
+								if (!/^[!#$%&'*+\-.^_\x60|~0-9A-Za-z]+$/u.test(name) || typeof ref !== "string" || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref) || headerNames.has(normalized)) throw new Error("invalid");
+								headerNames.add(normalized);
+								headerRefs[name] = ref;
+							}
+							append(serverName, {
+								serverName,
+								enabled: raw.enabled,
+								purpose,
+								transport: "streamable-http",
+								url: raw.url,
+								headers,
+								headerRefs
+							}, secrets);
+						} else if (raw.transport === "stdio" && typeof raw.command === "string" && raw.command.trim() !== "" && Array.isArray(raw.args) && raw.args.every((value) => typeof value === "string") && typeof raw.cwd === "string" && (raw.envRefs === void 0 || isRecord(raw.envRefs))) {
+							const envRefs = Object.create(null);
+							for (const [name, ref] of Object.entries(raw.envRefs ?? {})) {
+								if (!/^[A-Za-z_][A-Za-z0-9_]*$/u.test(name) || typeof ref !== "string" || !/^[A-Za-z_][A-Za-z0-9_]*$/u.test(ref)) throw new Error("invalid");
+								envRefs[name] = ref;
+							}
+							append(serverName, {
+								serverName,
+								enabled: raw.enabled,
+								purpose,
+								transport: "stdio",
+								command: raw.command.trim(),
+								args: raw.args,
+								cwd: raw.cwd,
+								envRefs
+							}, {});
+						} else throw new Error("invalid");
+					}
+					else throw new Error("invalid");
 					if (candidates.length === 0) {
 						if (skipped === 0) throw new Error("invalid");
 					}
 					const next = [];
 					for (const candidate of candidates) {
-						const headerRefs = Object.create(null);
+						const server = candidate.server;
+						const refs = server.transport === "streamable-http" ? { ...server.headerRefs } : { ...server.envRefs };
 						for (const [name, value] of Object.entries(candidate.secrets)) {
 							const ref = `MCP_IMPORT_${randomUUID().replaceAll("-", "")}`;
 							try {
@@ -531,17 +601,16 @@ window.__ModuleLoader__.load({
 								setImportFailure("credential");
 								return;
 							}
-							headerRefs[name] = ref;
+							refs[name] = ref;
 						}
-						next.push({
+						next.push(server.transport === "streamable-http" ? {
+							...server,
 							id: randomUUID(),
-							serverName: candidate.serverName,
-							enabled: true,
-							purpose: "model-tools",
-							transport: "streamable-http",
-							url: candidate.url,
-							headers: candidate.headers,
-							headerRefs
+							headerRefs: refs
+						} : {
+							...server,
+							id: randomUUID(),
+							envRefs: refs
 						});
 					}
 					try {
@@ -845,17 +914,9 @@ window.__ModuleLoader__.load({
 									children: t("managed.description")
 								})]
 							})]
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 							className: mcp_settings_module_css_default.actions,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-								variant: "outline",
-								disabled: busy || !snapshot.writable || importJson.trim() === "",
-								"aria-controls": "managed-mcp-import",
-								onClick: () => {
-									importServers();
-								},
-								children: busy ? t("checking") : t("managed.import")
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 								variant: "primary",
 								disabled: busy || !snapshot.writable,
 								"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
@@ -870,7 +931,7 @@ window.__ModuleLoader__.load({
 									setCheckState(void 0);
 								},
 								children: t("managed.add")
-							})]
+							})
 						})]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
@@ -889,6 +950,17 @@ window.__ModuleLoader__.load({
 								})]
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("managed.import.hint") }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+								className: mcp_settings_module_css_default.actions,
+								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									variant: "outline",
+									disabled: busy || !snapshot.writable || importJson.trim() === "",
+									onClick: () => {
+										importServers();
+									},
+									children: busy ? t("checking") : t("managed.import")
+								})
+							}),
 							importState !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.status,
 								role: "status",
@@ -1243,6 +1315,7 @@ window.__ModuleLoader__.load({
 					name: "settings.section",
 					id: "mcp",
 					order: 14,
+					priority: -1,
 					label: () => t("title"),
 					locale: NS,
 					inject: () => ({
