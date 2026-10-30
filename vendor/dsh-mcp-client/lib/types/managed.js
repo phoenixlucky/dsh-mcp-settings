@@ -168,7 +168,7 @@ let ManagedMcpServerManager = (() => {
          * @returns Completion after every changed row has been reconciled.
          */
         async reconcile(servers, restartIds = new Set()) {
-            const snapshot = validateManagedServers(servers);
+            const snapshot = this.acceptServers(servers);
             const task = this.tail.then(async () => {
                 if (this.disposed)
                     return;
@@ -206,6 +206,33 @@ let ManagedMcpServerManager = (() => {
                 this.ctx.logger.error('mcp-server-manager: server update failed (%s)', error instanceof Error ? error.name : 'unknown error');
             });
             return this.tail;
+        }
+        /** Accept each configured row on its own so one invalid row cannot stop the rest.
+         * @param servers - Complete next settings list.
+         * @returns Accepted rows in input order, without duplicates.
+         */
+        acceptServers(servers) {
+            const ids = new Set();
+            const names = new Set();
+            const accepted = [];
+            for (const server of Array.isArray(servers) ? servers : []) {
+                let row;
+                try {
+                    row = validateManagedServers([server])[0];
+                }
+                catch (error) {
+                    this.ctx.logger.warn('mcp-server-manager: skipped invalid server row (%s)', error instanceof Error ? error.message : 'unknown error');
+                    continue;
+                }
+                if (ids.has(row.id) || names.has(row.serverName)) {
+                    this.ctx.logger.warn('mcp-server-manager: skipped duplicate server "%s"', row.serverName);
+                    continue;
+                }
+                ids.add(row.id);
+                names.add(row.serverName);
+                accepted.push(row);
+            }
+            return accepted;
         }
         /** Stop listening for configuration changes and await all delegated clients.
          * @returns Completion after every delegated client has been disposed.
@@ -255,7 +282,7 @@ export async function checkManagedMcpServer(ctx, credentials, server, timeoutMs)
         if (controller.signal.aborted)
             return { state: 'timed-out' };
         const transport = createTransport(runtime);
-        client = new Client({ name: 'deepseek-harness-mcp-check', version: '0.2.1' });
+        client = new Client({ name: 'deepseek-harness-mcp-check', version: '0.2.1' }, { versionNegotiation: { mode: 'auto' } });
         await client.connect(transport, { signal: controller.signal });
         const result = await client.listTools({}, { signal: controller.signal });
         return { state: 'ready', toolCount: result.tools.length };
