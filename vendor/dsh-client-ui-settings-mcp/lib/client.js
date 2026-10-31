@@ -1711,6 +1711,17 @@ window.__ModuleLoader__.load({
 		/** Register MCP settings while at least one managed MCP setting is available. */
 		async function apply(ctx) {
 			const unmountRemote = await ctx.remote.$mount(TYPERT_REMOTE);
+			const remote = {
+				get credentials() {
+					return ctx.get("remote.credentials");
+				},
+				get mcpServerManager() {
+					return ctx.get("remote.mcpServerManager");
+				},
+				get mcpClientStatus() {
+					return ctx.get("remote.mcpClientStatus");
+				}
+			};
 			const t = ctx.locale.bind(NS);
 			ctx.effect(() => ctx.locale.register(NS, {
 				en,
@@ -1728,14 +1739,14 @@ window.__ModuleLoader__.load({
 					locale: NS,
 					inject: () => ({
 						managedForm: managed,
-						remote: ctx.remote
+						remote
 					})
 				}, McpConnectionsPage));
 				return () => stopSection?.();
 			}), "ui-settings-mcp: connection settings section");
 			const appearanceInjected = () => ({
 				form: ctx.configForms.get("mcp-card-presentation"),
-				remote: ctx.remote
+				remote
 			});
 			ctx.effect(() => ctx.configForms.whileServed(["mcp-card-presentation"], () => ctx.slots.inject("settings.section", () => ctx.slots.register({
 				name: "settings.section",

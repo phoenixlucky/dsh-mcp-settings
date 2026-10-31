@@ -272,11 +272,23 @@ async function checkManagedMcpServer(ctx, credentials, server, timeoutMs) {
 		}
 	}
 }
+/** Copy one configured row into plain JSON so schema checks see primitives, not loader wrappers.
+* @param server - One row from profile settings or a client draft.
+* @returns A detached plain value; malformed input is returned unchanged for the schema to reject.
+*/
+function plainServer(server) {
+	if (typeof server !== "object" || server === null) return server;
+	try {
+		return JSON.parse(JSON.stringify(server));
+	} catch {
+		return server;
+	}
+}
 /** Validate the complete list before any connection is changed. */
 function validateManagedServers(servers) {
 	const ids = /* @__PURE__ */ new Set();
 	const names = /* @__PURE__ */ new Set();
-	const result = servers.map((server) => ManagedServerSchema(server));
+	const result = servers.map((server) => ManagedServerSchema(plainServer(server)));
 	for (const server of result) {
 		if (ids.has(server.id)) throw new TypeError("mcp-server-manager: duplicate server id \"" + server.id + "\"");
 		if (names.has(server.serverName)) throw new TypeError("mcp-server-manager: duplicate serverName \"" + server.serverName + "\"");
@@ -345,7 +357,8 @@ function validateHttpUrl(input) {
 	const hostname = url.hostname.toLowerCase();
 	const address = hostname.replace(/^\[|\]$/gu, "");
 	const loopback = hostname === "localhost" || isIP(address) === 4 && address.startsWith("127.") || address === "::1" || address.startsWith("::ffff:") && isIP(address.slice(7)) === 4 && address.slice(7).startsWith("127.");
-	if (url.username !== "" || url.password !== "" || !(url.protocol === "https:" || url.protocol === "http:" && loopback)) throw new TypeError("MCP endpoint must use HTTPS or HTTP on a loopback address, without URL credentials");
+	const privateIpv4 = isIP(address) === 4 && (address.startsWith("10.") || address.startsWith("192.168.") || /^172\.(?:1[6-9]|2\d|3[01])\./u.test(address));
+	if (url.username !== "" || url.password !== "" || !(url.protocol === "https:" || url.protocol === "http:" && (loopback || privateIpv4))) throw new TypeError("MCP endpoint must use HTTPS or HTTP on a loopback/private IPv4 address, without URL credentials");
 	return url;
 }
 /** Compare settings without exposing values in diagnostics. */
