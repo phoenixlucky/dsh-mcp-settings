@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-mcp-settings",
   "description": "Managed MCP server settings for adding MCP servers",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "publishConfig": {
     "access": "public"
   },
@@ -34,6 +34,7 @@
   },
   "files": [
     "locale/*.json",
+    "assets/*.webp",
     "lib/index.js",
     "lib/managed.js",
     "lib/typert.host.js",

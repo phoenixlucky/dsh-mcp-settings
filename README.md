@@ -7,30 +7,36 @@ kind: "package-bundle"
 
 English | [中文](README.zh.md)
 
-## Summary
+An optional DSH bundle for configuring Streamable HTTP and stdio MCP servers from DSH Settings.
 
-This bundle provides the `mcp-server-manager` runtime for Streamable HTTP and stdio MCP servers. The default server list is empty; the bundle does not preconfigure or automatically start an MCP service.
+![MCP server settings with JSON import](assets/mcp-settings.webp)
 
-## Compatibility
+## Quick start
 
-This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The MCP client runtime is included under `vendor/`.
+From the directory containing this checkout, adjust the local path if your checkout folder has a different name:
 
-## Configure MCP servers
+```sh
+pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings
+```
 
-After installing this bundle in a profile, manage servers from DSH Settings → MCP Servers. The page is provided by this bundle and writes directly to its managed server settings. Add Streamable HTTP or stdio servers there, or paste an `mcpServers` JSON configuration into the visible text box and select **Import JSON**. Sensitive headers such as `Authorization` are saved in DSH's credential store.
+Then open **Settings → MCP Servers** to add a server or import a configuration.
 
-## Understand the implementation
+## Features
 
-`cordis.patch.yml` disables the built-in MCP settings page and inserts the managed server manager with an empty server list. The bundle exports Host Typert metadata under its own package identity for connection checks, while the base MCP client supplies live status. The page edits the manager's server list directly, without a browser-local draft or a separate export/apply step. The manager starts configured servers after the profile loads.
+- Configure Streamable HTTP and stdio MCP servers.
+- Import Streamable HTTP entries from an `mcpServers` JSON object.
+- Store sensitive headers, including `Authorization`, in DSH's credential store.
+- Check a server connection before saving its settings.
+- Keep `project-memory` servers separate from model-facing tools.
 
-## Model experience
+## Runtime behavior
 
-Only a successfully connected server with purpose `model-tools` publishes tools for the model. Purpose `project-memory` is owned by its registered consumer and stays out of the model-facing tool catalog.
+The default server list is empty. Installing the bundle does not preconfigure or start an MCP service. Configured servers start when the profile loads. Only successfully connected servers with purpose `model-tools` publish tools to the model; `project-memory` servers remain with their registered consumer.
 
-## Known limitations
+## Compatibility and implementation
 
-- JSON import accepts Streamable HTTP entries from an `mcpServers` object or managed server entries from a `servers` array. Add stdio servers from the settings form or import them in the managed format.
+This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The MCP client runtime is included under `vendor/`. The bundle disables the built-in MCP settings page, adds the managed server manager, and exports Host Typert metadata for connection checks. The base MCP client provides live connection status.
 
-## Vendored packages
+## Import limitation
 
-This repository includes the MCP client runtime under `vendor/`. The bundle uses relative `file:` dependencies, so the checkout can be moved or cloned. From the directory containing the checkout, install it with `pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings`.
+JSON import accepts Streamable HTTP entries in an `mcpServers` object or managed server entries in a `servers` array. Add stdio servers from the settings form or import them in the managed format. Entries with duplicate names are skipped.
