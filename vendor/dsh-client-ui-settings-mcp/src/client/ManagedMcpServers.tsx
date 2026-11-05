@@ -188,6 +188,16 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     try { await saveServers(servers.map(current => current.id === server.id ? { ...current, enabled } : current)) }
     catch { setFailure('save') } finally { setBusy(false) }
   }
+  const exportServers = () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify({ servers }, null, 2)], { type: 'application/json' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'mcp-servers.json'
+    document.body.append(link)
+    link.click()
+    link.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
   const previewImport = () => {
     setImportFailure(undefined); setImportState(undefined); setImportPreview(undefined)
     try {
@@ -384,16 +394,18 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         <div className={css.cardCopy}><h3 className={css.cardTitle}>{t('managed.title')}</h3><p className={css.cardDescription}>{t('managed.description')}</p></div>
       </div>
       <div className={css.actions}>
-      <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
-        if (!isEditingExisting && activeEditorId === draft.id) closeEditor()
-        else {
-          const next = emptyDraft()
-          setDraft(next)
-          setActiveEditorId(next.id)
-        }
-        setFailure(undefined)
-        setCheckState(undefined)
-      }}>{t('managed.add')}</Button>
+        <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
+          if (!isEditingExisting && activeEditorId === draft.id) closeEditor()
+          else {
+            const next = emptyDraft()
+            setDraft(next)
+            setActiveEditorId(next.id)
+          }
+          setFailure(undefined)
+          setCheckState(undefined)
+        }}>{t('managed.add')}</Button>
+        <Button variant="outline" disabled={servers.length === 0} onClick={exportServers}>{t('managed.export')}</Button>
+        <small className={css.exportHint}>{t('managed.export.notice')}</small>
       </div>
     </header>
     <div className={css.serverFilters}>
@@ -528,9 +540,9 @@ function managedCheckLabel(
 ): string {
   switch (result.state) {
     case 'ready': return t('managed.checkReady').replace('{count}', String(result.toolCount))
-    case 'authorization-required': return t('managed.check.authorization-required')
-    case 'connection-failed': return t('managed.check.connection-failed')
-    case 'timed-out': return t('managed.check.timed-out')
+    case 'authorization-required': return `${t('managed.check.authorization-required')} · ${t('managed.check.advice.authorization-required')}`
+    case 'connection-failed': return `${t('managed.check.connection-failed')} · ${t('managed.check.advice.connection-failed')}`
+    case 'timed-out': return `${t('managed.check.timed-out')} · ${t('managed.check.advice.timed-out')}`
   }
 }
 

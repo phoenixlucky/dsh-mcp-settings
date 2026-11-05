@@ -324,6 +324,13 @@
   gap: var(--mcp-space-2);
 }
 
+.exportHint {
+  flex-basis: 100%;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+  text-align: right;
+}
+
 .serverFilters {
   display: grid;
   grid-template-columns: minmax(12rem, 2fr) repeat(2, minmax(9rem, 1fr)) auto;
@@ -544,6 +551,10 @@
   .cardHeader > .actions {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .exportHint {
+    text-align: left;
   }
 
   .formGrid {
