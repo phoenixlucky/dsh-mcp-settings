@@ -25,8 +25,12 @@ Then open **Settings → MCP Servers** to add a server or import a configuration
 
 - Configure Streamable HTTP and stdio MCP servers.
 - Import Streamable HTTP entries from an `mcpServers` JSON object.
+- Search and filter servers by name, connection state, and transport; inspect tool names and descriptions while connected.
+- Preview JSON imports before saving, and reveal individual secret fields only when needed.
+- Export managed settings as JSON. Credential values stay in the local credential store and must be configured separately in another profile.
 - Store sensitive headers, including `Authorization`, in DSH's credential store.
 - Check a server connection before saving its settings.
+- Get fixed next-step guidance for authorization failures, connection failures, and timeouts.
 - Keep `project-memory` servers separate from model-facing tools.
 
 ## Runtime behavior

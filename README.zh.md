@@ -25,8 +25,12 @@ pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings
 
 - 配置 Streamable HTTP 和 stdio MCP 服务。
 - 从 `mcpServers` JSON 对象导入 Streamable HTTP 服务。
+- 按名称、连接状态和传输方式搜索筛选服务；连接成功时可查看工具名称和描述。
+- 导入前预览 JSON；需要时可单独显示某个密钥输入框。
+- 将托管配置导出为 JSON。密钥值保存在本地凭据库中，需要在其他配置文件中单独设置。
 - `Authorization` 等敏感请求头会保存到 DSH credential store。
 - 保存设置前可检查服务连接。
+- 授权失败、连接失败和超时时会显示固定的排查建议。
 - `project-memory` 服务与模型可用工具分开管理。
 
 ## 运行方式

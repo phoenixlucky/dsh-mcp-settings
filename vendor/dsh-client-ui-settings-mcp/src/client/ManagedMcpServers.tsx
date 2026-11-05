@@ -332,8 +332,13 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         if (next.length > 0) {
           const accepted = await form.mutate([{ op: 'set', path: ['servers'], value: [...(currentSnapshot.value?.servers ?? []), ...next] }], importPreview.revision)
           if (!accepted) {
-            setImportPreview(undefined)
-            setImportState(t('managed.import.previewStale'))
+            const recoveredSnapshot = form.getSnapshot()
+            if (recoveredSnapshot.revision !== importPreview.revision) {
+              setImportPreview(undefined)
+              setImportState(t('managed.import.previewStale'))
+            } else {
+              setImportFailure('save')
+            }
             return
           }
           await refreshStatuses()
