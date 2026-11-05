@@ -19,12 +19,21 @@ interface StatusRow {
   toolCount: number
   tools?: readonly { name: string, description: string }[]
 }
+/** One bounded, user-initiated tool inventory probe for a connected row. */
+interface ToolProbe {
+  state: 'loading' | 'ready' | 'failed'
+  tools?: readonly { name: string, description: string }[]
+  toolCount?: number
+}
 /** One Remote call result as the Client facade returns it. */
 interface RemoteReply<T> { ok: boolean; value?: T; error?: { message?: string } }
 /** `remote.mcpClientStatus` facade mounted by this plugin. */
 export interface McpStatusApi { list(): Promise<RemoteReply<readonly StatusRow[]>> }
 /** `remote.mcpServerManager` facade mounted by this plugin. */
-export interface McpManagerApi { check(server: ManagedMcpServer): Promise<RemoteReply<ManagedMcpCheck>> }
+export interface McpManagerApi {
+  check(server: ManagedMcpServer): Promise<RemoteReply<ManagedMcpCheck>>
+  revealSecret?(ref: string): Promise<RemoteReply<{ value?: string }>>
+}
 interface Injected {
   form: ConfigForm<{ servers?: ManagedMcpServer[] }>
   remote: Remote
@@ -88,7 +97,7 @@ async function probeServers(managerApi: McpManagerApi | undefined, servers: read
       if (!reply.ok) continue
       const result = reply.value
       if (result?.state === 'ready') {
-        rows.push({ serverName: server.serverName, transport: server.transport, state: 'connected', toolCount: result.toolCount })
+        rows.push({ serverName: server.serverName, transport: server.transport, state: 'connected', toolCount: result.toolCount, tools: result.tools })
       }
     } catch {
       // A failed probe leaves the row unknown rather than claiming a disconnect.
@@ -118,7 +127,11 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   const [stateFilter, setStateFilter] = useState<StatusFilter>('all')
   const [transportFilter, setTransportFilter] = useState<TransportFilter>('all')
   const [expandedToolIds, setExpandedToolIds] = useState<ReadonlySet<string>>(() => new Set())
+  const [toolProbes, setToolProbes] = useState<Readonly<Record<string, ToolProbe>>>({})
   const statusRequestId = useRef(0)
+  const checkSignature = useRef('')
+  const draftRef = useRef(draft)
+  draftRef.current = draft
 
   useEffect(() => {
     let active = true
@@ -164,6 +177,32 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     setDraft(emptyDraft())
     setFailure(undefined)
     setCheckState(undefined)
+  }
+  /** Reveal one secret row: stored values are fetched from the Host, typed values just toggle. */
+  const toggleSecret = async (rowId: string) => {
+    const row = draft.secrets.find(item => item.id === rowId)
+    if (row === undefined) return
+    const reveal = (value?: string) => setDraft(current => ({
+      ...current,
+      secrets: current.secrets.map(item => item.id === rowId ? { ...item, visible: true, ...(value === undefined ? {} : { value }) } : item),
+    }))
+    if (row.visible) {
+      setDraft(current => ({ ...current, secrets: current.secrets.map(item => item.id === rowId ? { ...item, visible: false } : item) }))
+      return
+    }
+    if (row.value !== '' || row.ref.trim() === '' || managerApi?.revealSecret === undefined) {
+      reveal()
+      return
+    }
+    setBusy(true)
+    try {
+      const reply = await managerApi.revealSecret(row.ref.trim())
+      reveal(reply.ok ? reply.value?.value ?? '' : '')
+    } catch {
+      reveal()
+    } finally {
+      setBusy(false)
+    }
   }
   const prepareDraft = async (): Promise<ManagedMcpServer | undefined> => {
     const serverName = draft.serverName.trim()
@@ -234,18 +273,22 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     }
   }
   const checkDraft = async () => {
+    if (busy) return
+    const signature = JSON.stringify(draft)
+    checkSignature.current = signature
     setBusy(true); setFailure(undefined); setCheckState(undefined)
     try {
       if (managerApi === undefined) { setFailure('check'); return }
       const server = await prepareDraft()
       if (server === undefined) return
       const reply = await managerApi.check(server)
+      // Drop a late result when the user edited the draft while the check ran.
+      if (checkSignature.current !== signature || signature !== JSON.stringify(draftRef.current)) return
       if (!reply.ok || reply.value === undefined) { setFailure('check'); return }
       setCheckState(managedCheckLabel(t, reply.value))
     } catch { setFailure('check') } finally { setBusy(false) }
   }
-  const remove = async (id: string) => {
-    setBusy(true); setFailure(undefined)
+  const remove = async (id: string) => {    setBusy(true); setFailure(undefined)
     try {
       await saveServers(servers.filter(server => server.id !== id))
       if (activeEditorId === id) closeEditor()
@@ -419,6 +462,21 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   }
   const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.serverName === server.serverName)
     ?? probed.find(status => status.serverName === server.serverName)
+  /** Read one connected row's tool list on demand when live status carries no inventory. */
+  const probeTools = async (server: ManagedMcpServer) => {
+    if (managerApi === undefined) return
+    if (toolProbes[server.id]?.state === 'loading' || toolProbes[server.id]?.state === 'ready') return
+    setToolProbes(current => ({ ...current, [server.id]: { state: 'loading' } }))
+    try {
+      const reply = await managerApi.check(server)
+      const value = reply.ok ? reply.value : undefined
+      setToolProbes(current => ({ ...current, [server.id]: value?.state === 'ready'
+        ? { state: 'ready', tools: value.tools, toolCount: value.toolCount }
+        : { state: 'failed' } }))
+    } catch {
+      setToolProbes(current => ({ ...current, [server.id]: { state: 'failed' } }))
+    }
+  }
   const stateFor = (server: ManagedMcpServer): ServerState => {
     if (!server.enabled) return 'disabled'
     return statusFor(server)?.state ?? 'unknown'
@@ -485,7 +543,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
                 aria-label={t('managed.secret.hidden')}
                 disabled={busy}
               />}
-            <Button variant="outline" size="sm" className={css.secretVisibilityButton} aria-label={t(row.visible ? 'managed.secret.hide' : 'managed.secret.show')} aria-pressed={row.visible} disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, visible: !item.visible } : item) })}>
+            <Button variant="outline" size="sm" className={css.secretVisibilityButton} aria-label={t(row.visible ? 'managed.secret.hide' : 'managed.secret.show')} aria-pressed={row.visible} disabled={busy} onClick={() => { void toggleSecret(row.id) }}>
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 {row.visible
                   ? <><path d="M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /><path d="m4 4 16 16" /></>
@@ -604,6 +662,11 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
         const status = statusFor(server)
         const state = stateFor(server)
         const toolsExpanded = expandedToolIds.has(server.id)
+        const probe = toolProbes[server.id]
+        const liveTools = status?.tools !== undefined && (status.tools.length > 0 || status.toolCount === 0)
+          ? status.tools
+          : undefined
+        const inventory = liveTools ?? (probe?.state === 'ready' ? probe.tools : undefined)
         return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
           <div className={css.serverMain}>
             <span className={css.stateDot} data-state={state} aria-hidden="true" />
@@ -621,12 +684,15 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
             </div>
           </div>
           <div className={css.serverActions}>
-            <Button variant="ghost" size="sm" disabled={busy || status === undefined || state !== 'connected'} aria-expanded={toolsExpanded} onClick={() => setExpandedToolIds(current => {
-              const next = new Set(current)
+            <Button variant="ghost" size="sm" disabled={busy || status === undefined || state !== 'connected'} aria-expanded={toolsExpanded} onClick={() => {
+              const next = new Set(expandedToolIds)
               if (next.has(server.id)) next.delete(server.id)
-              else next.add(server.id)
-              return next
-            })}>{t(toolsExpanded ? 'managed.tools.hide' : 'managed.tools.show')}</Button>
+              else {
+                next.add(server.id)
+                if (inventory === undefined) void probeTools(server)
+              }
+              setExpandedToolIds(next)
+            }}>{t(toolsExpanded ? 'managed.tools.hide' : 'managed.tools.show')}</Button>
             <Button variant="outline" size="sm" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
               if (activeEditorId === server.id) closeEditor()
               else {
@@ -640,11 +706,15 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
             <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
           </div>
           {toolsExpanded && <section className={css.toolInventory} aria-label={`${server.serverName} ${t('managed.tools.title')}`}>
-            {status?.tools === undefined
-              ? <p>{t(state === 'connected' ? 'managed.tools.unknown' : 'managed.tools.unavailable')}</p>
-              : status.tools.length === 0
+            {inventory !== undefined
+              ? inventory.length === 0
                 ? <p>{t('managed.tools.empty')}</p>
-                : <ul>{status.tools.map(tool => <li key={tool.name}><strong>{tool.name}</strong>{tool.description !== '' && <p>{tool.description}</p>}</li>)}</ul>}
+                : <ul>{inventory.map(tool => <li key={tool.name}><strong>{tool.name}</strong>{tool.description !== '' && <p>{tool.description}</p>}</li>)}</ul>
+              : <p>{state !== 'connected'
+                ? t('managed.tools.unavailable')
+                : probe?.state === 'loading'
+                  ? t('managed.tools.loading')
+                  : t('managed.tools.unknown')}</p>}
           </section>}
           {activeEditorId === server.id && editor}
         </article>
@@ -693,9 +763,10 @@ function managedCheckLabel(
 ): string {
   switch (result.state) {
     case 'ready': return t('managed.checkReady').replace('{count}', String(result.toolCount))
-    case 'authorization-required': return `${t('managed.check.authorization-required')} 璺?${t('managed.check.advice.authorization-required')}`
-    case 'connection-failed': return `${t('managed.check.connection-failed')} 璺?${t('managed.check.advice.connection-failed')}`
-    case 'timed-out': return `${t('managed.check.timed-out')} 璺?${t('managed.check.advice.timed-out')}`
+    case 'invalid': return t('managed.check.invalid')
+    case 'authorization-required': return `${t('managed.check.authorization-required')} — ${t('managed.check.advice.authorization-required')}`
+    case 'connection-failed': return `${t('managed.check.connection-failed')} — ${t('managed.check.advice.connection-failed')}`
+    case 'timed-out': return `${t('managed.check.timed-out')} — ${t('managed.check.advice.timed-out')}`
   }
 }
 

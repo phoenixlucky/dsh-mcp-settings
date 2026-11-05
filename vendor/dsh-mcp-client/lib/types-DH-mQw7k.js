@@ -804,6 +804,20 @@ var __esDecorate = function(ctor, descriptorIn, decorators, contextIn, initializ
 	if (target) Object.defineProperty(target, contextIn.name, descriptor);
 	done = true;
 };
+/** Detach and freeze one tool summary so callers cannot mutate catalog state. */
+function freezeToolSummary(tool) {
+	return Object.freeze({
+		name: String(tool?.name ?? ""),
+		description: String(tool?.description ?? "")
+	});
+}
+/** Detach and freeze one status row, including its tool summaries. */
+function freezeStatusRow(row) {
+	return Object.freeze({
+		...row,
+		tools: Object.freeze((row.tools ?? []).map(freezeToolSummary))
+	});
+}
 /** Root catalog shared by every configured mcp-client instance. */
 let McpClientStatusCatalog = (() => {
 	let _classSuper = TypertRemoteService;
@@ -841,7 +855,7 @@ let McpClientStatusCatalog = (() => {
 		* @returns The current server status rows.
 		*/
 		list() {
-			return [...this.rows.values()];
+			return [...this.rows.values()].map(freezeStatusRow);
 		}
 		/**
 		* Add one server row and return its update and teardown functions.
@@ -852,14 +866,17 @@ let McpClientStatusCatalog = (() => {
 			const id = `${input.serverName}:${++this.nextId}`;
 			this.rows.set(id, {
 				...input,
-				id
+				id,
+				tools: [...(input.tools ?? [])]
 			});
 			return {
 				update: (patch) => {
 					const current = this.rows.get(id);
-					if (current !== void 0) this.rows.set(id, {
+					if (current === void 0) return;
+					this.rows.set(id, {
 						...current,
-						...patch
+						...patch,
+						tools: [...(patch.tools ?? current.tools)]
 					});
 				},
 				dispose: () => {

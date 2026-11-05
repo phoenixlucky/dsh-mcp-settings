@@ -44,6 +44,8 @@ const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema = ()
 })]))
 let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value
 const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema = () => (_deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value ??= z.union([z.object({
+  'state': z.literal("invalid"),
+}), z.object({
   'state': z.literal("authorization-required"),
 }), z.object({
   'state': z.literal("connection-failed"),
@@ -52,6 +54,10 @@ const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema = () => (
 }), z.object({
   'state': z.literal("ready"),
   'toolCount': z.number(),
+  'tools': z.array(z.object({
+    'name': z.string(),
+    'description': z.string(),
+  })).optional(),
 })]))
 let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema$value
 const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema = () => (_deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema$value ??= z.union([z.strictObject({
@@ -136,7 +142,7 @@ const $remote = createTypertRemoteInfo({
         typeSymbol: '@deepseek-ai/dsh-mcp-client/types#ManagedMcpCheck',
         create: _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema,
         description: 'A safe result classification and discovered tool count on success.',
-        jsonSchema: {"oneOf":[{"type":"object","properties":{"state":{"type":"string","const":"authorization-required"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"connection-failed"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"timed-out"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"ready"},"toolCount":{"type":"number"}},"required":["state","toolCount"],"additionalProperties":true}]},
+        jsonSchema: {"oneOf":[{"type":"object","properties":{"state":{"type":"string","const":"invalid"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"authorization-required"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"connection-failed"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"timed-out"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"ready"},"toolCount":{"type":"number"},"tools":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"}},"required":["name","description"],"additionalProperties":true}}},"required":["state","toolCount"],"additionalProperties":true}]},
       },
       sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":122,"column":3},
     },
@@ -263,7 +269,7 @@ export const TYPERT = {
           },
           {
             "name": "ManagedMcpCheck",
-            "declaration": "export type ManagedMcpCheck = { state: 'authorization-required'; } | { state: 'connection-failed'; } | { state: 'timed-out'; } | { state: 'ready'; toolCount: number; };"
+            "declaration": "export type ManagedMcpCheck = { state: 'invalid'; } | { state: 'authorization-required'; } | { state: 'connection-failed'; } | { state: 'timed-out'; } | { state: 'ready'; toolCount: number; tools?: readonly McpToolSummary[]; };"
           },
           {
             "name": "ManagedMcpConsumer",

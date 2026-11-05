@@ -18,10 +18,29 @@ export interface ManagedConfig {
     servers: Volatile<ManagedMcpServer[]>;
     /** Maximum duration of a temporary check, in milliseconds. */
     checkTimeoutMs: Volatile<number>;
+    /** Timeout for one model-facing MCP tool call, in milliseconds. */
+    toolCallTimeoutMs: number;
+    /** UTF-8 byte limit for attributed server instructions. */
+    maxInstructionBytes: number;
+    /** Reconnect policy passed to each delegated mcp-client instance. */
+    reconnect: {
+        enabled: boolean;
+        initialDelayMs: number;
+        maxDelayMs: number;
+        maxAttempts: number;
+    };
 }
 type ManagedConfigInput = Partial<{
     servers: ManagedMcpServer[];
     checkTimeoutMs: number;
+    toolCallTimeoutMs: number;
+    maxInstructionBytes: number;
+    reconnect: {
+        enabled: boolean;
+        initialDelayMs: number;
+        maxDelayMs: number;
+        maxAttempts: number;
+    };
 }>;
 /** Settings schema for a general managed MCP server manager. */
 export declare const Config: z<ManagedConfigInput, ManagedConfig>;
@@ -38,10 +57,7 @@ declare module '@deepseek-ai/cordis' {
 /** Host service for server-list reconciliation and isolated connection checks. */
 export declare class ManagedMcpServerManager extends TypertRemoteService {
     static inject: string[];
-    static Config: z<Partial<{
-        servers: ManagedMcpServer[];
-        checkTimeoutMs: number;
-    }>, ManagedConfig>;
+    static Config: z<ManagedConfigInput, ManagedConfig>;
     private readonly config;
     private readonly credentials;
     private readonly active;
@@ -92,8 +108,18 @@ export declare function apply(ctx: Context, config: ManagedConfig): Promise<void
  * @param credentials - Provider resolving the draft's secret references.
  * @param server - Draft entry to check.
  * @param timeoutMs - Maximum duration for credential resolution, connect, and discovery.
+ * @param tuning - Resolved timeouts, instruction limit, and reconnect policy.
  * @returns A safe check result; server response text and credentials are never returned.
  */
-export declare function checkManagedMcpServer(ctx: Context, credentials: CredentialProvider, server: ManagedMcpServer, timeoutMs: number): Promise<ManagedMcpCheck>;
+export declare function checkManagedMcpServer(ctx: Context, credentials: CredentialProvider, server: ManagedMcpServer, timeoutMs: number, tuning?: {
+    toolCallTimeoutMs: number;
+    maxInstructionBytes: number;
+    reconnect: {
+        enabled: boolean;
+        initialDelayMs: number;
+        maxDelayMs: number;
+        maxAttempts: number;
+    };
+}): Promise<ManagedMcpCheck>;
 export {};
 //# sourceMappingURL=managed.d.ts.map

@@ -1,7 +1,7 @@
 {
   "name": "@tinyforge/dsh-mcp-settings",
   "description": "Managed MCP server settings for adding MCP servers",
-  "version": "1.0.38",
+  "version": "1.0.41",
   "publishConfig": {
     "access": "public"
   },

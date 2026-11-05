@@ -218,12 +218,17 @@ window.__ModuleLoader__.load({
 		})]);
 		let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value;
 		const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema = () => _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value ??= zod.z.union([
+			zod.z.object({ "state": zod.z.literal("invalid") }),
 			zod.z.object({ "state": zod.z.literal("authorization-required") }),
 			zod.z.object({ "state": zod.z.literal("connection-failed") }),
 			zod.z.object({ "state": zod.z.literal("timed-out") }),
 			zod.z.object({
 				"state": zod.z.literal("ready"),
-				"toolCount": zod.z.number()
+				"toolCount": zod.z.number(),
+				"tools": zod.z.array(zod.z.object({
+					"name": zod.z.string(),
+					"description": zod.z.string()
+				})).optional()
 			})
 		]);
 		let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema$value;
@@ -384,6 +389,15 @@ window.__ModuleLoader__.load({
 								"type": "object",
 								"properties": { "state": {
 									"type": "string",
+									"const": "invalid"
+								} },
+								"required": ["state"],
+								"additionalProperties": true
+							},
+							{
+								"type": "object",
+								"properties": { "state": {
+									"type": "string",
 									"const": "authorization-required"
 								} },
 								"required": ["state"],
@@ -414,7 +428,19 @@ window.__ModuleLoader__.load({
 										"type": "string",
 										"const": "ready"
 									},
-									"toolCount": { "type": "number" }
+									"toolCount": { "type": "number" },
+									"tools": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"name": { "type": "string" },
+												"description": { "type": "string" }
+											},
+											"required": ["name", "description"],
+											"additionalProperties": true
+										}
+									}
 								},
 								"required": ["state", "toolCount"],
 								"additionalProperties": true
@@ -424,6 +450,43 @@ window.__ModuleLoader__.load({
 					sourceLocation: {
 						"file": "packages/mcp/mcp-client/src/managed.ts",
 						"line": 122,
+						"column": 3
+					}
+				},
+				"mcpServerManager/revealSecret": {
+					service: "mcpServerManager",
+					description: "Resolve one stored credential reference for the settings UI.",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "ref",
+						description: "Credential reference stored on one server row.",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@tinyforge/dsh-mcp-settings#CredentialRef",
+							create: () => zod.z.string()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "@tinyforge/dsh-mcp-settings#CredentialRef",
+							create: () => zod.z.string()
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@tinyforge/dsh-mcp-settings#RevealedSecret",
+						create: () => zod.z.object({ value: zod.z.string() }),
+						description: "The stored secret value, or an empty string when unset.",
+						jsonSchema: {
+							"type": "object",
+							"properties": { "value": { "type": "string" } },
+							"required": ["value"],
+							"additionalProperties": true
+						}
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/managed.ts",
+						"line": 160,
 						"column": 3
 					}
 				}
@@ -780,7 +843,8 @@ window.__ModuleLoader__.load({
 						serverName: server.serverName,
 						transport: server.transport,
 						state: "connected",
-						toolCount: result.toolCount
+						toolCount: result.toolCount,
+						tools: result.tools
 					});
 				} catch {}
 			}
@@ -807,7 +871,11 @@ window.__ModuleLoader__.load({
 			const [stateFilter, setStateFilter] = (0, react.useState)("all");
 			const [transportFilter, setTransportFilter] = (0, react.useState)("all");
 			const [expandedToolIds, setExpandedToolIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
+			const [toolProbes, setToolProbes] = (0, react.useState)({});
 			const statusRequestId = (0, react.useRef)(0);
+			const checkSignature = (0, react.useRef)("");
+			const draftRef = (0, react.useRef)(draft);
+			draftRef.current = draft;
 			(0, react.useEffect)(() => {
 				let active = true;
 				const refresh = async (deep) => {
@@ -858,6 +926,42 @@ window.__ModuleLoader__.load({
 				setDraft(emptyDraft());
 				setFailure(void 0);
 				setCheckState(void 0);
+			};
+			/** Reveal one secret row: stored values are fetched from the Host, typed values just toggle. */
+			const toggleSecret = async (rowId) => {
+				const row = draft.secrets.find((item) => item.id === rowId);
+				if (row === void 0) return;
+				const reveal = (value) => setDraft((current) => ({
+					...current,
+					secrets: current.secrets.map((item) => item.id === rowId ? {
+						...item,
+						visible: true,
+						...value === void 0 ? {} : { value }
+					} : item)
+				}));
+				if (row.visible) {
+					setDraft((current) => ({
+						...current,
+						secrets: current.secrets.map((item) => item.id === rowId ? {
+							...item,
+							visible: false
+						} : item)
+					}));
+					return;
+				}
+				if (row.value !== "" || row.ref.trim() === "" || managerApi?.revealSecret === void 0) {
+					reveal();
+					return;
+				}
+				setBusy(true);
+				try {
+					const reply = await managerApi.revealSecret(row.ref.trim());
+					reveal(reply.ok ? reply.value?.value ?? "" : "");
+				} catch {
+					reveal();
+				} finally {
+					setBusy(false);
+				}
 			};
 			const prepareDraft = async () => {
 				const serverName = draft.serverName.trim();
@@ -940,6 +1044,9 @@ window.__ModuleLoader__.load({
 				}
 			};
 			const checkDraft = async () => {
+				if (busy) return;
+				const signature = JSON.stringify(draft);
+				checkSignature.current = signature;
 				setBusy(true);
 				setFailure(void 0);
 				setCheckState(void 0);
@@ -951,6 +1058,7 @@ window.__ModuleLoader__.load({
 					const server = await prepareDraft();
 					if (server === void 0) return;
 					const reply = await managerApi.check(server);
+					if (checkSignature.current !== signature || signature !== JSON.stringify(draftRef.current)) return;
 					if (!reply.ok || reply.value === void 0) {
 						setFailure("check");
 						return;
@@ -1212,6 +1320,32 @@ window.__ModuleLoader__.load({
 				}
 			};
 			const statusFor = (server) => statuses.find((status) => status.serverName === server.serverName) ?? probed.find((status) => status.serverName === server.serverName);
+			/** Read one connected row's tool list on demand when live status carries no inventory. */
+			const probeTools = async (server) => {
+				if (managerApi === void 0) return;
+				if (toolProbes[server.id]?.state === "loading" || toolProbes[server.id]?.state === "ready") return;
+				setToolProbes((current) => ({
+					...current,
+					[server.id]: { state: "loading" }
+				}));
+				try {
+					const reply = await managerApi.check(server);
+					const value = reply.ok ? reply.value : void 0;
+					setToolProbes((current) => ({
+						...current,
+						[server.id]: value?.state === "ready" ? {
+							state: "ready",
+							tools: value.tools,
+							toolCount: value.toolCount
+						} : { state: "failed" }
+					}));
+				} catch {
+					setToolProbes((current) => ({
+						...current,
+						[server.id]: { state: "failed" }
+					}));
+				}
+			};
 			const stateFor = (server) => {
 				if (!server.enabled) return "disabled";
 				return statusFor(server)?.state ?? "unknown";
@@ -1446,13 +1580,9 @@ window.__ModuleLoader__.load({
 													"aria-label": t(row.visible ? "managed.secret.hide" : "managed.secret.show"),
 													"aria-pressed": row.visible,
 													disabled: busy,
-													onClick: () => setDraft({
-														...draft,
-														secrets: draft.secrets.map((item) => item.id === row.id ? {
-															...item,
-															visible: !item.visible
-														} : item)
-													}),
+													onClick: () => {
+														toggleSecret(row.id);
+													},
 													children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
 														viewBox: "0 0 24 24",
 														"aria-hidden": "true",
@@ -1796,6 +1926,8 @@ window.__ModuleLoader__.load({
 								const status = statusFor(server);
 								const state = stateFor(server);
 								const toolsExpanded = expandedToolIds.has(server.id);
+								const probe = toolProbes[server.id];
+								const inventory = (status?.tools !== void 0 && (status.tools.length > 0 || status.toolCount === 0) ? status.tools : void 0) ?? (probe?.state === "ready" ? probe.tools : void 0);
 								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 									className: `${mcp_settings_module_css_default.serverCard} ${activeEditorId === server.id ? mcp_settings_module_css_default.serverCardEditing : ""}`,
 									children: [
@@ -1847,12 +1979,15 @@ window.__ModuleLoader__.load({
 													size: "sm",
 													disabled: busy || status === void 0 || state !== "connected",
 													"aria-expanded": toolsExpanded,
-													onClick: () => setExpandedToolIds((current) => {
-														const next = new Set(current);
+													onClick: () => {
+														const next = new Set(expandedToolIds);
 														if (next.has(server.id)) next.delete(server.id);
-														else next.add(server.id);
-														return next;
-													}),
+														else {
+															next.add(server.id);
+															if (inventory === void 0) probeTools(server);
+														}
+														setExpandedToolIds(next);
+													},
 													children: t(toolsExpanded ? "managed.tools.hide" : "managed.tools.show")
 												}),
 												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
@@ -1893,7 +2028,7 @@ window.__ModuleLoader__.load({
 										toolsExpanded && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("section", {
 											className: mcp_settings_module_css_default.toolInventory,
 											"aria-label": `${server.serverName} ${t("managed.tools.title")}`,
-											children: status?.tools === void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t(state === "connected" ? "managed.tools.unknown" : "managed.tools.unavailable") }) : status.tools.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.tools.empty") }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: status.tools.map((tool) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: tool.name }), tool.description !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: tool.description })] }, tool.name)) })
+											children: inventory !== void 0 ? inventory.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.tools.empty") }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: inventory.map((tool) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: tool.name }), tool.description !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: tool.description })] }, tool.name)) }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: state !== "connected" ? t("managed.tools.unavailable") : probe?.state === "loading" ? t("managed.tools.loading") : t("managed.tools.unknown") })
 										}),
 										activeEditorId === server.id && editor
 									]
@@ -1936,9 +2071,10 @@ window.__ModuleLoader__.load({
 		function managedCheckLabel(t, result) {
 			switch (result.state) {
 				case "ready": return t("managed.checkReady").replace("{count}", String(result.toolCount));
-				case "authorization-required": return `${t("managed.check.authorization-required")} 璺?${t("managed.check.advice.authorization-required")}`;
-				case "connection-failed": return `${t("managed.check.connection-failed")} 璺?${t("managed.check.advice.connection-failed")}`;
-				case "timed-out": return `${t("managed.check.timed-out")} 璺?${t("managed.check.advice.timed-out")}`;
+				case "invalid": return t("managed.check.invalid");
+				case "authorization-required": return `${t("managed.check.authorization-required")} — ${t("managed.check.advice.authorization-required")}`;
+				case "connection-failed": return `${t("managed.check.connection-failed")} — ${t("managed.check.advice.connection-failed")}`;
+				case "timed-out": return `${t("managed.check.timed-out")} — ${t("managed.check.advice.timed-out")}`;
 			}
 		}
 		function managedFailureLabel(t, failure) {
@@ -2020,6 +2156,7 @@ window.__ModuleLoader__.load({
 			"managed.tools.empty": "No tools are available.",
 			"managed.tools.unavailable": "Tool list is unavailable while the server is disconnected.",
 			"managed.tools.unknown": "The connection is live, but the tool list could not be read.",
+			"managed.tools.loading": "Reading the tool list…",
 			"managed.enabled": "Enabled",
 			"managed.edit": "Edit",
 			"managed.delete": "Delete",
@@ -2048,6 +2185,7 @@ window.__ModuleLoader__.load({
 			"managed.check.connection-failed": "Connection failed",
 			"managed.check.timed-out": "Connection check timed out",
 			"managed.check.ready": "Connected",
+			"managed.check.invalid": "The server settings are invalid; fix them and check again.",
 			"managed.check.advice.authorization-required": "Check the credential reference and secret value.",
 			"managed.check.advice.connection-failed": "Check the endpoint or command and confirm the server is available.",
 			"managed.check.advice.timed-out": "Check whether the server is responsive, then retry.",
@@ -2137,6 +2275,7 @@ window.__ModuleLoader__.load({
 			"managed.tools.empty": "此服务没有可用工具。",
 			"managed.tools.unavailable": "服务未连接，暂时无法查看工具列表。",
 			"managed.tools.unknown": "连接正常，但暂时读不到工具清单。",
+			"managed.tools.loading": "正在读取工具清单…",
 			"managed.enabled": "启用",
 			"managed.edit": "编辑",
 			"managed.delete": "删除",
@@ -2165,6 +2304,7 @@ window.__ModuleLoader__.load({
 			"managed.check.connection-failed": "连接失败",
 			"managed.check.timed-out": "连接检查超时",
 			"managed.check.ready": "已连接",
+			"managed.check.invalid": "服务器配置无效，请修正后重试。",
 			"managed.check.advice.authorization-required": "请检查凭据引用和秘密值。",
 			"managed.check.advice.connection-failed": "请检查服务地址或命令，并确认服务器可用。",
 			"managed.check.advice.timed-out": "请检查服务器是否响应，然后重试。",

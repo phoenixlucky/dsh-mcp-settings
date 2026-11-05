@@ -61,6 +61,8 @@ export interface ManagedStdioServer {
 export type ManagedMcpServer = ManagedHttpServer | ManagedStdioServer;
 /** Client-safe result of a temporary MCP connection check. */
 export type ManagedMcpCheck = {
+    state: 'invalid';
+} | {
     state: 'authorization-required';
 } | {
     state: 'connection-failed';
@@ -69,6 +71,7 @@ export type ManagedMcpCheck = {
 } | {
     state: 'ready';
     toolCount: number;
+    tools?: readonly McpToolSummary[];
 };
 /** Client-safe readiness result for the managed Chrome MCP endpoint. */
 export type ChromeConnectionCheck = {

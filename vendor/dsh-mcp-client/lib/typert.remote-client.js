@@ -44,6 +44,8 @@ const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema = ()
 })]))
 let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value
 const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema = () => (_deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema$value ??= z.union([z.object({
+  'state': z.literal("invalid"),
+}), z.object({
   'state': z.literal("authorization-required"),
 }), z.object({
   'state': z.literal("connection-failed"),
@@ -52,6 +54,10 @@ const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema = () => (
 }), z.object({
   'state': z.literal("ready"),
   'toolCount': z.number(),
+  'tools': z.array(z.object({
+    'name': z.string(),
+    'description': z.string(),
+  })).optional(),
 })]))
 let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema$value
 const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema = () => (_deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$schema$value ??= z.union([z.strictObject({
@@ -136,9 +142,39 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         typeSymbol: '@deepseek-ai/dsh-mcp-client/types#ManagedMcpCheck',
         create: _deepseek_ai_dsh_mcp_client_mcpServerManager_check_result$schema,
         description: 'A safe result classification and discovered tool count on success.',
-        jsonSchema: {"oneOf":[{"type":"object","properties":{"state":{"type":"string","const":"authorization-required"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"connection-failed"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"timed-out"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"ready"},"toolCount":{"type":"number"}},"required":["state","toolCount"],"additionalProperties":true}]},
+        jsonSchema: {"oneOf":[{"type":"object","properties":{"state":{"type":"string","const":"invalid"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"authorization-required"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"connection-failed"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"timed-out"}},"required":["state"],"additionalProperties":true},{"type":"object","properties":{"state":{"type":"string","const":"ready"},"toolCount":{"type":"number"},"tools":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"}},"required":["name","description"],"additionalProperties":true}}},"required":["state","toolCount"],"additionalProperties":true}]},
       },
       sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":122,"column":3},
+    },
+    'mcpServerManager/revealSecret': {
+      service: 'mcpServerManager',
+      description: 'Resolve one stored credential reference for the settings UI.',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'ref',
+          description: 'Credential reference stored on one server row.',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@tinyforge/dsh-mcp-settings#CredentialRef',
+            create: () => z.string(),
+          },
+          strictCodec: {
+            mode: 'strict',
+            typeSymbol: '@tinyforge/dsh-mcp-settings#CredentialRef',
+            create: () => z.string(),
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@tinyforge/dsh-mcp-settings#RevealedSecret',
+        create: () => z.object({ value: z.string() }),
+        description: 'The stored secret value, or an empty string when unset.',
+        jsonSchema: {"type":"object","properties":{"value":{"type":"string"}},"required":["value"],"additionalProperties":true},
+      },
+      sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":160,"column":3},
     },
   },
 }, z)
