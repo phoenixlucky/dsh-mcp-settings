@@ -16,6 +16,10 @@ const _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema = () => (_d
   'source': z.string().readonly(),
   'state': z.union([z.literal("connecting"), z.literal("connected"), z.literal("reconnecting"), z.literal("disconnected")]).readonly(),
   'toolCount': z.number().readonly(),
+  'tools': z.array(z.object({
+    'name': z.string().readonly(),
+    'description': z.string().readonly(),
+  })).readonly(),
 })))
 let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema$value
 const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema = () => (_deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema$value ??= z.union([z.object({
@@ -100,7 +104,7 @@ const $remote = createTypertRemoteInfo({
         typeSymbol: '@deepseek-ai/dsh-mcp-client#mcpClientStatus/list:result',
         create: _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema,
         description: 'The current server status rows.',
-        jsonSchema: {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"serverName":{"type":"string"},"transport":{"type":"string","enum":["streamable-http","stdio"]},"source":{"type":"string"},"state":{"type":"string","enum":["connecting","connected","reconnecting","disconnected"]},"toolCount":{"type":"number"}},"required":["id","serverName","transport","source","state","toolCount"],"additionalProperties":true}},
+        jsonSchema: {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"serverName":{"type":"string"},"transport":{"type":"string","enum":["streamable-http","stdio"]},"source":{"type":"string"},"state":{"type":"string","enum":["connecting","connected","reconnecting","disconnected"]},"toolCount":{"type":"number"},"tools":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"}},"required":["name","description"],"additionalProperties":true}}},"required":["id","serverName","transport","source","state","toolCount","tools"],"additionalProperties":true}},
       },
       sourceLocation: {"file":"packages/mcp/mcp-client/src/status.ts","line":25,"column":3},
     },
@@ -188,7 +192,7 @@ export const TYPERT = {
           {
             "kind": "method",
             "name": "register",
-            "signature": "register(input: Omit<McpServerStatus, 'id'>): { update(patch: Pick<McpServerStatus, 'state' | 'toolCount'>): void dispose(): void }",
+            "signature": "register(input: Omit<McpServerStatus, 'id'>): { update(patch: Pick<McpServerStatus, 'state' | 'toolCount' | 'tools'>): void dispose(): void }",
             "summary": "Add one server row and return its update and teardown functions.",
             "jsDoc": "/**\n * Add one server row and return its update and teardown functions.\n * @param input - Credential-safe connection details for the server.\n * @returns Functions that update or remove the registered row.\n */"
           }
@@ -199,8 +203,12 @@ export const TYPERT = {
             "declaration": "export type McpConnectionState = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';"
           },
           {
+            "name": "McpToolSummary",
+            "declaration": "export interface McpToolSummary {\n    readonly name: string;\n    readonly description: string;\n}"
+          },
+          {
             "name": "McpServerStatus",
-            "declaration": "export interface McpServerStatus {\n    readonly id: string;\n    readonly serverName: string;\n    readonly transport: 'stdio' | 'streamable-http';\n    readonly source: string;\n    readonly state: McpConnectionState;\n    readonly toolCount: number;\n}"
+            "declaration": "export interface McpServerStatus {\n    readonly id: string;\n    readonly serverName: string;\n    readonly transport: 'stdio' | 'streamable-http';\n    readonly source: string;\n    readonly state: McpConnectionState;\n    readonly toolCount: number;\n    readonly tools: readonly McpToolSummary[];\n}"
           }
         ]
       },

@@ -52,7 +52,7 @@ let McpClientStatusCatalog = (() => {
         /** Return live connection summaries with credentials and command arguments omitted.
          * @returns The current server status rows.
          */
-        list() { return [...this.rows.values()]; }
+        list() { return [...this.rows.values()].map(row => ({ ...row, tools: [...row.tools] })); }
         /**
          * Add one server row and return its update and teardown functions.
          * @param input - Credential-safe connection details for the server.
@@ -60,12 +60,12 @@ let McpClientStatusCatalog = (() => {
          */
         register(input) {
             const id = `${input.serverName}:${++this.nextId}`;
-            this.rows.set(id, { ...input, id });
+            this.rows.set(id, { ...input, tools: [...input.tools], id });
             return {
                 update: (patch) => {
                     const current = this.rows.get(id);
                     if (current !== undefined)
-                        this.rows.set(id, { ...current, ...patch });
+                        this.rows.set(id, { ...current, ...patch, tools: patch.tools === undefined ? current.tools : [...patch.tools] });
                 },
                 dispose: () => { this.rows.delete(id); },
             };

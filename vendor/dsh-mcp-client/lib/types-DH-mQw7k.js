@@ -128,6 +128,7 @@ function publicToolName(serverName, rawName) {
 async function syncTools(client, ctx, opts, previous) {
 	const definitions = /* @__PURE__ */ new Map();
 	const response = client.getServerCapabilities()?.tools === void 0 ? { tools: [] } : await client.listTools(void 0, { cacheMode: "refresh" });
+	const summaries = response.tools.map(tool => ({ name: tool.name, description: tool.description ?? "" }));
 	for (const tool of response.tools) {
 		const publicName = publicToolName(opts.serverName, tool.name);
 		if (definitions.has(publicName)) throw new Error(`mcp-client(${opts.serverName}): server listed tool "${tool.name}" more than once — invalid tool list`);
@@ -156,9 +157,9 @@ async function syncTools(client, ctx, opts, previous) {
 		for (const dispose of disposers.values()) dispose();
 		ctx.logger.error(`mcp-client(${opts.serverName}): tool registration failed, no tools registered: ${String(error)}`);
 		if (opts.registrationFailure === "throw") throw error;
-		return /* @__PURE__ */ new Map();
+		return { disposers: /* @__PURE__ */ new Map(), tools: [] };
 	}
-	return disposers;
+	return { disposers, tools: summaries };
 }
 /** Keep a supported advertised schema; unsupported MCP vocabulary falls back to JsonValue. */
 function supportedOutputSchema(candidate) {
@@ -501,6 +502,7 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 	let closeClient;
 	/** Live tool registrations owned by this server; only {@link enqueueSync} and dispose swap it. */
 	let disposers = /* @__PURE__ */ new Map();
+	let toolSummaries = [];
 	let reconnectTimer;
 	/** Consecutive failed connection attempts within the current outage. */
 	let failedAttempts = 0;
@@ -509,7 +511,7 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 	/** The real error from the first connection attempt, for startup-await diagnostics. */
 	let firstAttemptError;
 	function publish(state) {
-		publishStatus(state, disposers.size);
+		publishStatus(state, disposers.size, state === "connected" ? toolSummaries : []);
 	}
 	/** A generation may act only while it is the current one on a live plugin. */
 	const isCurrent = (generation) => !disposed && client === generation;
@@ -523,7 +525,9 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 	function enqueueSync(generation, syncOpts = opts) {
 		const run = syncChain.then(async () => {
 			if (!isCurrent(generation)) return;
-			disposers = await syncTools(generation, ctx, syncOpts, disposers);
+			const next = await syncTools(generation, ctx, syncOpts, disposers);
+			disposers = next.disposers;
+			toolSummaries = next.tools;
 			publish(connectedAt === void 0 ? "connecting" : "connected");
 		});
 		syncChain = run.catch(() => {});
@@ -941,7 +945,8 @@ async function apply(ctx, config) {
 		transport: config.transport,
 		source: statusSource(config),
 		state: "connecting",
-		toolCount: 0
+		toolCount: 0,
+		tools: []
 	});
 	ctx.effect(() => status.dispose, "mcp-client.status");
 	const reconnect = resolveReconnectPolicy(config.reconnect, `mcp-client(${config.serverName}): reconnect`);
@@ -956,10 +961,11 @@ async function apply(ctx, config) {
 		names.add(config.serverName);
 		return () => void names.delete(config.serverName);
 	}, "mcp-client.serverName");
-	const connection = startConnection(ctx, config, reconnect, (state, toolCount) => {
+	const connection = startConnection(ctx, config, reconnect, (state, toolCount, tools) => {
 		status.update({
 			state,
-			toolCount
+			toolCount,
+			tools
 		});
 	});
 	registerServerContext(ctx, config.serverName, connection);

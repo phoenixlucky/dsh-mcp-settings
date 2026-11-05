@@ -23,7 +23,7 @@ export declare class McpClientStatusCatalog extends TypertRemoteService {
      * @returns Functions that update or remove the registered row.
      */
     register(input: Omit<McpServerStatus, 'id'>): {
-        update(patch: Pick<McpServerStatus, 'state' | 'toolCount'>): void;
+        update(patch: Pick<McpServerStatus, 'state' | 'toolCount' | 'tools'>): void;
         dispose(): void;
     };
 }

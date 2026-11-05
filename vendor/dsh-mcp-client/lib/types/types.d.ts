@@ -2,6 +2,11 @@
 export type McpConnectionState = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 /** Selects whether a managed MCP row publishes model tools or serves project memory. */
 export type ManagedMcpPurpose = 'model-tools' | 'project-memory';
+/** Credential-safe summary of one discovered MCP tool. */
+export interface McpToolSummary {
+    readonly name: string;
+    readonly description: string;
+}
 /** Credential-safe information displayed on an MCP server card. */
 export interface McpServerStatus {
     readonly id: string;
@@ -10,6 +15,7 @@ export interface McpServerStatus {
     readonly source: string;
     readonly state: McpConnectionState;
     readonly toolCount: number;
+    readonly tools: readonly McpToolSummary[];
 }
 /** Streamable HTTP server settings; secret header values remain in credentials. */
 export interface ManagedHttpServer {
