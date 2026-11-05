@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "@deepseek-ai/dsh-mcp-settings",
+	id: "@tinyforge/dsh-mcp-settings",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;
@@ -189,7 +189,11 @@ window.__ModuleLoader__.load({
 				zod.z.literal("reconnecting"),
 				zod.z.literal("disconnected")
 			]).readonly(),
-			"toolCount": zod.z.number().readonly()
+			"toolCount": zod.z.number().readonly(),
+			"tools": zod.z.array(zod.z.object({
+				"name": zod.z.string().readonly(),
+				"description": zod.z.string().readonly()
+			})).readonly()
 		}));
 		let _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema$value;
 		const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema = () => _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0$schema$value ??= zod.z.union([zod.z.object({
@@ -316,7 +320,19 @@ window.__ModuleLoader__.load({
 											"disconnected"
 										]
 									},
-									"toolCount": { "type": "number" }
+									"toolCount": { "type": "number" },
+									"tools": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"name": { "type": "string" },
+												"description": { "type": "string" }
+											},
+											"required": ["name", "description"],
+											"additionalProperties": true
+										}
+									}
 								},
 								"required": [
 									"id",
@@ -324,7 +340,8 @@ window.__ModuleLoader__.load({
 									"transport",
 									"source",
 									"state",
-									"toolCount"
+									"toolCount",
+									"tools"
 								],
 								"additionalProperties": true
 							}
@@ -445,11 +462,11 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
-		const css = ".oetn4G_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 12%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:var(--dsw-alias-bg-layer-1);--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:76rem;margin-inline:auto;display:grid}.oetn4G_pageHeader{align-items:center;gap:var(--mcp-space-4);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.oetn4G_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_card{align-content:start;gap:var(--mcp-space-4);width:100%;min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:0 1px 2px color-mix(in srgb, var(--dsw-alias-label-primary) 5%, transparent);display:grid;container-type:inline-size}.oetn4G_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);display:flex}.oetn4G_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.oetn4G_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.oetn4G_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.oetn4G_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:color-mix(in srgb, var(--dsw-alias-bg-layer-1) 78%, transparent);display:grid}.oetn4G_fieldGroupTitle{padding-bottom:var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.oetn4G_formGrid{gap:var(--mcp-space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_formGrid .oetn4G_field{align-items:center;column-gap:var(--mcp-space-3);grid-template-columns:minmax(7rem,.8fr) minmax(0,1.2fr)}.oetn4G_field input,.oetn4G_field textarea,.oetn4G_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.oetn4G_field textarea:focus-visible,.oetn4G_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field textarea:disabled,.oetn4G_field select:disabled{opacity:.6}.oetn4G_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field input:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:1px solid var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.oetn4G_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.oetn4G_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.oetn4G_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.oetn4G_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4) var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;transition:border-color .14s,box-shadow .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 38%, var(--mcp-card-stroke));box-shadow:0 2px 8px color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent)}.oetn4G_serverCard strong{color:var(--dsw-alias-label-primary)}.oetn4G_serverCard p{margin:0}.oetn4G_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.oetn4G_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_serverState{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-2);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, var(--dsw-alias-settings-card-fill));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;line-height:1.2;display:inline-flex}.oetn4G_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_serverCardEditing{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 42%, var(--mcp-card-stroke));background:color-mix(in srgb, var(--dsw-static-amber-100) 10%, var(--dsw-alias-settings-card-fill));grid-template-columns:minmax(0,1fr)}.oetn4G_serverCardEditing>p{white-space:normal;border:0;padding:0}.oetn4G_serverCardEditing>.oetn4G_actions,.oetn4G_serverCardEditing>section{grid-column:1/-1}.oetn4G_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_toolCount{width:fit-content;padding:var(--mcp-space-2) var(--mcp-space-3);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14)}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}@container (width<=48rem){.oetn4G_serverCard:not(.oetn4G_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_serverHeading{grid-column:1/-1}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.oetn4G_cardHeader{flex-wrap:wrap;align-items:flex-start}.oetn4G_cardIdentity{flex:100%}.oetn4G_cardHeader>.oetn4G_actions{justify-content:flex-start;width:100%}.oetn4G_formGrid{grid-template-columns:minmax(0,1fr)}.oetn4G_enableControl{flex:auto;justify-content:space-between;max-width:100%}.oetn4G_serverCard:not(.oetn4G_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-start}}@container (width>=38rem){.oetn4G_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.oetn4G_field small{grid-column:2}.oetn4G_secretRow .oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_secretRow .oetn4G_field small{grid-column:1}}@container (width<=32rem){.oetn4G_card{padding:var(--mcp-space-3)}.oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_field small{grid-column:1}.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}.oetn4G_actions{justify-content:flex-start}.oetn4G_secretRow{grid-template-columns:minmax(0,1fr)}.oetn4G_serverHeading{flex-wrap:wrap;align-items:flex-start}.oetn4G_serverCard>.oetn4G_actions{justify-content:flex-start}.oetn4G_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard>p{white-space:normal;border:0;padding:0}}";
-		const tagId = "@deepseek-ai/dsh-mcp-settings/mcp-settings.module.css";
+		const css = ".oetn4G_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 12%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:var(--dsw-alias-bg-layer-1);--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:76rem;margin-inline:auto;display:grid}.oetn4G_pageHeader{align-items:center;gap:var(--mcp-space-4);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.oetn4G_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_card{align-content:start;gap:var(--mcp-space-4);width:100%;min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:0 1px 2px color-mix(in srgb, var(--dsw-alias-label-primary) 5%, transparent);display:grid;container-type:inline-size}.oetn4G_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);display:flex}.oetn4G_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.oetn4G_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.oetn4G_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.oetn4G_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:color-mix(in srgb, var(--dsw-alias-bg-layer-1) 78%, transparent);display:grid}.oetn4G_fieldGroupTitle{padding-bottom:var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_importPreview{gap:var(--mcp-space-3);min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:var(--mcp-space-2);margin:0;padding-inline-start:1.25rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.oetn4G_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.oetn4G_formGrid{gap:var(--mcp-space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_formGrid .oetn4G_field{align-items:center;column-gap:var(--mcp-space-3);grid-template-columns:minmax(7rem,.8fr) minmax(0,1.2fr)}.oetn4G_field input,.oetn4G_field textarea,.oetn4G_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.oetn4G_field textarea:focus-visible,.oetn4G_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field textarea:disabled,.oetn4G_field select:disabled{opacity:.6}.oetn4G_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field input:disabled{opacity:.6}.oetn4G_secretInput{align-items:center;gap:var(--mcp-space-2);grid-template-columns:minmax(0,1fr) auto;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:var(--mcp-space-2)}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:1px solid var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.oetn4G_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.oetn4G_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.oetn4G_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);text-align:right;flex-basis:100%}.oetn4G_serverFilters{align-items:end;gap:var(--mcp-space-3);grid-template-columns:minmax(12rem,2fr) repeat(2,minmax(9rem,1fr)) auto;display:grid}.oetn4G_toolDisclosure{justify-content:flex-start;display:flex}.oetn4G_toolInventory{gap:var(--mcp-space-3);min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);grid-column:1/-1;display:grid}.oetn4G_toolInventory h4,.oetn4G_toolInventory p{margin:0}.oetn4G_toolInventory ul{gap:var(--mcp-space-3);margin:0;padding-inline-start:1.25rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:var(--mcp-space-1);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4) var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;transition:border-color .14s,box-shadow .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 38%, var(--mcp-card-stroke));box-shadow:0 2px 8px color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent)}.oetn4G_serverCard strong{color:var(--dsw-alias-label-primary)}.oetn4G_serverCard p{margin:0}.oetn4G_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.oetn4G_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_serverState{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-2);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, var(--dsw-alias-settings-card-fill));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;line-height:1.2;display:inline-flex}.oetn4G_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_serverCardEditing{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 42%, var(--mcp-card-stroke));background:color-mix(in srgb, var(--dsw-static-amber-100) 10%, var(--dsw-alias-settings-card-fill));grid-template-columns:minmax(0,1fr)}.oetn4G_serverCardEditing>p{white-space:normal;border:0;padding:0}.oetn4G_serverCardEditing>.oetn4G_actions,.oetn4G_serverCardEditing>section{grid-column:1/-1}.oetn4G_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_toolCount{width:fit-content;padding:var(--mcp-space-2) var(--mcp-space-3);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14)}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}@container (width<=48rem){.oetn4G_serverCard:not(.oetn4G_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_serverHeading{grid-column:1/-1}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.oetn4G_serverFilters{grid-template-columns:minmax(0,1fr)}.oetn4G_cardHeader{flex-wrap:wrap;align-items:flex-start}.oetn4G_cardIdentity{flex:100%}.oetn4G_cardHeader>.oetn4G_actions{justify-content:flex-start;width:100%}.oetn4G_exportHint{text-align:left}.oetn4G_formGrid{grid-template-columns:minmax(0,1fr)}.oetn4G_enableControl{flex:auto;justify-content:space-between;max-width:100%}.oetn4G_serverCard:not(.oetn4G_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-start}}@container (width>=38rem){.oetn4G_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.oetn4G_field small{grid-column:2}.oetn4G_secretRow .oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_secretRow .oetn4G_field small{grid-column:1}}@container (width<=32rem){.oetn4G_card{padding:var(--mcp-space-3)}.oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_field small{grid-column:1}.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}.oetn4G_actions{justify-content:flex-start}.oetn4G_secretRow{grid-template-columns:minmax(0,1fr)}.oetn4G_serverHeading{flex-wrap:wrap;align-items:flex-start}.oetn4G_serverCard>.oetn4G_actions{justify-content:flex-start}.oetn4G_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard>p{white-space:normal;border:0;padding:0}}";
+		const tagId = "@tinyforge/dsh-mcp-settings/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-mcp-settings";
+			tag.dataset.plugin = "@tinyforge/dsh-mcp-settings";
 			tag.dataset.pluginCss = tagId;
 			tag.textContent = css;
 			document.head.appendChild(tag);
@@ -468,25 +485,32 @@ window.__ModuleLoader__.load({
 			"enableControl": "oetn4G_enableControl",
 			"enableLabel": "oetn4G_enableLabel",
 			"error": "oetn4G_error",
+			"exportHint": "oetn4G_exportHint",
 			"field": "oetn4G_field",
 			"fieldGroup": "oetn4G_fieldGroup",
 			"fieldGroupTitle": "oetn4G_fieldGroupTitle",
 			"formGrid": "oetn4G_formGrid",
+			"importPreview": "oetn4G_importPreview",
 			"pageCopy": "oetn4G_pageCopy",
 			"pageDescription": "oetn4G_pageDescription",
 			"pageHeader": "oetn4G_pageHeader",
 			"pageIcon": "oetn4G_pageIcon",
 			"pageTitle": "oetn4G_pageTitle",
+			"secretInput": "oetn4G_secretInput",
 			"secretRow": "oetn4G_secretRow",
+			"secretVisibilityButton": "oetn4G_secretVisibilityButton",
 			"serverCard": "oetn4G_serverCard",
 			"serverCardEditing": "oetn4G_serverCardEditing",
+			"serverFilters": "oetn4G_serverFilters",
 			"serverHeading": "oetn4G_serverHeading",
 			"serverIcon": "oetn4G_serverIcon",
 			"serverIdentity": "oetn4G_serverIdentity",
 			"serverList": "oetn4G_serverList",
 			"serverState": "oetn4G_serverState",
 			"status": "oetn4G_status",
-			"toolCount": "oetn4G_toolCount"
+			"toolCount": "oetn4G_toolCount",
+			"toolDisclosure": "oetn4G_toolDisclosure",
+			"toolInventory": "oetn4G_toolInventory"
 		};
 		//#endregion
 		//#region src/client/McpCardSettings.tsx
@@ -710,9 +734,11 @@ window.__ModuleLoader__.load({
 				args: server.transport === "stdio" ? server.args.join("\n") : "",
 				cwd: server.transport === "stdio" ? server.cwd : "",
 				secrets: Object.entries(secrets).map(([name, ref]) => ({
+					id: randomUUID(),
 					name,
 					ref,
-					value: ""
+					value: "",
+					visible: false
 				}))
 			};
 		}
@@ -729,6 +755,11 @@ window.__ModuleLoader__.load({
 			const [checkState, setCheckState] = (0, react.useState)();
 			const [importJson, setImportJson] = (0, react.useState)("");
 			const [importState, setImportState] = (0, react.useState)();
+			const [importPreview, setImportPreview] = (0, react.useState)();
+			const [searchQuery, setSearchQuery] = (0, react.useState)("");
+			const [stateFilter, setStateFilter] = (0, react.useState)("all");
+			const [transportFilter, setTransportFilter] = (0, react.useState)("all");
+			const [expandedToolIds, setExpandedToolIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
 			(0, react.useEffect)(() => {
 				let active = true;
 				const refresh = async () => {
@@ -759,6 +790,12 @@ window.__ModuleLoader__.load({
 				} catch {
 					setStatuses([]);
 				}
+			};
+			const closeEditor = () => {
+				setActiveEditorId(void 0);
+				setDraft(emptyDraft());
+				setFailure(void 0);
+				setCheckState(void 0);
 			};
 			const prepareDraft = async () => {
 				const serverName = draft.serverName.trim();
@@ -864,7 +901,7 @@ window.__ModuleLoader__.load({
 				setFailure(void 0);
 				try {
 					await saveServers(servers.filter((server) => server.id !== id));
-					if (activeEditorId === id) setActiveEditorId(void 0);
+					if (activeEditorId === id) closeEditor();
 				} catch {
 					setFailure("save");
 				} finally {
@@ -885,10 +922,20 @@ window.__ModuleLoader__.load({
 					setBusy(false);
 				}
 			};
-			const importServers = async () => {
-				setBusy(true);
+			const exportServers = () => {
+				const url = URL.createObjectURL(new Blob([JSON.stringify({ servers }, null, 2)], { type: "application/json" }));
+				const link = document.createElement("a");
+				link.href = url;
+				link.download = "mcp-servers.json";
+				document.body.append(link);
+				link.click();
+				link.remove();
+				window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
+			};
+			const previewImport = () => {
 				setImportFailure(void 0);
 				setImportState(void 0);
+				setImportPreview(void 0);
 				try {
 					const parsed = JSON.parse(importJson);
 					if (!isRecord(parsed) || parsed.mcpServers !== void 0 && parsed.servers !== void 0) throw new Error("invalid");
@@ -992,6 +1039,23 @@ window.__ModuleLoader__.load({
 					if (candidates.length === 0) {
 						if (skipped === 0) throw new Error("invalid");
 					}
+					setImportPreview({
+						candidates,
+						skipped,
+						secretCount: candidates.reduce((count, candidate) => count + Object.keys(candidate.secrets).length, 0)
+					});
+				} catch {
+					setImportState(void 0);
+					setImportFailure("import-invalid");
+				}
+			};
+			const confirmImport = async () => {
+				if (importPreview === void 0) return;
+				const { candidates, skipped } = importPreview;
+				setBusy(true);
+				setImportFailure(void 0);
+				setImportState(void 0);
+				try {
 					const next = [];
 					for (const candidate of candidates) {
 						const server = candidate.server;
@@ -1026,15 +1090,25 @@ window.__ModuleLoader__.load({
 						return;
 					}
 					setImportJson("");
+					setImportPreview(void 0);
 					setImportState(t("managed.import.complete").replace("{imported}", String(next.length)).replace("{skipped}", String(skipped)));
 				} catch {
-					setImportState(void 0);
-					setImportFailure("import-invalid");
+					setImportFailure("save");
 				} finally {
 					setBusy(false);
 				}
 			};
 			const statusFor = (server) => statuses.find((status) => status.serverName === server.serverName);
+			const stateFor = (server) => !server.enabled ? "disabled" : statusFor(server)?.state ?? "disconnected";
+			const query = searchQuery.trim().toLocaleLowerCase();
+			const matchingServers = servers.filter((server) => {
+				const nameMatches = query === "" || server.serverName.toLocaleLowerCase().includes(query);
+				const stateMatches = stateFilter === "all" || stateFor(server) === stateFilter;
+				const transportMatches = transportFilter === "all" || server.transport === transportFilter;
+				return nameMatches && stateMatches && transportMatches;
+			});
+			const displayedServers = servers.filter((server) => matchingServers.includes(server) || server.id === activeEditorId);
+			const hasFilters = searchQuery !== "" || stateFilter !== "all" || transportFilter !== "all";
 			const isEditingExisting = servers.some((server) => server.id === draft.id);
 			const editor = /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.fieldGroup,
@@ -1190,7 +1264,7 @@ window.__ModuleLoader__.load({
 							] }),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: draft.transport === "streamable-http" ? t("managed.credentials") : t("managed.environment") }),
 							draft.transport === "streamable-http" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("managed.credentialsHint") }),
-							draft.secrets.map((row, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							draft.secrets.map((row) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: mcp_settings_module_css_default.secretRow,
 								children: [
 									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
@@ -1200,7 +1274,7 @@ window.__ModuleLoader__.load({
 											disabled: busy,
 											onChange: (event) => setDraft({
 												...draft,
-												secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? {
+												secrets: draft.secrets.map((item) => item.id === row.id ? {
 													...item,
 													name: event.currentTarget.value
 												} : item)
@@ -1214,7 +1288,7 @@ window.__ModuleLoader__.load({
 											disabled: busy,
 											onChange: (event) => setDraft({
 												...draft,
-												secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? {
+												secrets: draft.secrets.map((item) => item.id === row.id ? {
 													...item,
 													ref: event.currentTarget.value
 												} : item)
@@ -1223,18 +1297,53 @@ window.__ModuleLoader__.load({
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-											type: "password",
-											autoComplete: "new-password",
-											value: row.value,
-											disabled: busy,
-											onChange: (event) => setDraft({
-												...draft,
-												secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? {
-													...item,
-													value: event.currentTarget.value
-												} : item)
-											})
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+											className: mcp_settings_module_css_default.secretInput,
+											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+												type: row.visible ? "text" : "password",
+												autoComplete: "new-password",
+												value: row.value,
+												disabled: busy,
+												onChange: (event) => setDraft({
+													...draft,
+													secrets: draft.secrets.map((item) => item.id === row.id ? {
+														...item,
+														value: event.currentTarget.value
+													} : item)
+												})
+											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+												variant: "outline",
+												size: "sm",
+												className: mcp_settings_module_css_default.secretVisibilityButton,
+												"aria-label": t(row.visible ? "managed.secret.hide" : "managed.secret.show"),
+												"aria-pressed": row.visible,
+												disabled: busy,
+												onClick: () => setDraft({
+													...draft,
+													secrets: draft.secrets.map((item) => item.id === row.id ? {
+														...item,
+														visible: !item.visible
+													} : item)
+												}),
+												children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
+													viewBox: "0 0 24 24",
+													"aria-hidden": "true",
+													focusable: "false",
+													children: row.visible ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" }),
+														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
+															cx: "12",
+															cy: "12",
+															r: "2.5"
+														}),
+														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "m4 4 16 16" })
+													] }) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
+														cx: "12",
+														cy: "12",
+														r: "2.5"
+													})] })
+												})
+											})]
 										})]
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
@@ -1242,21 +1351,23 @@ window.__ModuleLoader__.load({
 										disabled: busy,
 										onClick: () => setDraft({
 											...draft,
-											secrets: draft.secrets.filter((_item, rowIndex) => rowIndex !== index)
+											secrets: draft.secrets.filter((item) => item.id !== row.id)
 										}),
 										children: t("managed.removeSecret")
 									})
 								]
-							}, index)),
+							}, row.id)),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 								variant: "outline",
 								disabled: busy,
 								onClick: () => setDraft({
 									...draft,
 									secrets: [...draft.secrets, {
+										id: randomUUID(),
 										name: "",
 										ref: "",
-										value: ""
+										value: "",
+										visible: false
 									}]
 								}),
 								children: t("managed.addSecret")
@@ -1320,25 +1431,115 @@ window.__ModuleLoader__.load({
 									children: t("managed.description")
 								})]
 							})]
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.actions,
-							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-								variant: "primary",
-								disabled: busy || !snapshot.writable,
-								"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
-								onClick: () => {
-									if (!isEditingExisting && activeEditorId === draft.id) setActiveEditorId(void 0);
-									else {
-										const next = emptyDraft();
-										setDraft(next);
-										setActiveEditorId(next.id);
-									}
-									setFailure(void 0);
-									setCheckState(void 0);
-								},
-								children: t("managed.add")
-							})
+							children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									variant: "primary",
+									disabled: busy || !snapshot.writable,
+									"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
+									onClick: () => {
+										if (!isEditingExisting && activeEditorId === draft.id) closeEditor();
+										else {
+											const next = emptyDraft();
+											setDraft(next);
+											setActiveEditorId(next.id);
+										}
+										setFailure(void 0);
+										setCheckState(void 0);
+									},
+									children: t("managed.add")
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									variant: "outline",
+									disabled: servers.length === 0,
+									onClick: exportServers,
+									children: t("managed.export")
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", {
+									className: mcp_settings_module_css_default.exportHint,
+									children: t("managed.export.notice")
+								})
+							]
 						})]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: mcp_settings_module_css_default.serverFilters,
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+								className: `${mcp_settings_module_css_default.field} ${mcp_settings_module_css_default.searchField}`,
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.search") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+									type: "search",
+									value: searchQuery,
+									onChange: (event) => setSearchQuery(event.currentTarget.value),
+									placeholder: t("managed.search.placeholder")
+								})]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+								className: `${mcp_settings_module_css_default.field} ${mcp_settings_module_css_default.filterField}`,
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.filter.state") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+									value: stateFilter,
+									onChange: (event) => setStateFilter(event.currentTarget.value),
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "all",
+											children: t("managed.filter.allStates")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "disabled",
+											children: t("managed.state.disabled")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "connecting",
+											children: t("managed.state.connecting")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "connected",
+											children: t("managed.state.connected")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "reconnecting",
+											children: t("managed.state.reconnecting")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "disconnected",
+											children: t("managed.state.disconnected")
+										})
+									]
+								})]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+								className: `${mcp_settings_module_css_default.field} ${mcp_settings_module_css_default.filterField}`,
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.filter.transport") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+									value: transportFilter,
+									onChange: (event) => setTransportFilter(event.currentTarget.value),
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "all",
+											children: t("managed.filter.allTransports")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "streamable-http",
+											children: t("transport.streamable-http")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "stdio",
+											children: t("transport.stdio")
+										})
+									]
+								})]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								variant: "outline",
+								disabled: !hasFilters,
+								onClick: () => {
+									setSearchQuery("");
+									setStateFilter("all");
+									setTransportFilter("all");
+								},
+								children: t("managed.filter.clear")
+							})
+						]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 						id: "managed-mcp-import",
@@ -1351,7 +1552,12 @@ window.__ModuleLoader__.load({
 									rows: 8,
 									value: importJson,
 									disabled: busy,
-									onChange: (event) => setImportJson(event.currentTarget.value),
+									onChange: (event) => {
+										setImportJson(event.currentTarget.value);
+										setImportPreview(void 0);
+										setImportState(void 0);
+										setImportFailure(void 0);
+									},
 									placeholder: t("managed.import.placeholder")
 								})]
 							}),
@@ -1361,10 +1567,8 @@ window.__ModuleLoader__.load({
 								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "outline",
 									disabled: busy || !snapshot.writable || importJson.trim() === "",
-									onClick: () => {
-										importServers();
-									},
-									children: busy ? t("checking") : t("managed.import")
+									onClick: previewImport,
+									children: t("managed.import.previewAction")
 								})
 							}),
 							importState !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
@@ -1376,6 +1580,38 @@ window.__ModuleLoader__.load({
 								className: mcp_settings_module_css_default.error,
 								role: "alert",
 								children: managedFailureLabel(t, importFailure)
+							}),
+							importPreview !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+								className: mcp_settings_module_css_default.importPreview,
+								"aria-label": t("managed.import.previewTitle"),
+								children: [
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: t("managed.import.previewTitle") }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.import.previewSummary").replace("{count}", String(importPreview.candidates.length)).replace("{skipped}", String(importPreview.skipped)) }),
+									importPreview.candidates.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: importPreview.candidates.map((candidate) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: candidate.server.serverName }),
+										" · ",
+										t(candidate.server.transport === "stdio" ? "transport.stdio" : "transport.streamable-http"),
+										" · ",
+										t(candidate.server.purpose === "project-memory" ? "managed.purpose.project-memory" : "managed.purpose.model-tools")
+									] }, candidate.server.serverName)) }),
+									importPreview.secretCount > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.import.credentialsNotice").replace("{count}", String(importPreview.secretCount)) }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+										className: mcp_settings_module_css_default.actions,
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+											variant: "primary",
+											disabled: busy || !snapshot.writable,
+											onClick: () => {
+												confirmImport();
+											},
+											children: t("managed.import.confirm")
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+											variant: "outline",
+											disabled: busy,
+											onClick: () => setImportPreview(void 0),
+											children: t("managed.import.cancel")
+										})]
+									})
+								]
 							})
 						]
 					}),
@@ -1383,9 +1619,14 @@ window.__ModuleLoader__.load({
 						className: mcp_settings_module_css_default.serverList,
 						children: [
 							servers.length === 0 && activeEditorId !== draft.id && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.empty") }),
-							servers.map((server) => {
+							hasFilters && matchingServers.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								role: "status",
+								children: t("managed.filter.noResults")
+							}),
+							displayedServers.map((server) => {
 								const status = statusFor(server);
-								const state = !server.enabled ? "disabled" : status?.state ?? "disconnected";
+								const state = stateFor(server);
+								const toolsExpanded = expandedToolIds.has(server.id);
 								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 									className: `${mcp_settings_module_css_default.serverCard} ${activeEditorId === server.id ? mcp_settings_module_css_default.serverCardEditing : ""}`,
 									children: [
@@ -1436,7 +1677,7 @@ window.__ModuleLoader__.load({
 												disabled: busy || !snapshot.writable,
 												"aria-expanded": activeEditorId === server.id,
 												onClick: () => {
-													if (activeEditorId === server.id) setActiveEditorId(void 0);
+													if (activeEditorId === server.id) closeEditor();
 													else {
 														setDraft(toDraft(server));
 														setActiveEditorId(server.id);
@@ -1453,6 +1694,28 @@ window.__ModuleLoader__.load({
 												},
 												children: t("managed.delete")
 											})]
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+											className: mcp_settings_module_css_default.toolDisclosure,
+											children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+												variant: "outline",
+												"aria-expanded": toolsExpanded,
+												onClick: () => setExpandedToolIds((current) => {
+													const next = new Set(current);
+													if (next.has(server.id)) next.delete(server.id);
+													else next.add(server.id);
+													return next;
+												}),
+												children: t(toolsExpanded ? "managed.tools.hide" : "managed.tools.show")
+											})
+										}),
+										toolsExpanded && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+											className: mcp_settings_module_css_default.toolInventory,
+											"aria-label": `${server.serverName} ${t("managed.tools.title")}`,
+											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: t("managed.tools.title") }), state !== "connected" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+												role: "status",
+												children: t("managed.tools.unavailable")
+											}) : status?.tools.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.tools.empty") }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: (status?.tools ?? []).map((tool) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: tool.name }), tool.description !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: tool.description })] }, tool.name)) })]
 										}),
 										activeEditorId === server.id && editor
 									]
@@ -1490,9 +1753,9 @@ window.__ModuleLoader__.load({
 		function managedCheckLabel(t, result) {
 			switch (result.state) {
 				case "ready": return t("managed.checkReady").replace("{count}", String(result.toolCount));
-				case "authorization-required": return t("managed.check.authorization-required");
-				case "connection-failed": return t("managed.check.connection-failed");
-				case "timed-out": return t("managed.check.timed-out");
+				case "authorization-required": return `${t("managed.check.authorization-required")} · ${t("managed.check.advice.authorization-required")}`;
+				case "connection-failed": return `${t("managed.check.connection-failed")} · ${t("managed.check.advice.connection-failed")}`;
+				case "timed-out": return `${t("managed.check.timed-out")} · ${t("managed.check.advice.timed-out")}`;
 			}
 		}
 		function managedFailureLabel(t, failure) {
@@ -1574,6 +1837,19 @@ window.__ModuleLoader__.load({
 			"managed.description": "Configure server connections, purpose, credentials, and live status in one list.",
 			"managed.add": "Add server",
 			"managed.empty": "No MCP servers are configured.",
+			"managed.search": "Search servers",
+			"managed.search.placeholder": "Search by server name",
+			"managed.filter.state": "Status",
+			"managed.filter.allStates": "All statuses",
+			"managed.filter.transport": "Transport",
+			"managed.filter.allTransports": "All transports",
+			"managed.filter.clear": "Clear filters",
+			"managed.filter.noResults": "No servers match these filters.",
+			"managed.tools.show": "View tools",
+			"managed.tools.hide": "Hide tools",
+			"managed.tools.title": "Available tools",
+			"managed.tools.empty": "No tools are available.",
+			"managed.tools.unavailable": "Tool list is unavailable while the server is disconnected.",
 			"managed.enabled": "Enabled",
 			"managed.edit": "Edit",
 			"managed.delete": "Delete",
@@ -1602,6 +1878,9 @@ window.__ModuleLoader__.load({
 			"managed.check.connection-failed": "Connection failed",
 			"managed.check.timed-out": "Connection check timed out",
 			"managed.check.ready": "Connected",
+			"managed.check.advice.authorization-required": "Check the credential reference and secret value.",
+			"managed.check.advice.connection-failed": "Check the endpoint or command and confirm the server is available.",
+			"managed.check.advice.timed-out": "Check whether the server is responsive, then retry.",
 			"managed.state.disabled": "Disabled",
 			"managed.state.connecting": "Connecting",
 			"managed.state.connected": "Connected",
@@ -1614,9 +1893,21 @@ window.__ModuleLoader__.load({
 			"managed.import": "Import JSON",
 			"managed.import.placeholder": "Paste a configuration containing an mcpServers object.",
 			"managed.import.hint": "Imports streamable-http servers. Secret headers are stored in the credential store; existing names are skipped.",
+			"managed.import.previewAction": "Preview import",
+			"managed.import.previewTitle": "Import preview",
+			"managed.import.previewSummary": "Ready to add {count} server(s); {skipped} duplicate(s) will be skipped.",
+			"managed.import.credentialsNotice": "After confirmation, {count} credential value(s) will be stored in the credential store.",
+			"managed.import.confirm": "Confirm import",
+			"managed.import.cancel": "Cancel preview",
 			"managed.import.action": "Import servers",
 			"managed.import.complete": "Imported {imported} server(s); skipped {skipped} duplicate(s).",
-			"managed.import.invalid": "Invalid JSON or unsupported server configuration. Check the mcpServers object and streamable-http entries."
+			"managed.import.invalid": "Invalid JSON or unsupported server configuration. Check the mcpServers object and streamable-http entries.",
+			"managed.export": "Export settings",
+			"managed.export.notice": "Credential values stay in the local credential store and must be configured separately in another profile.",
+			"managed.secret.show": "Show secret",
+			"managed.secret.hide": "Hide secret",
+			"managed.purpose.model-tools": "Model tools",
+			"managed.purpose.project-memory": "Project memory"
 		};
 		/** Simplified Chinese strings for MCP server settings. */
 		const zh = {
@@ -1654,6 +1945,19 @@ window.__ModuleLoader__.load({
 			"managed.description": "在同一列表中配置服务器连接、用途、凭据和实时状态。",
 			"managed.add": "添加服务器",
 			"managed.empty": "尚未配置 MCP 服务器。",
+			"managed.search": "搜索服务",
+			"managed.search.placeholder": "按服务名称搜索",
+			"managed.filter.state": "连接状态",
+			"managed.filter.allStates": "全部状态",
+			"managed.filter.transport": "传输方式",
+			"managed.filter.allTransports": "全部传输方式",
+			"managed.filter.clear": "清除筛选",
+			"managed.filter.noResults": "没有符合这些筛选条件的服务。",
+			"managed.tools.show": "查看工具",
+			"managed.tools.hide": "收起工具",
+			"managed.tools.title": "可用工具",
+			"managed.tools.empty": "此服务没有可用工具。",
+			"managed.tools.unavailable": "服务未连接，暂时无法查看工具列表。",
 			"managed.enabled": "启用",
 			"managed.edit": "编辑",
 			"managed.delete": "删除",
@@ -1682,6 +1986,9 @@ window.__ModuleLoader__.load({
 			"managed.check.connection-failed": "连接失败",
 			"managed.check.timed-out": "连接检查超时",
 			"managed.check.ready": "已连接",
+			"managed.check.advice.authorization-required": "请检查凭据引用和秘密值。",
+			"managed.check.advice.connection-failed": "请检查服务地址或命令，并确认服务器可用。",
+			"managed.check.advice.timed-out": "请检查服务器是否响应，然后重试。",
 			"managed.state.disabled": "已停用",
 			"managed.state.connecting": "连接中",
 			"managed.state.connected": "已连接",
@@ -1694,9 +2001,21 @@ window.__ModuleLoader__.load({
 			"managed.import": "导入 JSON",
 			"managed.import.placeholder": "粘贴包含 mcpServers 对象的配置。",
 			"managed.import.hint": "支持导入 streamable-http 服务。敏感请求头会保存到凭据库；已有名称会跳过。",
+			"managed.import.previewAction": "预览导入",
+			"managed.import.previewTitle": "导入预览",
+			"managed.import.previewSummary": "将新增 {count} 个服务；跳过 {skipped} 个重复项。",
+			"managed.import.credentialsNotice": "确认后将把 {count} 个凭据值保存到凭据库。",
+			"managed.import.confirm": "确认导入",
+			"managed.import.cancel": "取消预览",
 			"managed.import.action": "导入服务",
 			"managed.import.complete": "已导入 {imported} 个服务；跳过 {skipped} 个重复项。",
-			"managed.import.invalid": "JSON 或服务器配置无效。请检查 mcpServers 对象及 streamable-http 配置。"
+			"managed.import.invalid": "JSON 或服务器配置无效。请检查 mcpServers 对象及 streamable-http 配置。",
+			"managed.export": "导出配置",
+			"managed.export.notice": "密钥值仍保存在本地凭据库；在其他配置文件中需要单独设置。",
+			"managed.secret.show": "显示密钥",
+			"managed.secret.hide": "隐藏密钥",
+			"managed.purpose.model-tools": "模型工具",
+			"managed.purpose.project-memory": "项目记忆"
 		};
 		//#endregion
 		//#region src/client/index.ts
@@ -1711,17 +2030,6 @@ window.__ModuleLoader__.load({
 		/** Register MCP settings while at least one managed MCP setting is available. */
 		async function apply(ctx) {
 			const unmountRemote = await ctx.remote.$mount(TYPERT_REMOTE);
-			const remote = {
-				get credentials() {
-					return ctx.get("remote.credentials");
-				},
-				get mcpServerManager() {
-					return ctx.get("remote.mcpServerManager");
-				},
-				get mcpClientStatus() {
-					return ctx.get("remote.mcpClientStatus");
-				}
-			};
 			const t = ctx.locale.bind(NS);
 			ctx.effect(() => ctx.locale.register(NS, {
 				en,
@@ -1739,14 +2047,14 @@ window.__ModuleLoader__.load({
 					locale: NS,
 					inject: () => ({
 						managedForm: managed,
-						remote
+						remote: ctx.remote
 					})
 				}, McpConnectionsPage));
 				return () => stopSection?.();
 			}), "ui-settings-mcp: connection settings section");
 			const appearanceInjected = () => ({
 				form: ctx.configForms.get("mcp-card-presentation"),
-				remote
+				remote: ctx.remote
 			});
 			ctx.effect(() => ctx.configForms.whileServed(["mcp-card-presentation"], () => ctx.slots.inject("settings.section", () => ctx.slots.register({
 				name: "settings.section",

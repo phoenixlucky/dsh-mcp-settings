@@ -526,6 +526,10 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 		const run = syncChain.then(async () => {
 			if (!isCurrent(generation)) return;
 			const next = await syncTools(generation, ctx, syncOpts, disposers);
+			if (!isCurrent(generation)) {
+				for (const dispose of next.disposers.values()) dispose();
+				return;
+			}
 			disposers = next.disposers;
 			toolSummaries = next.tools;
 			publish(connectedAt === void 0 ? "connecting" : "connected");

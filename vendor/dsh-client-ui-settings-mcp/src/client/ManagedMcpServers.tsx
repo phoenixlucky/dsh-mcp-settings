@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Button, IconApiOutlineRegular, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
@@ -13,8 +13,8 @@ type McpTransportFilter = 'all' | ManagedMcpServer['transport']
 interface Injected { form: ConfigForm<{ servers?: ManagedMcpServer[] }>; remote: Remote }
 interface SecretRow { id: string; name: string; ref: string; value: string; visible: boolean }
 interface HeaderRow { name: string; value: string }
-interface ImportCandidate { server: Omit<ManagedMcpServer, 'id'>; secrets: Record<string, string> }
-interface ImportPreview { candidates: ImportCandidate[]; skipped: number; secretCount: number }
+interface ImportCandidate { server: Omit<ManagedMcpServer, 'id'>; secrets: Record<string, string>; secretRefs: Record<string, string> }
+interface ImportPreview { candidates: ImportCandidate[]; skipped: number; secretCount: number; revision: number | undefined }
 interface Draft {
   id: string
   serverName: string
@@ -63,16 +63,18 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const [stateFilter, setStateFilter] = useState<McpStatusFilter>('all')
   const [transportFilter, setTransportFilter] = useState<McpTransportFilter>('all')
   const [expandedToolIds, setExpandedToolIds] = useState<ReadonlySet<string>>(() => new Set())
+  const statusRequestId = useRef(0)
 
   useEffect(() => {
     let active = true
     const refresh = async () => {
+      const requestId = ++statusRequestId.current
       try {
         const reply = await remote.mcpClientStatus.list()
-        if (active && reply.ok) setStatuses(reply.value)
+        if (active && requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : [])
       } catch (error) {
         void error
-        if (active) setStatuses([])
+        if (active && requestId === statusRequestId.current) setStatuses([])
       }
     }
     void refresh()
@@ -86,10 +88,11 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     await refreshStatuses()
   }
   const refreshStatuses = async () => {
+    const requestId = ++statusRequestId.current
     try {
       const reply = await remote.mcpClientStatus.list()
-      if (reply.ok) setStatuses(reply.value)
-    } catch { setStatuses([]) }
+      if (requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : [])
+    } catch { if (requestId === statusRequestId.current) setStatuses([]) }
   }
   const closeEditor = () => {
     setActiveEditorId(undefined)
@@ -189,7 +192,15 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     catch { setFailure('save') } finally { setBusy(false) }
   }
   const exportServers = () => {
-    const url = URL.createObjectURL(new Blob([JSON.stringify({ servers }, null, 2)], { type: 'application/json' }))
+    const exportableServers = servers.map(server => {
+      const common = { id: server.id, serverName: server.serverName, enabled: server.enabled, purpose: server.purpose }
+      if (server.transport === 'streamable-http') {
+        const headers = Object.fromEntries(Object.entries(server.headers ?? {}).filter(([name]) => !/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)))
+        return { ...common, transport: server.transport, url: server.url, ...(Object.keys(headers).length > 0 ? { headers } : {}), headerRefs: { ...server.headerRefs } }
+      }
+      return { ...common, transport: server.transport, command: server.command, args: [...server.args], cwd: server.cwd, envRefs: { ...server.envRefs } }
+    })
+    const url = URL.createObjectURL(new Blob([JSON.stringify({ servers: exportableServers }, null, 2)], { type: 'application/json' }))
     const link = document.createElement('a')
     link.href = url
     link.download = 'mcp-servers.json'
@@ -211,7 +222,8 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName)) throw new Error('invalid')
         if (existingNames.has(serverName.toLowerCase()) || importedNames.has(serverName.toLowerCase())) { skipped++; return }
         importedNames.add(serverName.toLowerCase())
-        candidates.push({ server, secrets })
+        const secretRefs = Object.fromEntries(Object.keys(secrets).map(name => [name, `MCP_IMPORT_${randomUUID().replaceAll('-', '')}`]))
+        candidates.push({ server, secrets, secretRefs })
       }
       if (isRecord(parsed.mcpServers)) {
         for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
@@ -279,6 +291,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         candidates,
         skipped,
         secretCount: candidates.reduce((count, candidate) => count + Object.keys(candidate.secrets).length, 0),
+        revision: snapshot.revision,
       })
     } catch {
       setImportState(undefined)
@@ -287,6 +300,12 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   }
   const confirmImport = async () => {
     if (importPreview === undefined) return
+    const currentSnapshot = form.getSnapshot()
+    if (currentSnapshot.revision !== importPreview.revision) {
+      setImportPreview(undefined)
+      setImportState(t('managed.import.previewStale'))
+      return
+    }
     const { candidates, skipped } = importPreview
     setBusy(true); setImportFailure(undefined); setImportState(undefined)
     try {
@@ -295,7 +314,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         const server = candidate.server
         const refs = server.transport === 'streamable-http' ? { ...server.headerRefs } : { ...server.envRefs }
         for (const [name, value] of Object.entries(candidate.secrets)) {
-          const ref = `MCP_IMPORT_${randomUUID().replaceAll('-', '')}`
+          const ref = candidate.secretRefs[name]
           try {
             const reply = await remote.credentials.set(ref, value)
             if (!reply.ok) { setImportFailure('credential'); return }
@@ -309,7 +328,17 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
           ? { ...server, id: randomUUID(), headerRefs: refs }
           : { ...server, id: randomUUID(), envRefs: refs })
       }
-      try { if (next.length > 0) await saveServers([...servers, ...next]) }
+      try {
+        if (next.length > 0) {
+          const accepted = await form.mutate([{ op: 'set', path: ['servers'], value: [...(currentSnapshot.value?.servers ?? []), ...next] }], importPreview.revision)
+          if (!accepted) {
+            setImportPreview(undefined)
+            setImportState(t('managed.import.previewStale'))
+            return
+          }
+          await refreshStatuses()
+        }
+      }
       catch { setImportFailure('save'); return }
       setImportJson('')
       setImportPreview(undefined)
@@ -426,14 +455,16 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       <Button variant="outline" disabled={!hasFilters} onClick={() => { setSearchQuery(''); setStateFilter('all'); setTransportFilter('all') }}>{t('managed.filter.clear')}</Button>
     </div>
     <section id="managed-mcp-import" className={css.fieldGroup} aria-label={t('managed.import')}>
-      <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => {
-        setImportJson(event.currentTarget.value)
-        setImportPreview(undefined); setImportState(undefined); setImportFailure(undefined)
-      }} placeholder={t('managed.import.placeholder')} /></label>
-      <small>{t('managed.import.hint')}</small>
-      <div className={css.actions}>
-        <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={previewImport}>{t('managed.import.previewAction')}</Button>
-      </div>
+      {importPreview === undefined && <>
+        <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => {
+          setImportJson(event.currentTarget.value)
+          setImportPreview(undefined); setImportState(undefined); setImportFailure(undefined)
+        }} placeholder={t('managed.import.placeholder')} /></label>
+        <small>{t('managed.import.hint')}</small>
+        <div className={css.actions}>
+          <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={previewImport}>{t('managed.import.previewAction')}</Button>
+        </div>
+      </>}
       {importState !== undefined && <p className={css.status} role="status">{importState}</p>}
       {importFailure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, importFailure)}</p>}
       {importPreview !== undefined && <section className={css.importPreview} aria-label={t('managed.import.previewTitle')}>
