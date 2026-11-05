@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "@tinyforge/dsh-mcp-settings",
+	id: "@deepseek-ai/dsh-mcp-settings",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;
@@ -463,10 +463,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
 		const css = ".oetn4G_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 12%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:var(--dsw-alias-bg-layer-1);--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:76rem;margin-inline:auto;display:grid}.oetn4G_pageHeader{align-items:center;gap:var(--mcp-space-4);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.oetn4G_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_card{align-content:start;gap:var(--mcp-space-4);width:100%;min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:0 1px 2px color-mix(in srgb, var(--dsw-alias-label-primary) 5%, transparent);display:grid;container-type:inline-size}.oetn4G_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);display:flex}.oetn4G_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.oetn4G_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.oetn4G_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.oetn4G_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:color-mix(in srgb, var(--dsw-alias-bg-layer-1) 78%, transparent);display:grid}.oetn4G_fieldGroupTitle{padding-bottom:var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_importPreview{gap:var(--mcp-space-3);min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:var(--mcp-space-2);margin:0;padding-inline-start:1.25rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.oetn4G_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.oetn4G_formGrid{gap:var(--mcp-space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_formGrid .oetn4G_field{align-items:center;column-gap:var(--mcp-space-3);grid-template-columns:minmax(7rem,.8fr) minmax(0,1.2fr)}.oetn4G_field input,.oetn4G_field textarea,.oetn4G_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.oetn4G_field textarea:focus-visible,.oetn4G_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field textarea:disabled,.oetn4G_field select:disabled{opacity:.6}.oetn4G_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field input:disabled{opacity:.6}.oetn4G_secretInput{align-items:center;gap:var(--mcp-space-2);grid-template-columns:minmax(0,1fr) auto;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:var(--mcp-space-2)}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:1px solid var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.oetn4G_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.oetn4G_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.oetn4G_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);text-align:right;flex-basis:100%}.oetn4G_serverFilters{align-items:end;gap:var(--mcp-space-3);grid-template-columns:minmax(12rem,2fr) repeat(2,minmax(9rem,1fr)) auto;display:grid}.oetn4G_toolDisclosure{justify-content:flex-start;display:flex}.oetn4G_toolInventory{gap:var(--mcp-space-3);min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);grid-column:1/-1;display:grid}.oetn4G_toolInventory h4,.oetn4G_toolInventory p{margin:0}.oetn4G_toolInventory ul{gap:var(--mcp-space-3);margin:0;padding-inline-start:1.25rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:var(--mcp-space-1);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4) var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;transition:border-color .14s,box-shadow .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 38%, var(--mcp-card-stroke));box-shadow:0 2px 8px color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent)}.oetn4G_serverCard strong{color:var(--dsw-alias-label-primary)}.oetn4G_serverCard p{margin:0}.oetn4G_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.oetn4G_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_serverState{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-2);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, var(--dsw-alias-settings-card-fill));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;line-height:1.2;display:inline-flex}.oetn4G_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_serverCardEditing{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 42%, var(--mcp-card-stroke));background:color-mix(in srgb, var(--dsw-static-amber-100) 10%, var(--dsw-alias-settings-card-fill));grid-template-columns:minmax(0,1fr)}.oetn4G_serverCardEditing>p{white-space:normal;border:0;padding:0}.oetn4G_serverCardEditing>.oetn4G_actions,.oetn4G_serverCardEditing>section{grid-column:1/-1}.oetn4G_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_toolCount{width:fit-content;padding:var(--mcp-space-2) var(--mcp-space-3);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14)}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}@container (width<=48rem){.oetn4G_serverCard:not(.oetn4G_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_serverHeading{grid-column:1/-1}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.oetn4G_serverFilters{grid-template-columns:minmax(0,1fr)}.oetn4G_cardHeader{flex-wrap:wrap;align-items:flex-start}.oetn4G_cardIdentity{flex:100%}.oetn4G_cardHeader>.oetn4G_actions{justify-content:flex-start;width:100%}.oetn4G_exportHint{text-align:left}.oetn4G_formGrid{grid-template-columns:minmax(0,1fr)}.oetn4G_enableControl{flex:auto;justify-content:space-between;max-width:100%}.oetn4G_serverCard:not(.oetn4G_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-start}}@container (width>=38rem){.oetn4G_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.oetn4G_field small{grid-column:2}.oetn4G_secretRow .oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_secretRow .oetn4G_field small{grid-column:1}}@container (width<=32rem){.oetn4G_card{padding:var(--mcp-space-3)}.oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_field small{grid-column:1}.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}.oetn4G_actions{justify-content:flex-start}.oetn4G_secretRow{grid-template-columns:minmax(0,1fr)}.oetn4G_serverHeading{flex-wrap:wrap;align-items:flex-start}.oetn4G_serverCard>.oetn4G_actions{justify-content:flex-start}.oetn4G_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard>p{white-space:normal;border:0;padding:0}}";
-		const tagId = "@tinyforge/dsh-mcp-settings/mcp-settings.module.css";
+		const tagId = "@deepseek-ai/dsh-mcp-settings/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "@tinyforge/dsh-mcp-settings";
+			tag.dataset.plugin = "@deepseek-ai/dsh-mcp-settings";
 			tag.dataset.pluginCss = tagId;
 			tag.textContent = css;
 			document.head.appendChild(tag);
@@ -760,14 +760,16 @@ window.__ModuleLoader__.load({
 			const [stateFilter, setStateFilter] = (0, react.useState)("all");
 			const [transportFilter, setTransportFilter] = (0, react.useState)("all");
 			const [expandedToolIds, setExpandedToolIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
+			const statusRequestId = (0, react.useRef)(0);
 			(0, react.useEffect)(() => {
 				let active = true;
 				const refresh = async () => {
+					const requestId = ++statusRequestId.current;
 					try {
 						const reply = await remote.mcpClientStatus.list();
-						if (active && reply.ok) setStatuses(reply.value);
+						if (active && requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : []);
 					} catch (error) {
-						if (active) setStatuses([]);
+						if (active && requestId === statusRequestId.current) setStatuses([]);
 					}
 				};
 				refresh();
@@ -784,11 +786,12 @@ window.__ModuleLoader__.load({
 				await refreshStatuses();
 			};
 			const refreshStatuses = async () => {
+				const requestId = ++statusRequestId.current;
 				try {
 					const reply = await remote.mcpClientStatus.list();
-					if (reply.ok) setStatuses(reply.value);
+					if (requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : []);
 				} catch {
-					setStatuses([]);
+					if (requestId === statusRequestId.current) setStatuses([]);
 				}
 			};
 			const closeEditor = () => {
@@ -923,7 +926,33 @@ window.__ModuleLoader__.load({
 				}
 			};
 			const exportServers = () => {
-				const url = URL.createObjectURL(new Blob([JSON.stringify({ servers }, null, 2)], { type: "application/json" }));
+				const exportableServers = servers.map((server) => {
+					const common = {
+						id: server.id,
+						serverName: server.serverName,
+						enabled: server.enabled,
+						purpose: server.purpose
+					};
+					if (server.transport === "streamable-http") {
+						const headers = Object.fromEntries(Object.entries(server.headers ?? {}).filter(([name]) => !/^(authorization|cookie|proxy-authorization|x-api-key)$/iu.test(name)));
+						return {
+							...common,
+							transport: server.transport,
+							url: server.url,
+							...Object.keys(headers).length > 0 ? { headers } : {},
+							headerRefs: { ...server.headerRefs }
+						};
+					}
+					return {
+						...common,
+						transport: server.transport,
+						command: server.command,
+						args: [...server.args],
+						cwd: server.cwd,
+						envRefs: { ...server.envRefs }
+					};
+				});
+				const url = URL.createObjectURL(new Blob([JSON.stringify({ servers: exportableServers }, null, 2)], { type: "application/json" }));
 				const link = document.createElement("a");
 				link.href = url;
 				link.download = "mcp-servers.json";
@@ -950,9 +979,11 @@ window.__ModuleLoader__.load({
 							return;
 						}
 						importedNames.add(serverName.toLowerCase());
+						const secretRefs = Object.fromEntries(Object.keys(secrets).map((name) => [name, `MCP_IMPORT_${randomUUID().replaceAll("-", "")}`]));
 						candidates.push({
 							server,
-							secrets
+							secrets,
+							secretRefs
 						});
 					};
 					if (isRecord(parsed.mcpServers)) for (const [serverName, raw] of Object.entries(parsed.mcpServers)) {
@@ -1042,7 +1073,8 @@ window.__ModuleLoader__.load({
 					setImportPreview({
 						candidates,
 						skipped,
-						secretCount: candidates.reduce((count, candidate) => count + Object.keys(candidate.secrets).length, 0)
+						secretCount: candidates.reduce((count, candidate) => count + Object.keys(candidate.secrets).length, 0),
+						revision: snapshot.revision
 					});
 				} catch {
 					setImportState(void 0);
@@ -1051,6 +1083,12 @@ window.__ModuleLoader__.load({
 			};
 			const confirmImport = async () => {
 				if (importPreview === void 0) return;
+				const currentSnapshot = form.getSnapshot();
+				if (currentSnapshot.revision !== importPreview.revision) {
+					setImportPreview(void 0);
+					setImportState(t("managed.import.previewStale"));
+					return;
+				}
 				const { candidates, skipped } = importPreview;
 				setBusy(true);
 				setImportFailure(void 0);
@@ -1061,7 +1099,7 @@ window.__ModuleLoader__.load({
 						const server = candidate.server;
 						const refs = server.transport === "streamable-http" ? { ...server.headerRefs } : { ...server.envRefs };
 						for (const [name, value] of Object.entries(candidate.secrets)) {
-							const ref = `MCP_IMPORT_${randomUUID().replaceAll("-", "")}`;
+							const ref = candidate.secretRefs[name];
 							try {
 								if (!(await remote.credentials.set(ref, value)).ok) {
 									setImportFailure("credential");
@@ -1084,7 +1122,20 @@ window.__ModuleLoader__.load({
 						});
 					}
 					try {
-						if (next.length > 0) await saveServers([...servers, ...next]);
+						if (next.length > 0) {
+							if (!await form.mutate([{
+								op: "set",
+								path: ["servers"],
+								value: [...currentSnapshot.value?.servers ?? [], ...next]
+							}], importPreview.revision)) {
+								if (form.getSnapshot().revision !== importPreview.revision) {
+									setImportPreview(void 0);
+									setImportState(t("managed.import.previewStale"));
+								} else setImportFailure("save");
+								return;
+							}
+							await refreshStatuses();
+						}
 					} catch {
 						setImportFailure("save");
 						return;
@@ -1546,31 +1597,33 @@ window.__ModuleLoader__.load({
 						className: mcp_settings_module_css_default.fieldGroup,
 						"aria-label": t("managed.import"),
 						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								className: mcp_settings_module_css_default.field,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.import") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
-									rows: 8,
-									value: importJson,
-									disabled: busy,
-									onChange: (event) => {
-										setImportJson(event.currentTarget.value);
-										setImportPreview(void 0);
-										setImportState(void 0);
-										setImportFailure(void 0);
-									},
-									placeholder: t("managed.import.placeholder")
-								})]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("managed.import.hint") }),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: mcp_settings_module_css_default.actions,
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "outline",
-									disabled: busy || !snapshot.writable || importJson.trim() === "",
-									onClick: previewImport,
-									children: t("managed.import.previewAction")
+							importPreview === void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+									className: mcp_settings_module_css_default.field,
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.import") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
+										rows: 8,
+										value: importJson,
+										disabled: busy,
+										onChange: (event) => {
+											setImportJson(event.currentTarget.value);
+											setImportPreview(void 0);
+											setImportState(void 0);
+											setImportFailure(void 0);
+										},
+										placeholder: t("managed.import.placeholder")
+									})]
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: t("managed.import.hint") }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: mcp_settings_module_css_default.actions,
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										variant: "outline",
+										disabled: busy || !snapshot.writable || importJson.trim() === "",
+										onClick: previewImport,
+										children: t("managed.import.previewAction")
+									})
 								})
-							}),
+							] }),
 							importState !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: mcp_settings_module_css_default.status,
 								role: "status",
@@ -1896,6 +1949,7 @@ window.__ModuleLoader__.load({
 			"managed.import.previewAction": "Preview import",
 			"managed.import.previewTitle": "Import preview",
 			"managed.import.previewSummary": "Ready to add {count} server(s); {skipped} duplicate(s) will be skipped.",
+			"managed.import.previewStale": "Settings changed since this preview. Review the JSON and preview it again before confirming.",
 			"managed.import.credentialsNotice": "After confirmation, {count} credential value(s) will be stored in the credential store.",
 			"managed.import.confirm": "Confirm import",
 			"managed.import.cancel": "Cancel preview",
@@ -2004,6 +2058,7 @@ window.__ModuleLoader__.load({
 			"managed.import.previewAction": "预览导入",
 			"managed.import.previewTitle": "导入预览",
 			"managed.import.previewSummary": "将新增 {count} 个服务；跳过 {skipped} 个重复项。",
+			"managed.import.previewStale": "预览后设置已更改。请重新检查 JSON 并预览，再确认导入。",
 			"managed.import.credentialsNotice": "确认后将把 {count} 个凭据值保存到凭据库。",
 			"managed.import.confirm": "确认导入",
 			"managed.import.cancel": "取消预览",
