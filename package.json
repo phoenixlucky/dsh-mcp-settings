@@ -1,7 +1,7 @@
 {
-  "name": "@deepseek-ai/dsh-mcp-settings",
+  "name": "@tinyforge/dsh-mcp-settings",
   "description": "Managed MCP server settings for adding MCP servers",
-  "version": "1.0.33",
+  "version": "1.0.35",
   "publishConfig": {
     "access": "public"
   },

@@ -3,7 +3,7 @@ description: "可选 bundle，通过 profile patch 添加和管理 MCP 服务。
 kind: "package-bundle"
 ---
 
-# `@deepseek-ai/dsh-mcp-settings`
+# `@tinyforge/dsh-mcp-settings`
 
 [English](README.md) | 中文
 

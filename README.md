@@ -3,7 +3,7 @@ description: "Optional bundle for adding and managing MCP servers through profil
 kind: "package-bundle"
 ---
 
-# `@deepseek-ai/dsh-mcp-settings`
+# `@tinyforge/dsh-mcp-settings`
 
 English | [中文](README.zh.md)
 

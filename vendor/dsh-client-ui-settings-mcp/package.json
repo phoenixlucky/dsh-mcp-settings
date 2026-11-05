@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-mcp-settings",
+  "name": "@tinyforge/dsh-mcp-settings",
   "description": "Managed MCP server settings for DeepSeek Harness",
   "version": "0.2.2-alpha.2",
   "publishConfig": {
