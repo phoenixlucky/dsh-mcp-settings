@@ -8,6 +8,8 @@ import type { ManagedMcpCheck, ManagedMcpServer, McpServerStatus } from '@deepse
 import css from './mcp-settings.module.css'
 
 type Remote = ClientContext['remote']
+type McpStatusFilter = 'all' | 'disabled' | McpServerStatus['state']
+type McpTransportFilter = 'all' | ManagedMcpServer['transport']
 interface Injected { form: ConfigForm<{ servers?: ManagedMcpServer[] }>; remote: Remote }
 interface SecretRow { name: string; ref: string; value: string }
 interface HeaderRow { name: string; value: string }
@@ -54,6 +56,10 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const [checkState, setCheckState] = useState<string>()
   const [importJson, setImportJson] = useState('')
   const [importState, setImportState] = useState<string>()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [stateFilter, setStateFilter] = useState<McpStatusFilter>('all')
+  const [transportFilter, setTransportFilter] = useState<McpTransportFilter>('all')
+  const [expandedToolIds, setExpandedToolIds] = useState<ReadonlySet<string>>(() => new Set())
 
   useEffect(() => {
     let active = true
@@ -279,6 +285,16 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     } finally { setBusy(false) }
   }
   const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.serverName === server.serverName)
+  const stateFor = (server: ManagedMcpServer): McpStatusFilter => !server.enabled ? 'disabled' : statusFor(server)?.state ?? 'disconnected'
+  const query = searchQuery.trim().toLocaleLowerCase()
+  const matchingServers = servers.filter(server => {
+    const nameMatches = query === '' || server.serverName.toLocaleLowerCase().includes(query)
+    const stateMatches = stateFilter === 'all' || stateFor(server) === stateFilter
+    const transportMatches = transportFilter === 'all' || server.transport === transportFilter
+    return nameMatches && stateMatches && transportMatches
+  })
+  const displayedServers = servers.filter(server => matchingServers.includes(server) || server.id === activeEditorId)
+  const hasFilters = searchQuery !== '' || stateFilter !== 'all' || transportFilter !== 'all'
   const isEditingExisting = servers.some(server => server.id === draft.id)
   const editor = (
     <section className={css.fieldGroup} aria-label={t('managed.editor')}>
@@ -347,6 +363,23 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       }}>{t('managed.add')}</Button>
       </div>
     </header>
+    <div className={css.serverFilters}>
+      <label className={`${css.field} ${css.searchField}`}><span>{t('managed.search')}</span><input type="search" value={searchQuery} onChange={event => setSearchQuery(event.currentTarget.value)} placeholder={t('managed.search.placeholder')} /></label>
+      <label className={`${css.field} ${css.filterField}`}><span>{t('managed.filter.state')}</span><select value={stateFilter} onChange={event => setStateFilter(event.currentTarget.value as McpStatusFilter)}>
+        <option value="all">{t('managed.filter.allStates')}</option>
+        <option value="disabled">{t('managed.state.disabled')}</option>
+        <option value="connecting">{t('managed.state.connecting')}</option>
+        <option value="connected">{t('managed.state.connected')}</option>
+        <option value="reconnecting">{t('managed.state.reconnecting')}</option>
+        <option value="disconnected">{t('managed.state.disconnected')}</option>
+      </select></label>
+      <label className={`${css.field} ${css.filterField}`}><span>{t('managed.filter.transport')}</span><select value={transportFilter} onChange={event => setTransportFilter(event.currentTarget.value as McpTransportFilter)}>
+        <option value="all">{t('managed.filter.allTransports')}</option>
+        <option value="streamable-http">{t('transport.streamable-http')}</option>
+        <option value="stdio">{t('transport.stdio')}</option>
+      </select></label>
+      <Button variant="outline" disabled={!hasFilters} onClick={() => { setSearchQuery(''); setStateFilter('all'); setTransportFilter('all') }}>{t('managed.filter.clear')}</Button>
+    </div>
     <section id="managed-mcp-import" className={css.fieldGroup} aria-label={t('managed.import')}>
       <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => setImportJson(event.currentTarget.value)} placeholder={t('managed.import.placeholder')} /></label>
       <small>{t('managed.import.hint')}</small>
@@ -358,9 +391,11 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     </section>
     <div className={css.serverList}>
       {servers.length === 0 && activeEditorId !== draft.id && <p>{t('managed.empty')}</p>}
-      {servers.map((server) => {
+      {hasFilters && matchingServers.length === 0 && <p role="status">{t('managed.filter.noResults')}</p>}
+      {displayedServers.map((server) => {
         const status = statusFor(server)
-        const state = !server.enabled ? 'disabled' : status?.state ?? 'disconnected'
+        const state = stateFor(server)
+        const toolsExpanded = expandedToolIds.has(server.id)
         return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
           <div className={css.serverHeading}>
             <div className={css.serverIdentity}>
@@ -385,6 +420,22 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
             }}>{t('managed.edit')}</Button>
             <Button variant="outline" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id) }}>{t('managed.delete')}</Button>
           </div>
+          <div className={css.toolDisclosure}>
+            <Button variant="outline" aria-expanded={toolsExpanded} onClick={() => setExpandedToolIds(current => {
+              const next = new Set(current)
+              if (next.has(server.id)) next.delete(server.id)
+              else next.add(server.id)
+              return next
+            })}>{t(toolsExpanded ? 'managed.tools.hide' : 'managed.tools.show')}</Button>
+          </div>
+          {toolsExpanded && <section className={css.toolInventory} aria-label={`${server.serverName} ${t('managed.tools.title')}`}>
+            <h4>{t('managed.tools.title')}</h4>
+            {state !== 'connected'
+              ? <p role="status">{t('managed.tools.unavailable')}</p>
+              : status?.tools.length === 0
+                ? <p>{t('managed.tools.empty')}</p>
+                : <ul>{(status?.tools ?? []).map(tool => <li key={tool.name}><strong>{tool.name}</strong>{tool.description !== '' && <p>{tool.description}</p>}</li>)}</ul>}
+          </section>}
           {activeEditorId === server.id && editor}
         </article>
       })}

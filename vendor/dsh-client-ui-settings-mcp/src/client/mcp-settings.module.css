@@ -275,6 +275,53 @@
   gap: var(--mcp-space-2);
 }
 
+.serverFilters {
+  display: grid;
+  grid-template-columns: minmax(12rem, 2fr) repeat(2, minmax(9rem, 1fr)) auto;
+  align-items: end;
+  gap: var(--mcp-space-3);
+}
+
+.toolDisclosure {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.toolInventory {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: var(--mcp-space-3);
+  min-width: 0;
+  padding: var(--mcp-space-4);
+  border: 1px solid var(--mcp-card-stroke);
+  border-radius: var(--dsw-radius-lg);
+  background: var(--mcp-field-fill);
+}
+
+.toolInventory h4,
+.toolInventory p {
+  margin: 0;
+}
+
+.toolInventory ul {
+  display: grid;
+  gap: var(--mcp-space-3);
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+
+.toolInventory li {
+  min-width: 0;
+  color: var(--dsw-alias-label-primary);
+  overflow-wrap: anywhere;
+}
+
+.toolInventory li p {
+  margin-top: var(--mcp-space-1);
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-base-16);
+}
+
 .serverList {
   display: grid;
   gap: var(--mcp-space-3);
@@ -432,6 +479,10 @@
 }
 
 @container (max-width: 40rem) {
+  .serverFilters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .cardHeader {
     align-items: flex-start;
     flex-wrap: wrap;
