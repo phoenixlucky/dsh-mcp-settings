@@ -11,8 +11,10 @@ type Remote = ClientContext['remote']
 type McpStatusFilter = 'all' | 'disabled' | McpServerStatus['state']
 type McpTransportFilter = 'all' | ManagedMcpServer['transport']
 interface Injected { form: ConfigForm<{ servers?: ManagedMcpServer[] }>; remote: Remote }
-interface SecretRow { name: string; ref: string; value: string }
+interface SecretRow { id: string; name: string; ref: string; value: string; visible: boolean }
 interface HeaderRow { name: string; value: string }
+interface ImportCandidate { server: Omit<ManagedMcpServer, 'id'>; secrets: Record<string, string> }
+interface ImportPreview { candidates: ImportCandidate[]; skipped: number; secretCount: number }
 interface Draft {
   id: string
   serverName: string
@@ -39,7 +41,7 @@ function toDraft(server: ManagedMcpServer): Draft {
     command: server.transport === 'stdio' ? server.command : '',
     args: server.transport === 'stdio' ? server.args.join('\n') : '',
     cwd: server.transport === 'stdio' ? server.cwd : '',
-    secrets: Object.entries(secrets).map(([name, ref]) => ({ name, ref, value: '' })),
+    secrets: Object.entries(secrets).map(([name, ref]) => ({ id: randomUUID(), name, ref, value: '', visible: false })),
   }
 }
 
@@ -56,6 +58,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const [checkState, setCheckState] = useState<string>()
   const [importJson, setImportJson] = useState('')
   const [importState, setImportState] = useState<string>()
+  const [importPreview, setImportPreview] = useState<ImportPreview>()
   const [searchQuery, setSearchQuery] = useState('')
   const [stateFilter, setStateFilter] = useState<McpStatusFilter>('all')
   const [transportFilter, setTransportFilter] = useState<McpTransportFilter>('all')
@@ -87,6 +90,12 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       const reply = await remote.mcpClientStatus.list()
       if (reply.ok) setStatuses(reply.value)
     } catch { setStatuses([]) }
+  }
+  const closeEditor = () => {
+    setActiveEditorId(undefined)
+    setDraft(emptyDraft())
+    setFailure(undefined)
+    setCheckState(undefined)
   }
   const prepareDraft = async (): Promise<ManagedMcpServer | undefined> => {
     const serverName = draft.serverName.trim()
@@ -170,7 +179,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     setBusy(true); setFailure(undefined)
     try {
       await saveServers(servers.filter(server => server.id !== id))
-      if (activeEditorId === id) setActiveEditorId(undefined)
+      if (activeEditorId === id) closeEditor()
     }
     catch { setFailure('save') } finally { setBusy(false) }
   }
@@ -179,14 +188,14 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     try { await saveServers(servers.map(current => current.id === server.id ? { ...current, enabled } : current)) }
     catch { setFailure('save') } finally { setBusy(false) }
   }
-  const importServers = async () => {
-    setBusy(true); setImportFailure(undefined); setImportState(undefined)
+  const previewImport = () => {
+    setImportFailure(undefined); setImportState(undefined); setImportPreview(undefined)
     try {
       const parsed: unknown = JSON.parse(importJson)
       if (!isRecord(parsed) || (parsed.mcpServers !== undefined && parsed.servers !== undefined)) throw new Error('invalid')
       const existingNames = new Set(servers.map(server => server.serverName.toLowerCase()))
       const importedNames = new Set<string>()
-      const candidates: { server: Omit<ManagedMcpServer, 'id'>; secrets: Record<string, string> }[] = []
+      const candidates: ImportCandidate[] = []
       let skipped = 0
       const append = (serverName: string, server: Omit<ManagedMcpServer, 'id'>, secrets: Record<string, string>) => {
         if (!/^[A-Za-z0-9_-]{1,32}$/u.test(serverName)) throw new Error('invalid')
@@ -256,6 +265,21 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       if (candidates.length === 0) {
         if (skipped === 0) throw new Error('invalid')
       }
+      setImportPreview({
+        candidates,
+        skipped,
+        secretCount: candidates.reduce((count, candidate) => count + Object.keys(candidate.secrets).length, 0),
+      })
+    } catch {
+      setImportState(undefined)
+      setImportFailure('import-invalid')
+    }
+  }
+  const confirmImport = async () => {
+    if (importPreview === undefined) return
+    const { candidates, skipped } = importPreview
+    setBusy(true); setImportFailure(undefined); setImportState(undefined)
+    try {
       const next: ManagedMcpServer[] = []
       for (const candidate of candidates) {
         const server = candidate.server
@@ -278,10 +302,10 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       try { if (next.length > 0) await saveServers([...servers, ...next]) }
       catch { setImportFailure('save'); return }
       setImportJson('')
+      setImportPreview(undefined)
       setImportState(t('managed.import.complete').replace('{imported}', String(next.length)).replace('{skipped}', String(skipped)))
     } catch {
-      setImportState(undefined)
-      setImportFailure('import-invalid')
+      setImportFailure('save')
     } finally { setBusy(false) }
   }
   const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.serverName === server.serverName)
@@ -325,13 +349,22 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         </>}
         <h4>{draft.transport === 'streamable-http' ? t('managed.credentials') : t('managed.environment')}</h4>
         {draft.transport === 'streamable-http' && <small>{t('managed.credentialsHint')}</small>}
-        {draft.secrets.map((row, index) => <div className={css.secretRow} key={index}>
-          <label className={css.field}><span>{draft.transport === 'streamable-http' ? t('managed.headerName') : t('managed.envName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, name: event.currentTarget.value } : item) })} /></label>
-          <label className={css.field}><span>{t('managed.credentialRef')}</span><input value={row.ref} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, ref: event.currentTarget.value } : item) })} /></label>
-          <label className={css.field}><span>{t('managed.secret')}</span><input type="password" autoComplete="new-password" value={row.value} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map((item, rowIndex) => rowIndex === index ? { ...item, value: event.currentTarget.value } : item) })} /></label>
-          <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.filter((_item, rowIndex) => rowIndex !== index) })}>{t('managed.removeSecret')}</Button>
+        {draft.secrets.map(row => <div className={css.secretRow} key={row.id}>
+          <label className={css.field}><span>{draft.transport === 'streamable-http' ? t('managed.headerName') : t('managed.envName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, name: event.currentTarget.value } : item) })} /></label>
+          <label className={css.field}><span>{t('managed.credentialRef')}</span><input value={row.ref} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, ref: event.currentTarget.value } : item) })} /></label>
+            <label className={css.field}><span>{t('managed.secret')}</span><div className={css.secretInput}>
+              <input type={row.visible ? 'text' : 'password'} autoComplete="new-password" value={row.value} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, value: event.currentTarget.value } : item) })} />
+              <Button variant="outline" size="sm" className={css.secretVisibilityButton} aria-label={t(row.visible ? 'managed.secret.hide' : 'managed.secret.show')} aria-pressed={row.visible} disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, visible: !item.visible } : item) })}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  {row.visible
+                    ? <><path d="M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /><path d="m4 4 16 16" /></>
+                    : <><path d="M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></>}
+                </svg>
+              </Button>
+            </div></label>
+          <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.filter(item => item.id !== row.id) })}>{t('managed.removeSecret')}</Button>
         </div>)}
-        <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: [...draft.secrets, { name: '', ref: '', value: '' }] })}>{t('managed.addSecret')}</Button>
+        <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: [...draft.secrets, { id: randomUUID(), name: '', ref: '', value: '', visible: false }] })}>{t('managed.addSecret')}</Button>
       </div>
       <footer className={css.cardFooter}>
         <div className={css.actions}>
@@ -352,7 +385,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       </div>
       <div className={css.actions}>
       <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
-        if (!isEditingExisting && activeEditorId === draft.id) setActiveEditorId(undefined)
+        if (!isEditingExisting && activeEditorId === draft.id) closeEditor()
         else {
           const next = emptyDraft()
           setDraft(next)
@@ -381,13 +414,28 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       <Button variant="outline" disabled={!hasFilters} onClick={() => { setSearchQuery(''); setStateFilter('all'); setTransportFilter('all') }}>{t('managed.filter.clear')}</Button>
     </div>
     <section id="managed-mcp-import" className={css.fieldGroup} aria-label={t('managed.import')}>
-      <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => setImportJson(event.currentTarget.value)} placeholder={t('managed.import.placeholder')} /></label>
+      <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => {
+        setImportJson(event.currentTarget.value)
+        setImportPreview(undefined); setImportState(undefined); setImportFailure(undefined)
+      }} placeholder={t('managed.import.placeholder')} /></label>
       <small>{t('managed.import.hint')}</small>
       <div className={css.actions}>
-        <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={() => { void importServers() }}>{busy ? t('checking') : t('managed.import')}</Button>
+        <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={previewImport}>{t('managed.import.previewAction')}</Button>
       </div>
       {importState !== undefined && <p className={css.status} role="status">{importState}</p>}
       {importFailure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, importFailure)}</p>}
+      {importPreview !== undefined && <section className={css.importPreview} aria-label={t('managed.import.previewTitle')}>
+        <h4>{t('managed.import.previewTitle')}</h4>
+        <p>{t('managed.import.previewSummary').replace('{count}', String(importPreview.candidates.length)).replace('{skipped}', String(importPreview.skipped))}</p>
+        {importPreview.candidates.length > 0 && <ul>{importPreview.candidates.map(candidate => <li key={candidate.server.serverName}>
+          <strong>{candidate.server.serverName}</strong> · {t(candidate.server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')} · {t(candidate.server.purpose === 'project-memory' ? 'managed.purpose.project-memory' : 'managed.purpose.model-tools')}
+        </li>)}</ul>}
+        {importPreview.secretCount > 0 && <p>{t('managed.import.credentialsNotice').replace('{count}', String(importPreview.secretCount))}</p>}
+        <div className={css.actions}>
+          <Button variant="primary" disabled={busy || !snapshot.writable} onClick={() => { void confirmImport() }}>{t('managed.import.confirm')}</Button>
+          <Button variant="outline" disabled={busy} onClick={() => setImportPreview(undefined)}>{t('managed.import.cancel')}</Button>
+        </div>
+      </section>}
     </section>
     <div className={css.serverList}>
       {servers.length === 0 && activeEditorId !== draft.id && <p>{t('managed.empty')}</p>}
@@ -410,7 +458,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
           <p className={css.toolCount}>{t('toolCount')}: {status?.toolCount ?? 0}</p>
           <div className={css.actions}>
             <Button variant="outline" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
-              if (activeEditorId === server.id) setActiveEditorId(undefined)
+              if (activeEditorId === server.id) closeEditor()
               else {
                 setDraft(toDraft(server))
                 setActiveEditorId(server.id)

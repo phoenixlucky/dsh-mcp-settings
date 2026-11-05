@@ -32,8 +32,12 @@ export const en = {
   'managed.error.check': 'Could not check this MCP server.', 'managed.error.invalid': 'Complete the required fields and use unique names.',
   'managed.import': 'Import JSON', 'managed.import.placeholder': 'Paste a configuration containing an mcpServers object.',
   'managed.import.hint': 'Imports streamable-http servers. Secret headers are stored in the credential store; existing names are skipped.',
+  'managed.import.previewAction': 'Preview import', 'managed.import.previewTitle': 'Import preview', 'managed.import.previewSummary': 'Ready to add {count} server(s); {skipped} duplicate(s) will be skipped.',
+  'managed.import.credentialsNotice': 'After confirmation, {count} credential value(s) will be stored in the credential store.', 'managed.import.confirm': 'Confirm import', 'managed.import.cancel': 'Cancel preview',
   'managed.import.action': 'Import servers', 'managed.import.complete': 'Imported {imported} server(s); skipped {skipped} duplicate(s).',
   'managed.import.invalid': 'Invalid JSON or unsupported server configuration. Check the mcpServers object and streamable-http entries.',
+  'managed.secret.show': 'Show secret', 'managed.secret.hide': 'Hide secret',
+  'managed.purpose.model-tools': 'Model tools', 'managed.purpose.project-memory': 'Project memory',
 } as const
 
 /** Simplified Chinese strings for MCP server settings. */
@@ -70,6 +74,10 @@ export const zh: Record<keyof typeof en, string> = {
   'managed.error.check': '无法检查 MCP 服务连接。', 'managed.error.invalid': '请填写必填项，并确保名称唯一。',
   'managed.import': '导入 JSON', 'managed.import.placeholder': '粘贴包含 mcpServers 对象的配置。',
   'managed.import.hint': '支持导入 streamable-http 服务。敏感请求头会保存到凭据库；已有名称会跳过。',
+  'managed.import.previewAction': '预览导入', 'managed.import.previewTitle': '导入预览', 'managed.import.previewSummary': '将新增 {count} 个服务；跳过 {skipped} 个重复项。',
+  'managed.import.credentialsNotice': '确认后将把 {count} 个凭据值保存到凭据库。', 'managed.import.confirm': '确认导入', 'managed.import.cancel': '取消预览',
   'managed.import.action': '导入服务', 'managed.import.complete': '已导入 {imported} 个服务；跳过 {skipped} 个重复项。',
   'managed.import.invalid': 'JSON 或服务器配置无效。请检查 mcpServers 对象及 streamable-http 配置。',
+  'managed.secret.show': '显示密钥', 'managed.secret.hide': '隐藏密钥',
+  'managed.purpose.model-tools': '模型工具', 'managed.purpose.project-memory': '项目记忆',
 }
