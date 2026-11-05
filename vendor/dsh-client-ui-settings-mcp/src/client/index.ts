@@ -24,6 +24,18 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap { 'settings.mcp': keyof typeof en }
 }
 
+/**
+ * Resolve a Remote namespace this plugin mounted itself.
+ * Property access on `ctx.remote` is gated by the Cordis inject declaration, so a
+ * namespace created by this plugin's own `$mount` is reached through `ctx.get`.
+ * @param ctx - Client root.
+ * @param namespace - Namespace mounted by `$mount` (e.g. `mcpClientStatus`).
+ * @returns The namespace facade, or undefined while it is not mounted.
+ */
+function remoteNamespace(ctx: ClientContext, namespace: string): unknown {
+  return ctx.get(`remote.${namespace}` as never)
+}
+
 /** Register MCP settings while at least one managed MCP setting is available. */
 export async function apply(ctx: ClientContext): Promise<() => Promise<void>> {
   const unmountRemote = await ctx.remote.$mount(mcpRemote)
@@ -34,7 +46,12 @@ export async function apply(ctx: ClientContext): Promise<() => Promise<void>> {
     const managed = ctx.configForms.get<ManagedSettings>('mcp-server-manager')
     stopSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
       name: 'settings.section', id: 'mcp', order: 14, priority: -1, label: () => t('title'), locale: NS,
-      inject: () => ({ managedForm: managed, remote: ctx.remote }),
+      inject: () => ({
+        managedForm: managed,
+        remote: ctx.remote,
+        statusApi: remoteNamespace(ctx, 'mcpClientStatus'),
+        managerApi: remoteNamespace(ctx, 'mcpServerManager'),
+      }),
     }, McpConnectionsPage))
     return () => stopSection?.()
   }), 'ui-settings-mcp: connection settings section')

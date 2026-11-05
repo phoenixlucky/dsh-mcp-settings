@@ -4,13 +4,33 @@ import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
-import type { ManagedMcpCheck, ManagedMcpServer, McpServerStatus } from '@deepseek-ai/dsh-mcp-client'
+import type { ManagedMcpCheck, ManagedMcpServer } from '@deepseek-ai/dsh-mcp-client'
 import css from './mcp-settings.module.css'
 
 type Remote = ClientContext['remote']
-type McpStatusFilter = 'all' | 'disabled' | McpServerStatus['state']
-type McpTransportFilter = 'all' | ManagedMcpServer['transport']
-interface Injected { form: ConfigForm<{ servers?: ManagedMcpServer[] }>; remote: Remote }
+type Transport = ManagedMcpServer['transport']
+type ServerState = 'disabled' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected' | 'unknown'
+type StatusFilter = 'all' | ServerState
+type TransportFilter = 'all' | Transport
+interface StatusRow {
+  serverName: string
+  transport: Transport
+  state: Exclude<ServerState, 'disabled' | 'unknown'>
+  toolCount: number
+  tools?: readonly { name: string, description: string }[]
+}
+/** One Remote call result as the Client facade returns it. */
+interface RemoteReply<T> { ok: boolean; value?: T; error?: { message?: string } }
+/** `remote.mcpClientStatus` facade mounted by this plugin. */
+export interface McpStatusApi { list(): Promise<RemoteReply<readonly StatusRow[]>> }
+/** `remote.mcpServerManager` facade mounted by this plugin. */
+export interface McpManagerApi { check(server: ManagedMcpServer): Promise<RemoteReply<ManagedMcpCheck>> }
+interface Injected {
+  form: ConfigForm<{ servers?: ManagedMcpServer[] }>
+  remote: Remote
+  statusApi?: McpStatusApi
+  managerApi?: McpManagerApi
+}
 interface SecretRow { id: string; name: string; ref: string; value: string; visible: boolean }
 interface HeaderRow { name: string; value: string }
 interface ImportCandidate { server: Omit<ManagedMcpServer, 'id'>; secrets: Record<string, string>; secretRefs: Record<string, string> }
@@ -19,7 +39,7 @@ interface Draft {
   id: string
   serverName: string
   enabled: boolean
-  transport: 'streamable-http' | 'stdio'
+  transport: Transport
   url: string
   headers: HeaderRow[]
   command: string
@@ -45,11 +65,45 @@ function toDraft(server: ManagedMcpServer): Draft {
   }
 }
 
+/** Read live connection rows from the status Remote this plugin mounted. */
+async function readStatusRows(statusApi: McpStatusApi | undefined): Promise<{ rows: readonly StatusRow[], problem?: string }> {
+  if (statusApi === undefined) return { rows: [], problem: 'status-namespace-unmounted' }
+  try {
+    const reply = await statusApi.list()
+    if (reply?.ok === true) return { rows: reply.value ?? [] }
+    return { rows: [], problem: `status-rejected ${reply?.error?.message ?? ''}`.trim() }
+  } catch (error) {
+    return { rows: [], problem: `status-failed ${error instanceof Error ? error.message : 'unknown'}` }
+  }
+}
+
+/** Probe each enabled server through the manager's bounded connection check. */
+async function probeServers(managerApi: McpManagerApi | undefined, servers: readonly ManagedMcpServer[]): Promise<readonly StatusRow[]> {
+  if (managerApi === undefined) return []
+  const rows: StatusRow[] = []
+  for (const server of servers) {
+    if (!server.enabled) continue
+    try {
+      const reply = await managerApi.check(server)
+      if (!reply.ok) continue
+      const result = reply.value
+      if (result?.state === 'ready') {
+        rows.push({ serverName: server.serverName, transport: server.transport, state: 'connected', toolCount: result.toolCount })
+      }
+    } catch {
+      // A failed probe leaves the row unknown rather than claiming a disconnect.
+    }
+  }
+  return rows
+}
+
 /** Edit multiple host-managed MCP servers and check their connection state. */
-export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'settings.mcp'>) {
+export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: Injected & PropsLocale<'settings.mcp'>) {
   const snapshot = useSyncExternalStore(form.subscribe.bind(form), form.getSnapshot.bind(form))
   const servers = snapshot.value?.servers ?? []
-  const [statuses, setStatuses] = useState<readonly McpServerStatus[]>([])
+  const [statuses, setStatuses] = useState<readonly StatusRow[]>([])
+  const [probed, setProbed] = useState<readonly StatusRow[]>([])
+  const [statusProblem, setStatusProblem] = useState<string>()
   const [draft, setDraft] = useState<Draft>(emptyDraft)
   const [activeEditorId, setActiveEditorId] = useState<string>()
   const [busy, setBusy] = useState(false)
@@ -59,40 +113,51 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const [importJson, setImportJson] = useState('')
   const [importState, setImportState] = useState<string>()
   const [importPreview, setImportPreview] = useState<ImportPreview>()
+  const [importOpen, setImportOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [stateFilter, setStateFilter] = useState<McpStatusFilter>('all')
-  const [transportFilter, setTransportFilter] = useState<McpTransportFilter>('all')
+  const [stateFilter, setStateFilter] = useState<StatusFilter>('all')
+  const [transportFilter, setTransportFilter] = useState<TransportFilter>('all')
   const [expandedToolIds, setExpandedToolIds] = useState<ReadonlySet<string>>(() => new Set())
   const statusRequestId = useRef(0)
 
   useEffect(() => {
     let active = true
-    const refresh = async () => {
+    const refresh = async (deep: boolean) => {
       const requestId = ++statusRequestId.current
-      try {
-        const reply = await remote.mcpClientStatus.list()
-        if (active && requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : [])
-      } catch (error) {
-        void error
-        if (active && requestId === statusRequestId.current) setStatuses([])
-      }
+      const result = await readStatusRows(statusApi)
+      if (!active || requestId !== statusRequestId.current) return
+      setStatuses(result.rows)
+      setStatusProblem(result.problem !== undefined && result.rows.length === 0 ? result.problem : undefined)
+      if (result.rows.length > 0) { setProbed([]); return }
+      if (!deep) return
+      const current = form.getSnapshot().value?.servers ?? []
+      const measured = await probeServers(managerApi, current)
+      if (!active || requestId !== statusRequestId.current) return
+      setProbed(measured)
     }
-    void refresh()
-    const timer = setInterval(() => { void refresh() }, 5000)
+    void refresh(true)
+    const timer = setInterval(() => { void refresh(false) }, 5000)
     return () => { active = false; clearInterval(timer) }
-  }, [remote])
+    // `t` only localizes the same fixed message, so the poll follows the mounted facades alone.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusApi, managerApi])
 
+  const refreshStatuses = async (deep = true) => {
+    const requestId = ++statusRequestId.current
+    const result = await readStatusRows(statusApi)
+    if (requestId !== statusRequestId.current) return
+    setStatuses(result.rows)
+    setStatusProblem(result.problem !== undefined && result.rows.length === 0 ? result.problem : undefined)
+    if (result.rows.length > 0) { setProbed([]); return }
+    if (!deep) return
+    const measured = await probeServers(managerApi, form.getSnapshot().value?.servers ?? [])
+    if (requestId !== statusRequestId.current) return
+    setProbed(measured)
+  }
   const saveServers = async (next: ManagedMcpServer[]) => {
     const accepted = await form.set('servers', next)
     if (!accepted) throw new Error('settings refused')
     await refreshStatuses()
-  }
-  const refreshStatuses = async () => {
-    const requestId = ++statusRequestId.current
-    try {
-      const reply = await remote.mcpClientStatus.list()
-      if (requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : [])
-    } catch { if (requestId === statusRequestId.current) setStatuses([]) }
   }
   const closeEditor = () => {
     setActiveEditorId(undefined)
@@ -171,10 +236,11 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const checkDraft = async () => {
     setBusy(true); setFailure(undefined); setCheckState(undefined)
     try {
+      if (managerApi === undefined) { setFailure('check'); return }
       const server = await prepareDraft()
       if (server === undefined) return
-      const reply = await remote.mcpServerManager.check(server)
-      if (!reply.ok) { setFailure('check'); return }
+      const reply = await managerApi.check(server)
+      if (!reply.ok || reply.value === undefined) { setFailure('check'); return }
       setCheckState(managedCheckLabel(t, reply.value))
     } catch { setFailure('check') } finally { setBusy(false) }
   }
@@ -284,9 +350,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
           } else throw new Error('invalid')
         }
       } else throw new Error('invalid')
-      if (candidates.length === 0) {
-        if (skipped === 0) throw new Error('invalid')
-      }
+      if (candidates.length === 0 && skipped === 0) throw new Error('invalid')
       setImportPreview({
         candidates,
         skipped,
@@ -347,13 +411,18 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
       catch { setImportFailure('save'); return }
       setImportJson('')
       setImportPreview(undefined)
+      setImportOpen(false)
       setImportState(t('managed.import.complete').replace('{imported}', String(next.length)).replace('{skipped}', String(skipped)))
     } catch {
       setImportFailure('save')
     } finally { setBusy(false) }
   }
   const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.serverName === server.serverName)
-  const stateFor = (server: ManagedMcpServer): McpStatusFilter => !server.enabled ? 'disabled' : statusFor(server)?.state ?? 'disconnected'
+    ?? probed.find(status => status.serverName === server.serverName)
+  const stateFor = (server: ManagedMcpServer): ServerState => {
+    if (!server.enabled) return 'disabled'
+    return statusFor(server)?.state ?? 'unknown'
+  }
   const query = searchQuery.trim().toLocaleLowerCase()
   const matchingServers = servers.filter(server => {
     const nameMatches = query === '' || server.serverName.toLocaleLowerCase().includes(query)
@@ -364,6 +433,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
   const displayedServers = servers.filter(server => matchingServers.includes(server) || server.id === activeEditorId)
   const hasFilters = searchQuery !== '' || stateFilter !== 'all' || transportFilter !== 'all'
   const isEditingExisting = servers.some(server => server.id === draft.id)
+  const connectedCount = servers.filter(server => stateFor(server) === 'connected').length
   const editor = (
     <section className={css.fieldGroup} aria-label={t('managed.editor')}>
       <h4 className={css.fieldGroupTitle}>{t('managed.editor')}</h4>
@@ -396,16 +466,33 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         {draft.secrets.map(row => <div className={css.secretRow} key={row.id}>
           <label className={css.field}><span>{draft.transport === 'streamable-http' ? t('managed.headerName') : t('managed.envName')}</span><input value={row.name} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, name: event.currentTarget.value } : item) })} /></label>
           <label className={css.field}><span>{t('managed.credentialRef')}</span><input value={row.ref} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, ref: event.currentTarget.value } : item) })} /></label>
-            <label className={css.field}><span>{t('managed.secret')}</span><div className={css.secretInput}>
-              <input type={row.visible ? 'text' : 'password'} autoComplete="new-password" value={row.value} disabled={busy} onChange={event => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, value: event.currentTarget.value } : item) })} />
-              <Button variant="outline" size="sm" className={css.secretVisibilityButton} aria-label={t(row.visible ? 'managed.secret.hide' : 'managed.secret.show')} aria-pressed={row.visible} disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, visible: !item.visible } : item) })}>
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  {row.visible
-                    ? <><path d="M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /><path d="m4 4 16 16" /></>
-                    : <><path d="M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></>}
-                </svg>
-              </Button>
-            </div></label>
+          <label className={css.field}><span>{t('managed.secret')}</span><div className={css.secretInput}>
+            {row.visible
+              ? <input
+                type="text"
+                autoComplete="new-password"
+                value={row.value}
+                placeholder={t('managed.secret.placeholder')}
+                disabled={busy}
+                onChange={event => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, value: event.currentTarget.value } : item) })}
+              />
+              : <input
+                className={css.secretMask}
+                type="text"
+                readOnly
+                value={'*'.repeat(22)}
+                title={t('managed.secret.hidden')}
+                aria-label={t('managed.secret.hidden')}
+                disabled={busy}
+              />}
+            <Button variant="outline" size="sm" className={css.secretVisibilityButton} aria-label={t(row.visible ? 'managed.secret.hide' : 'managed.secret.show')} aria-pressed={row.visible} disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.map(item => item.id === row.id ? { ...item, visible: !item.visible } : item) })}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                {row.visible
+                  ? <><path d="M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /><path d="m4 4 16 16" /></>
+                  : <><path d="M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></>}
+              </svg>
+            </Button>
+          </div><small>{row.visible ? t('managed.secret.placeholder') : t('managed.secret.hint')}</small></label>
           <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: draft.secrets.filter(item => item.id !== row.id) })}>{t('managed.removeSecret')}</Button>
         </div>)}
         <Button variant="outline" disabled={busy} onClick={() => setDraft({ ...draft, secrets: [...draft.secrets, { id: randomUUID(), name: '', ref: '', value: '', visible: false }] })}>{t('managed.addSecret')}</Button>
@@ -421,50 +508,74 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
     </section>
   )
 
-  return <section className={css.card} aria-label={t('managed.title')}>
-    <header className={css.cardHeader}>
-      <div className={css.cardIdentity}>
-        <span className={css.cardIcon} aria-hidden="true"><IconApiOutlineRegular size={24} /></span>
-        <div className={css.cardCopy}><h3 className={css.cardTitle}>{t('managed.title')}</h3><p className={css.cardDescription}>{t('managed.description')}</p></div>
+  return <section className={css.connections} aria-label={t('managed.title')}>
+    <header className={css.pageHeader}>
+      <div className={css.pageCopy}>
+        <h2 className={css.pageTitle}>{t('managed.title')}</h2>
+        <p className={css.pageDescription}>{servers.length === 0
+          ? t('managed.description')
+          : t('managed.summary').replace('{connected}', String(connectedCount)).replace('{total}', String(servers.length))}</p>
       </div>
       <div className={css.actions}>
+        <Button variant="outline" disabled={servers.length === 0} onClick={exportServers}>{t('managed.export')}</Button>
         <Button variant="primary" disabled={busy || !snapshot.writable} aria-expanded={!isEditingExisting && activeEditorId === draft.id} onClick={() => {
           if (!isEditingExisting && activeEditorId === draft.id) closeEditor()
           else {
             const next = emptyDraft()
             setDraft(next)
             setActiveEditorId(next.id)
+            setImportOpen(false)
           }
           setFailure(undefined)
           setCheckState(undefined)
         }}>{t('managed.add')}</Button>
-        <Button variant="outline" disabled={servers.length === 0} onClick={exportServers}>{t('managed.export')}</Button>
-        <small className={css.exportHint}>{t('managed.export.notice')}</small>
       </div>
     </header>
-    <div className={css.serverFilters}>
-      <label className={`${css.field} ${css.searchField}`}><span>{t('managed.search')}</span><input type="search" value={searchQuery} onChange={event => setSearchQuery(event.currentTarget.value)} placeholder={t('managed.search.placeholder')} /></label>
-      <label className={`${css.field} ${css.filterField}`}><span>{t('managed.filter.state')}</span><select value={stateFilter} onChange={event => setStateFilter(event.currentTarget.value as McpStatusFilter)}>
-        <option value="all">{t('managed.filter.allStates')}</option>
-        <option value="disabled">{t('managed.state.disabled')}</option>
-        <option value="connecting">{t('managed.state.connecting')}</option>
-        <option value="connected">{t('managed.state.connected')}</option>
-        <option value="reconnecting">{t('managed.state.reconnecting')}</option>
-        <option value="disconnected">{t('managed.state.disconnected')}</option>
-      </select></label>
-      <label className={`${css.field} ${css.filterField}`}><span>{t('managed.filter.transport')}</span><select value={transportFilter} onChange={event => setTransportFilter(event.currentTarget.value as McpTransportFilter)}>
-        <option value="all">{t('managed.filter.allTransports')}</option>
-        <option value="streamable-http">{t('transport.streamable-http')}</option>
-        <option value="stdio">{t('transport.stdio')}</option>
-      </select></label>
-      <Button variant="outline" disabled={!hasFilters} onClick={() => { setSearchQuery(''); setStateFilter('all'); setTransportFilter('all') }}>{t('managed.filter.clear')}</Button>
+
+    <div className={css.toolbar}>
+      <label className={`${css.field} ${css.searchField}`}>
+        <span className={css.srOnly}>{t('managed.search')}</span>
+        <input type="search" value={searchQuery} onChange={event => setSearchQuery(event.currentTarget.value)} placeholder={t('managed.search.placeholder')} />
+      </label>
+      <label className={`${css.field} ${css.filterField}`}>
+        <span className={css.srOnly}>{t('managed.filter.state')}</span>
+        <select value={stateFilter} onChange={event => setStateFilter(event.currentTarget.value as StatusFilter)}>
+          <option value="all">{t('managed.filter.allStates')}</option>
+          <option value="connected">{t('managed.state.connected')}</option>
+          <option value="connecting">{t('managed.state.connecting')}</option>
+          <option value="reconnecting">{t('managed.state.reconnecting')}</option>
+          <option value="disconnected">{t('managed.state.disconnected')}</option>
+          <option value="unknown">{t('managed.state.unknown')}</option>
+          <option value="disabled">{t('managed.state.disabled')}</option>
+        </select>
+      </label>
+      <label className={`${css.field} ${css.filterField}`}>
+        <span className={css.srOnly}>{t('managed.filter.transport')}</span>
+        <select value={transportFilter} onChange={event => setTransportFilter(event.currentTarget.value as TransportFilter)}>
+          <option value="all">{t('managed.filter.allTransports')}</option>
+          <option value="streamable-http">{t('transport.streamable-http')}</option>
+          <option value="stdio">{t('transport.stdio')}</option>
+        </select>
+      </label>
+      <div className={css.toolbarEnd}>
+        {hasFilters && <Button variant="ghost" onClick={() => { setSearchQuery(''); setStateFilter('all'); setTransportFilter('all') }}>{t('managed.filter.clear')}</Button>}
+        <Button variant="ghost" disabled={busy} onClick={() => { void refreshStatuses() }}>{t('managed.refresh')}</Button>
+        <Button variant="outline" aria-expanded={importOpen} onClick={() => { setImportOpen(!importOpen); setImportPreview(undefined) }}>{t('managed.import')}</Button>
+      </div>
     </div>
-    <section id="managed-mcp-import" className={css.fieldGroup} aria-label={t('managed.import')}>
+
+    {statusProblem !== undefined && probed.length === 0 && <p className={css.statusProblem} role="status" title={statusProblem}>{t('managed.status.unavailable')}</p>}
+
+    {importOpen && <section className={css.importPanel} aria-label={t('managed.import')}>
+      <h4 className={css.fieldGroupTitle}>{t('managed.import')}</h4>
       {importPreview === undefined && <>
-        <label className={css.field}><span>{t('managed.import')}</span><textarea rows={8} value={importJson} disabled={busy} onChange={event => {
-          setImportJson(event.currentTarget.value)
-          setImportPreview(undefined); setImportState(undefined); setImportFailure(undefined)
-        }} placeholder={t('managed.import.placeholder')} /></label>
+        <label className={css.field}>
+          <span className={css.srOnly}>{t('managed.import')}</span>
+          <textarea rows={6} value={importJson} disabled={busy} onChange={event => {
+            setImportJson(event.currentTarget.value)
+            setImportPreview(undefined); setImportState(undefined); setImportFailure(undefined)
+          }} placeholder={t('managed.import.placeholder')} />
+        </label>
         <small>{t('managed.import.hint')}</small>
         <div className={css.actions}>
           <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={previewImport}>{t('managed.import.previewAction')}</Button>
@@ -476,7 +587,7 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
         <h4>{t('managed.import.previewTitle')}</h4>
         <p>{t('managed.import.previewSummary').replace('{count}', String(importPreview.candidates.length)).replace('{skipped}', String(importPreview.skipped))}</p>
         {importPreview.candidates.length > 0 && <ul>{importPreview.candidates.map(candidate => <li key={candidate.server.serverName}>
-          <strong>{candidate.server.serverName}</strong> · {t(candidate.server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')} · {t(candidate.server.purpose === 'project-memory' ? 'managed.purpose.project-memory' : 'managed.purpose.model-tools')}
+          <strong>{candidate.server.serverName}</strong> 璺?{t(candidate.server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')} 璺?{t(candidate.server.purpose === 'project-memory' ? 'managed.purpose.project-memory' : 'managed.purpose.model-tools')}
         </li>)}</ul>}
         {importPreview.secretCount > 0 && <p>{t('managed.import.credentialsNotice').replace('{count}', String(importPreview.secretCount))}</p>}
         <div className={css.actions}>
@@ -484,28 +595,39 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
           <Button variant="outline" disabled={busy} onClick={() => setImportPreview(undefined)}>{t('managed.import.cancel')}</Button>
         </div>
       </section>}
-    </section>
+    </section>}
+
     <div className={css.serverList}>
-      {servers.length === 0 && activeEditorId !== draft.id && <p>{t('managed.empty')}</p>}
-      {hasFilters && matchingServers.length === 0 && <p role="status">{t('managed.filter.noResults')}</p>}
+      {servers.length === 0 && !(activeEditorId === draft.id) && <p className={css.empty}>{t('managed.empty')}</p>}
+      {hasFilters && matchingServers.length === 0 && <p className={css.empty} role="status">{t('managed.filter.noResults')}</p>}
       {displayedServers.map((server) => {
         const status = statusFor(server)
         const state = stateFor(server)
         const toolsExpanded = expandedToolIds.has(server.id)
         return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
-          <div className={css.serverHeading}>
+          <div className={css.serverMain}>
+            <span className={css.stateDot} data-state={state} aria-hidden="true" />
+            <span className={css.serverIcon} aria-hidden="true"><IconApiOutlineRegular size={18} /></span>
             <div className={css.serverIdentity}>
-              <span className={css.serverIcon} aria-hidden="true"><IconApiOutlineRegular size={22} /></span>
-              <div><strong>{server.serverName}</strong><p>{t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')} · <span className={css.serverState} data-state={state}>{managedStateLabel(t, state)}</span></p></div>
-            </div>
-            <div className={css.enableControl}>
-              <span className={css.enableLabel}>{t('managed.enabled')}</span>
-              <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
+              <div className={css.serverNameRow}>
+                <strong className={css.serverName}>{server.serverName}</strong>
+                <span className={css.statePill} data-state={state}>{managedStateLabel(t, state)}</span>
+              </div>
+              <p className={css.serverMeta}>
+                {t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')}
+                <span className={css.separator} aria-hidden="true">·</span>
+                {t('managed.toolCountInline').replace('{count}', String(status?.toolCount ?? 0))}
+              </p>
             </div>
           </div>
-          <p className={css.toolCount}>{t('toolCount')}: {status?.toolCount ?? 0}</p>
-          <div className={css.actions}>
-            <Button variant="outline" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
+          <div className={css.serverActions}>
+            <Button variant="ghost" size="sm" disabled={busy || status === undefined || state !== 'connected'} aria-expanded={toolsExpanded} onClick={() => setExpandedToolIds(current => {
+              const next = new Set(current)
+              if (next.has(server.id)) next.delete(server.id)
+              else next.add(server.id)
+              return next
+            })}>{t(toolsExpanded ? 'managed.tools.hide' : 'managed.tools.show')}</Button>
+            <Button variant="outline" size="sm" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
               if (activeEditorId === server.id) closeEditor()
               else {
                 setDraft(toDraft(server))
@@ -514,29 +636,23 @@ export function ManagedMcpServers({ form, remote, t }: Injected & PropsLocale<'s
               setFailure(undefined)
               setCheckState(undefined)
             }}>{t('managed.edit')}</Button>
-            <Button variant="outline" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id) }}>{t('managed.delete')}</Button>
-          </div>
-          <div className={css.toolDisclosure}>
-            <Button variant="outline" aria-expanded={toolsExpanded} onClick={() => setExpandedToolIds(current => {
-              const next = new Set(current)
-              if (next.has(server.id)) next.delete(server.id)
-              else next.add(server.id)
-              return next
-            })}>{t(toolsExpanded ? 'managed.tools.hide' : 'managed.tools.show')}</Button>
+            <Button variant="ghost" size="sm" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id) }}>{t('managed.delete')}</Button>
+            <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
           </div>
           {toolsExpanded && <section className={css.toolInventory} aria-label={`${server.serverName} ${t('managed.tools.title')}`}>
-            <h4>{t('managed.tools.title')}</h4>
-            {state !== 'connected'
-              ? <p role="status">{t('managed.tools.unavailable')}</p>
-              : status?.tools.length === 0
+            {status?.tools === undefined
+              ? <p>{t(state === 'connected' ? 'managed.tools.unknown' : 'managed.tools.unavailable')}</p>
+              : status.tools.length === 0
                 ? <p>{t('managed.tools.empty')}</p>
-                : <ul>{(status?.tools ?? []).map(tool => <li key={tool.name}><strong>{tool.name}</strong>{tool.description !== '' && <p>{tool.description}</p>}</li>)}</ul>}
+                : <ul>{status.tools.map(tool => <li key={tool.name}><strong>{tool.name}</strong>{tool.description !== '' && <p>{tool.description}</p>}</li>)}</ul>}
           </section>}
           {activeEditorId === server.id && editor}
         </article>
       })}
       {!isEditingExisting && activeEditorId === draft.id && <article className={`${css.serverCard} ${css.serverCardEditing}`}>{editor}</article>}
     </div>
+
+    {servers.length > 0 && <p className={css.exportHint}>{t('managed.export.notice')}</p>}
   </section>
 }
 
@@ -559,7 +675,7 @@ function isAllowedEndpoint(input: string): boolean {
 
 function managedStateLabel(
   t: PropsLocale<'settings.mcp'>['t'],
-  state: 'disabled' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected',
+  state: ServerState,
 ): string {
   switch (state) {
     case 'disabled': return t('managed.state.disabled')
@@ -567,6 +683,7 @@ function managedStateLabel(
     case 'connected': return t('managed.state.connected')
     case 'reconnecting': return t('managed.state.reconnecting')
     case 'disconnected': return t('managed.state.disconnected')
+    case 'unknown': return t('managed.state.unknown')
   }
 }
 
@@ -576,9 +693,9 @@ function managedCheckLabel(
 ): string {
   switch (result.state) {
     case 'ready': return t('managed.checkReady').replace('{count}', String(result.toolCount))
-    case 'authorization-required': return `${t('managed.check.authorization-required')} · ${t('managed.check.advice.authorization-required')}`
-    case 'connection-failed': return `${t('managed.check.connection-failed')} · ${t('managed.check.advice.connection-failed')}`
-    case 'timed-out': return `${t('managed.check.timed-out')} · ${t('managed.check.advice.timed-out')}`
+    case 'authorization-required': return `${t('managed.check.authorization-required')} 璺?${t('managed.check.advice.authorization-required')}`
+    case 'connection-failed': return `${t('managed.check.connection-failed')} 璺?${t('managed.check.advice.connection-failed')}`
+    case 'timed-out': return `${t('managed.check.timed-out')} 璺?${t('managed.check.advice.timed-out')}`
   }
 }
 

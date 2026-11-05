@@ -8,7 +8,7 @@ window.__ModuleLoader__.load({
 		let react = require("react");
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
 		let react_jsx_runtime = require("react/jsx-runtime");
-		//#region ../../node_modules/.pnpm/@deepseek-ai+dsh-typert-pro_a6e9a8aa967178344e20691a5993d5fa/node_modules/@deepseek-ai/dsh-typert-protocol/lib/types/remote-info.js
+		//#region ../../node_modules/.pnpm/@deepseek-ai+dsh-typert-pro_2e073fa9830b436143adccb4bc65f602/node_modules/@deepseek-ai/dsh-typert-protocol/lib/types/remote-info.js
 		/** Lazy assembly of generated Remote definitions using caller-supplied Zod; no runtime imports. */
 		/**
 		* Retain one generated definition per endpoint without constructing parsers or projections.
@@ -164,7 +164,7 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
-		//#region ../../node_modules/.pnpm/@deepseek-ai+dsh-mcp-client_36e5434467f07009774fd0c3f47f3628/node_modules/@deepseek-ai/dsh-mcp-client/lib/typert.remote-client.js
+		//#region ../../node_modules/.pnpm/@deepseek-ai+dsh-mcp-client_b8198a624c49e8d3239460efc43ec704/node_modules/@deepseek-ai/dsh-mcp-client/lib/typert.remote-client.js
 		let _deepseek_ai_dsh_mcp_client_chromeMcp_checkChromeConnection_result$schema$value;
 		const _deepseek_ai_dsh_mcp_client_chromeMcp_checkChromeConnection_result$schema = () => _deepseek_ai_dsh_mcp_client_chromeMcp_checkChromeConnection_result$schema$value ??= zod.z.object({
 			"state": zod.z.union([
@@ -462,7 +462,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
-		const css = ".oetn4G_connections{--mcp-space-1:4px;--mcp-space-2:8px;--mcp-space-3:12px;--mcp-space-4:16px;--mcp-space-5:20px;--dsw-alias-button-primary-fill:var(--dsw-static-amber-600);--mcp-card-fill:color-mix(in srgb, var(--dsw-static-amber-100) 12%, var(--dsw-alias-settings-card-fill));--mcp-field-fill:var(--dsw-alias-bg-layer-1);--mcp-card-stroke:color-mix(in srgb, var(--dsw-static-amber-600) 18%, var(--dsw-alias-settings-card-stroke));gap:var(--mcp-space-5);grid-template-columns:minmax(0,1fr);width:100%;max-width:76rem;margin-inline:auto;display:grid}.oetn4G_pageHeader{align-items:center;gap:var(--mcp-space-4);min-width:0;padding:0 var(--mcp-space-1) var(--mcp-space-2);display:flex}.oetn4G_pageIcon{border-radius:var(--dsw-radius-xl);background:var(--mcp-field-fill);width:3.5rem;height:3.5rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_pageCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:500 28px/36px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_card{align-content:start;gap:var(--mcp-space-4);width:100%;min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--mcp-card-fill);color:var(--dsw-alias-label-primary);box-shadow:0 1px 2px color-mix(in srgb, var(--dsw-alias-label-primary) 5%, transparent);display:grid;container-type:inline-size}.oetn4G_cardHeader{justify-content:space-between;align-items:center;gap:var(--mcp-space-4);min-height:3.5rem;padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);display:flex}.oetn4G_cardIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_cardIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:3rem;height:3rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_cardCopy{gap:var(--mcp-space-1);min-width:0;display:grid}.oetn4G_cardTitle{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xl-24);margin:0}.oetn4G_card>h3{padding:0 var(--mcp-space-1) var(--mcp-space-3);border-bottom:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_cardDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);margin:0}.oetn4G_enableControl{align-items:center;gap:var(--mcp-space-3);flex:none;padding:0;display:flex}.oetn4G_enableLabel{max-width:14rem;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);text-align:right}.oetn4G_fieldGroup{gap:var(--mcp-space-4);min-width:0;padding:var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:color-mix(in srgb, var(--dsw-alias-bg-layer-1) 78%, transparent);display:grid}.oetn4G_fieldGroupTitle{padding-bottom:var(--mcp-space-3);border-bottom:1px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-l-20);margin:0}.oetn4G_importPreview{gap:var(--mcp-space-3);min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:var(--mcp-space-2);margin:0;padding-inline-start:1.25rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.oetn4G_field{gap:var(--mcp-space-2);color:var(--dsw-alias-label-primary);font:var(--dsw-font-base-strong-16);display:grid}.oetn4G_formGrid{gap:var(--mcp-space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_formGrid .oetn4G_field{align-items:center;column-gap:var(--mcp-space-3);grid-template-columns:minmax(7rem,.8fr) minmax(0,1.2fr)}.oetn4G_field input,.oetn4G_field textarea,.oetn4G_field select{box-sizing:border-box;width:100%;min-width:0;min-height:2.5rem;padding:var(--mcp-space-2) var(--mcp-space-3);border:.5px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:inherit}.oetn4G_field textarea:focus-visible,.oetn4G_field select:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field textarea:disabled,.oetn4G_field select:disabled{opacity:.6}.oetn4G_field input:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.oetn4G_field input:disabled{opacity:.6}.oetn4G_secretInput{align-items:center;gap:var(--mcp-space-2);grid-template-columns:minmax(0,1fr) auto;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:var(--mcp-space-2)}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-3) var(--mcp-space-1) 0;border-top:1px solid var(--mcp-card-stroke);grid-template-columns:minmax(0,1fr) auto;display:grid}.oetn4G_status{align-items:center;gap:var(--mcp-space-2) var(--mcp-space-3);min-width:0;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16);flex-wrap:wrap;margin:0;display:flex}.oetn4G_status strong{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-3);corner-shape:round;background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);border-radius:999px}.oetn4G_status strong[data-state=ready]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_error{color:var(--dsw-alias-state-error-primary);grid-column:1/-1;margin:0}.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-2);flex-wrap:wrap;display:flex}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);text-align:right;flex-basis:100%}.oetn4G_serverFilters{align-items:end;gap:var(--mcp-space-3);grid-template-columns:minmax(12rem,2fr) repeat(2,minmax(9rem,1fr)) auto;display:grid}.oetn4G_toolDisclosure{justify-content:flex-start;display:flex}.oetn4G_toolInventory{gap:var(--mcp-space-3);min-width:0;padding:var(--mcp-space-4);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);grid-column:1/-1;display:grid}.oetn4G_toolInventory h4,.oetn4G_toolInventory p{margin:0}.oetn4G_toolInventory ul{gap:var(--mcp-space-3);margin:0;padding-inline-start:1.25rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:var(--mcp-space-1);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverList{gap:var(--mcp-space-3);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-base-16)}.oetn4G_serverCard{align-items:center;gap:var(--mcp-space-4);padding:var(--mcp-space-4) var(--mcp-space-5);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);color:var(--dsw-alias-label-secondary);grid-template-columns:minmax(0,1fr) auto auto;transition:border-color .14s,box-shadow .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 38%, var(--mcp-card-stroke));box-shadow:0 2px 8px color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent)}.oetn4G_serverCard strong{color:var(--dsw-alias-label-primary)}.oetn4G_serverCard p{margin:0}.oetn4G_serverCard>p{padding-inline:var(--mcp-space-4);border-inline:.5px solid var(--mcp-card-stroke);color:var(--dsw-alias-label-primary);white-space:nowrap}.oetn4G_serverHeading{justify-content:space-between;align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIdentity{align-items:center;gap:var(--mcp-space-3);min-width:0;display:flex}.oetn4G_serverIcon{border-radius:var(--dsw-radius-lg);background:var(--mcp-field-fill);width:2.75rem;height:2.75rem;color:var(--dsw-alias-button-primary-fill);flex:none;place-items:center;display:grid}.oetn4G_serverState{width:fit-content;padding:var(--mcp-space-1) var(--mcp-space-2);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, var(--dsw-alias-settings-card-fill));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;align-items:center;line-height:1.2;display:inline-flex}.oetn4G_serverState[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-state-success-primary)}.oetn4G_serverCardEditing{border-color:color-mix(in srgb, var(--dsw-static-amber-600) 42%, var(--mcp-card-stroke));background:color-mix(in srgb, var(--dsw-static-amber-100) 10%, var(--dsw-alias-settings-card-fill));grid-template-columns:minmax(0,1fr)}.oetn4G_serverCardEditing>p{white-space:normal;border:0;padding:0}.oetn4G_serverCardEditing>.oetn4G_actions,.oetn4G_serverCardEditing>section{grid-column:1/-1}.oetn4G_secretRow{align-items:end;gap:var(--mcp-space-3);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_toolCount{width:fit-content;padding:var(--mcp-space-2) var(--mcp-space-3);border:1px solid var(--mcp-card-stroke);border-radius:var(--dsw-radius-md);background:var(--mcp-field-fill);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14)}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}@container (width<=48rem){.oetn4G_serverCard:not(.oetn4G_serverCardEditing){align-items:center;column-gap:var(--mcp-space-4);row-gap:var(--mcp-space-4);grid-template-columns:minmax(0,1fr) auto}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_serverHeading{grid-column:1/-1}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-end;gap:var(--mcp-space-3)}}@container (width<=40rem){.oetn4G_serverFilters{grid-template-columns:minmax(0,1fr)}.oetn4G_cardHeader{flex-wrap:wrap;align-items:flex-start}.oetn4G_cardIdentity{flex:100%}.oetn4G_cardHeader>.oetn4G_actions{justify-content:flex-start;width:100%}.oetn4G_exportHint{text-align:left}.oetn4G_formGrid{grid-template-columns:minmax(0,1fr)}.oetn4G_enableControl{flex:auto;justify-content:space-between;max-width:100%}.oetn4G_serverCard:not(.oetn4G_serverCardEditing){grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>p{white-space:normal;border:0;padding:0}.oetn4G_serverCard:not(.oetn4G_serverCardEditing)>.oetn4G_actions{justify-content:flex-start}}@container (width>=38rem){.oetn4G_field{align-items:center;column-gap:var(--mcp-space-4);grid-template-columns:minmax(9rem,12rem) minmax(0,1fr)}.oetn4G_field small{grid-column:2}.oetn4G_secretRow .oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_secretRow .oetn4G_field small{grid-column:1}}@container (width<=32rem){.oetn4G_card{padding:var(--mcp-space-3)}.oetn4G_field{grid-template-columns:minmax(0,1fr)}.oetn4G_field small{grid-column:1}.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}.oetn4G_actions{justify-content:flex-start}.oetn4G_secretRow{grid-template-columns:minmax(0,1fr)}.oetn4G_serverHeading{flex-wrap:wrap;align-items:flex-start}.oetn4G_serverCard>.oetn4G_actions{justify-content:flex-start}.oetn4G_serverCard{grid-template-columns:minmax(0,1fr);align-items:start}.oetn4G_serverCard>p{white-space:normal;border:0;padding:0}}";
+		const css = ".oetn4G_connections{--mcp-gap:12px;--mcp-gap-sm:8px;width:100%;max-width:60rem;color:var(--dsw-alias-label-primary);grid-template-columns:minmax(0,1fr);gap:16px;margin-inline:auto;display:grid;container-type:inline-size}.oetn4G_actions{justify-content:flex-end;align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_pageHeader{justify-content:space-between;align-items:flex-start;gap:16px;min-width:0;display:flex}.oetn4G_pageCopy{gap:4px;min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:600 18px/26px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);margin:0}.oetn4G_toolbar{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_toolbarEnd{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;margin-inline-start:auto;display:flex}.oetn4G_searchField{flex:14rem;min-width:10rem}.oetn4G_filterField{flex:0 auto;min-width:8.5rem}.oetn4G_srOnly{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.oetn4G_statusProblem{border:1px solid color-mix(in srgb, var(--dsw-static-amber-600) 26%, var(--dsw-alias-settings-card-stroke));border-radius:var(--dsw-radius-lg);background:color-mix(in srgb, var(--dsw-static-amber-100) 22%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0;padding:8px 12px}.oetn4G_field{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);gap:6px;display:grid}.oetn4G_field input,.oetn4G_field select,.oetn4G_field textarea{box-sizing:border-box;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);width:100%;min-width:0;min-height:2.125rem;color:var(--dsw-alias-label-primary);font:inherit;padding:6px 10px}.oetn4G_field textarea{resize:vertical;line-height:1.5}.oetn4G_field input:focus-visible,.oetn4G_field select:focus-visible,.oetn4G_field textarea:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:1px}.oetn4G_field input:disabled,.oetn4G_field select:disabled,.oetn4G_field textarea:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_importPanel{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;padding:16px;display:grid}.oetn4G_importPreview{gap:var(--mcp-gap-sm);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);min-width:0;padding:12px;display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere;font:var(--dsw-font-xs-13)}.oetn4G_serverList{gap:var(--mcp-gap-sm);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_empty{border:1px dashed var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);text-align:center;margin:0;padding:20px 16px}.oetn4G_serverCard{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;min-width:0;padding:10px 12px;transition:border-color .14s,background-color .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 16%, var(--dsw-alias-settings-card-stroke))}.oetn4G_serverMain{align-items:center;gap:10px;min-width:0;display:flex}.oetn4G_stateDot{background:var(--dsw-alias-label-secondary);border-radius:999px;flex:none;width:8px;height:8px}.oetn4G_stateDot[data-state=connected]{background:var(--dsw-alias-state-success-primary)}.oetn4G_stateDot[data-state=connecting],.oetn4G_stateDot[data-state=reconnecting]{background:var(--dsw-static-amber-600)}.oetn4G_stateDot[data-state=disconnected]{background:var(--dsw-alias-state-error-primary)}.oetn4G_stateDot[data-state=disabled]{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 45%, transparent)}.oetn4G_serverIcon{border-radius:var(--dsw-radius-md);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, transparent);width:28px;height:28px;color:var(--dsw-alias-label-secondary);flex:none;place-items:center;display:grid}.oetn4G_serverIdentity{gap:2px;min-width:0;display:grid}.oetn4G_serverNameRow{align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_serverName{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.oetn4G_statePill{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 12%, transparent);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;flex:none;padding:1px 8px;line-height:1.5}.oetn4G_statePill[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, transparent);color:var(--dsw-alias-state-success-primary)}.oetn4G_statePill[data-state=connecting],.oetn4G_statePill[data-state=reconnecting]{background:color-mix(in srgb, var(--dsw-static-amber-600) 14%, transparent);color:var(--dsw-static-amber-600)}.oetn4G_statePill[data-state=disconnected]{background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);color:var(--dsw-alias-state-error-primary)}.oetn4G_serverMeta{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_separator{padding-inline:4px}.oetn4G_serverActions{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px;display:flex}.oetn4G_toolInventory{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;gap:6px;min-width:0;margin-top:4px;padding:10px 12px;display:grid}.oetn4G_toolInventory p{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_toolInventory ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xs-13);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:2px}.oetn4G_fieldGroup{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;min-width:0;margin-top:8px;padding:14px;display:grid}.oetn4G_fieldGroupTitle{border-bottom:1px solid var(--dsw-alias-settings-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0;padding-bottom:8px}.oetn4G_formGrid{gap:var(--mcp-gap);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_secretRow{align-items:end;gap:var(--mcp-gap-sm);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_secretInput{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:6px}.oetn4G_secretMask{letter-spacing:1.5px;color:var(--dsw-alias-label-secondary);user-select:none}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-gap);border-top:1px solid var(--dsw-alias-settings-card-stroke);grid-template-columns:minmax(0,1fr) auto;padding-top:10px;display:grid}.oetn4G_status{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_error{color:var(--dsw-alias-state-error-primary);font:var(--dsw-font-xs-13);grid-column:1/-1;margin:0}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_card{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;color:var(--dsw-alias-label-primary);padding:16px;display:grid}.oetn4G_switchRow{justify-content:space-between;align-items:center;gap:var(--mcp-gap);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);display:flex}.oetn4G_serverCardEditing{background:var(--dsw-alias-settings-card-fill);border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 18%, var(--dsw-alias-settings-card-stroke));grid-template-columns:minmax(0,1fr)}@container (width<=42rem){.oetn4G_pageHeader{flex-direction:column;align-items:stretch}.oetn4G_pageHeader>.oetn4G_actions{justify-content:flex-start}.oetn4G_formGrid,.oetn4G_secretRow,.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}}@container (width<=34rem){.oetn4G_serverCard{grid-template-columns:minmax(0,1fr)}.oetn4G_serverActions{justify-content:flex-start}.oetn4G_toolbarEnd{margin-inline-start:0}}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}";
 		const tagId = "@tinyforge/dsh-mcp-settings/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -474,43 +474,47 @@ window.__ModuleLoader__.load({
 		var mcp_settings_module_css_default = {
 			"actions": "oetn4G_actions",
 			"card": "oetn4G_card",
-			"cardCopy": "oetn4G_cardCopy",
-			"cardDescription": "oetn4G_cardDescription",
 			"cardFooter": "oetn4G_cardFooter",
-			"cardHeader": "oetn4G_cardHeader",
-			"cardIcon": "oetn4G_cardIcon",
-			"cardIdentity": "oetn4G_cardIdentity",
-			"cardTitle": "oetn4G_cardTitle",
 			"connections": "oetn4G_connections",
-			"enableControl": "oetn4G_enableControl",
-			"enableLabel": "oetn4G_enableLabel",
+			"empty": "oetn4G_empty",
 			"error": "oetn4G_error",
 			"exportHint": "oetn4G_exportHint",
 			"field": "oetn4G_field",
 			"fieldGroup": "oetn4G_fieldGroup",
 			"fieldGroupTitle": "oetn4G_fieldGroupTitle",
+			"filterField": "oetn4G_filterField",
 			"formGrid": "oetn4G_formGrid",
+			"importPanel": "oetn4G_importPanel",
 			"importPreview": "oetn4G_importPreview",
 			"pageCopy": "oetn4G_pageCopy",
 			"pageDescription": "oetn4G_pageDescription",
 			"pageHeader": "oetn4G_pageHeader",
-			"pageIcon": "oetn4G_pageIcon",
 			"pageTitle": "oetn4G_pageTitle",
+			"searchField": "oetn4G_searchField",
 			"secretInput": "oetn4G_secretInput",
+			"secretMask": "oetn4G_secretMask",
 			"secretRow": "oetn4G_secretRow",
 			"secretVisibilityButton": "oetn4G_secretVisibilityButton",
+			"separator": "oetn4G_separator",
+			"serverActions": "oetn4G_serverActions",
 			"serverCard": "oetn4G_serverCard",
 			"serverCardEditing": "oetn4G_serverCardEditing",
-			"serverFilters": "oetn4G_serverFilters",
-			"serverHeading": "oetn4G_serverHeading",
 			"serverIcon": "oetn4G_serverIcon",
 			"serverIdentity": "oetn4G_serverIdentity",
 			"serverList": "oetn4G_serverList",
-			"serverState": "oetn4G_serverState",
+			"serverMain": "oetn4G_serverMain",
+			"serverMeta": "oetn4G_serverMeta",
+			"serverName": "oetn4G_serverName",
+			"serverNameRow": "oetn4G_serverNameRow",
+			"srOnly": "oetn4G_srOnly",
+			"stateDot": "oetn4G_stateDot",
+			"statePill": "oetn4G_statePill",
 			"status": "oetn4G_status",
-			"toolCount": "oetn4G_toolCount",
-			"toolDisclosure": "oetn4G_toolDisclosure",
-			"toolInventory": "oetn4G_toolInventory"
+			"statusProblem": "oetn4G_statusProblem",
+			"switchRow": "oetn4G_switchRow",
+			"toolInventory": "oetn4G_toolInventory",
+			"toolbar": "oetn4G_toolbar",
+			"toolbarEnd": "oetn4G_toolbarEnd"
 		};
 		//#endregion
 		//#region src/client/McpCardSettings.tsx
@@ -742,11 +746,53 @@ window.__ModuleLoader__.load({
 				}))
 			};
 		}
+		/** Read live connection rows from the status Remote this plugin mounted. */
+		async function readStatusRows(statusApi) {
+			if (statusApi === void 0) return {
+				rows: [],
+				problem: "status-namespace-unmounted"
+			};
+			try {
+				const reply = await statusApi.list();
+				if (reply?.ok === true) return { rows: reply.value ?? [] };
+				return {
+					rows: [],
+					problem: `status-rejected ${reply?.error?.message ?? ""}`.trim()
+				};
+			} catch (error) {
+				return {
+					rows: [],
+					problem: `status-failed ${error instanceof Error ? error.message : "unknown"}`
+				};
+			}
+		}
+		/** Probe each enabled server through the manager's bounded connection check. */
+		async function probeServers(managerApi, servers) {
+			if (managerApi === void 0) return [];
+			const rows = [];
+			for (const server of servers) {
+				if (!server.enabled) continue;
+				try {
+					const reply = await managerApi.check(server);
+					if (!reply.ok) continue;
+					const result = reply.value;
+					if (result?.state === "ready") rows.push({
+						serverName: server.serverName,
+						transport: server.transport,
+						state: "connected",
+						toolCount: result.toolCount
+					});
+				} catch {}
+			}
+			return rows;
+		}
 		/** Edit multiple host-managed MCP servers and check their connection state. */
-		function ManagedMcpServers({ form, remote, t }) {
+		function ManagedMcpServers({ form, remote, statusApi, managerApi, t }) {
 			const snapshot = (0, react.useSyncExternalStore)(form.subscribe.bind(form), form.getSnapshot.bind(form));
 			const servers = snapshot.value?.servers ?? [];
 			const [statuses, setStatuses] = (0, react.useState)([]);
+			const [probed, setProbed] = (0, react.useState)([]);
+			const [statusProblem, setStatusProblem] = (0, react.useState)();
 			const [draft, setDraft] = (0, react.useState)(emptyDraft);
 			const [activeEditorId, setActiveEditorId] = (0, react.useState)();
 			const [busy, setBusy] = (0, react.useState)(false);
@@ -756,6 +802,7 @@ window.__ModuleLoader__.load({
 			const [importJson, setImportJson] = (0, react.useState)("");
 			const [importState, setImportState] = (0, react.useState)();
 			const [importPreview, setImportPreview] = (0, react.useState)();
+			const [importOpen, setImportOpen] = (0, react.useState)(false);
 			const [searchQuery, setSearchQuery] = (0, react.useState)("");
 			const [stateFilter, setStateFilter] = (0, react.useState)("all");
 			const [transportFilter, setTransportFilter] = (0, react.useState)("all");
@@ -763,36 +810,48 @@ window.__ModuleLoader__.load({
 			const statusRequestId = (0, react.useRef)(0);
 			(0, react.useEffect)(() => {
 				let active = true;
-				const refresh = async () => {
+				const refresh = async (deep) => {
 					const requestId = ++statusRequestId.current;
-					try {
-						const reply = await remote.mcpClientStatus.list();
-						if (active && requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : []);
-					} catch (error) {
-						if (active && requestId === statusRequestId.current) setStatuses([]);
+					const result = await readStatusRows(statusApi);
+					if (!active || requestId !== statusRequestId.current) return;
+					setStatuses(result.rows);
+					setStatusProblem(result.problem !== void 0 && result.rows.length === 0 ? result.problem : void 0);
+					if (result.rows.length > 0) {
+						setProbed([]);
+						return;
 					}
+					if (!deep) return;
+					const measured = await probeServers(managerApi, form.getSnapshot().value?.servers ?? []);
+					if (!active || requestId !== statusRequestId.current) return;
+					setProbed(measured);
 				};
-				refresh();
+				refresh(true);
 				const timer = setInterval(() => {
-					refresh();
+					refresh(false);
 				}, 5e3);
 				return () => {
 					active = false;
 					clearInterval(timer);
 				};
-			}, [remote]);
+			}, [statusApi, managerApi]);
+			const refreshStatuses = async (deep = true) => {
+				const requestId = ++statusRequestId.current;
+				const result = await readStatusRows(statusApi);
+				if (requestId !== statusRequestId.current) return;
+				setStatuses(result.rows);
+				setStatusProblem(result.problem !== void 0 && result.rows.length === 0 ? result.problem : void 0);
+				if (result.rows.length > 0) {
+					setProbed([]);
+					return;
+				}
+				if (!deep) return;
+				const measured = await probeServers(managerApi, form.getSnapshot().value?.servers ?? []);
+				if (requestId !== statusRequestId.current) return;
+				setProbed(measured);
+			};
 			const saveServers = async (next) => {
 				if (!await form.set("servers", next)) throw new Error("settings refused");
 				await refreshStatuses();
-			};
-			const refreshStatuses = async () => {
-				const requestId = ++statusRequestId.current;
-				try {
-					const reply = await remote.mcpClientStatus.list();
-					if (requestId === statusRequestId.current) setStatuses(reply.ok ? reply.value : []);
-				} catch {
-					if (requestId === statusRequestId.current) setStatuses([]);
-				}
 			};
 			const closeEditor = () => {
 				setActiveEditorId(void 0);
@@ -885,10 +944,14 @@ window.__ModuleLoader__.load({
 				setFailure(void 0);
 				setCheckState(void 0);
 				try {
+					if (managerApi === void 0) {
+						setFailure("check");
+						return;
+					}
 					const server = await prepareDraft();
 					if (server === void 0) return;
-					const reply = await remote.mcpServerManager.check(server);
-					if (!reply.ok) {
+					const reply = await managerApi.check(server);
+					if (!reply.ok || reply.value === void 0) {
 						setFailure("check");
 						return;
 					}
@@ -1067,9 +1130,7 @@ window.__ModuleLoader__.load({
 						} else throw new Error("invalid");
 					}
 					else throw new Error("invalid");
-					if (candidates.length === 0) {
-						if (skipped === 0) throw new Error("invalid");
-					}
+					if (candidates.length === 0 && skipped === 0) throw new Error("invalid");
 					setImportPreview({
 						candidates,
 						skipped,
@@ -1142,6 +1203,7 @@ window.__ModuleLoader__.load({
 					}
 					setImportJson("");
 					setImportPreview(void 0);
+					setImportOpen(false);
 					setImportState(t("managed.import.complete").replace("{imported}", String(next.length)).replace("{skipped}", String(skipped)));
 				} catch {
 					setImportFailure("save");
@@ -1149,8 +1211,11 @@ window.__ModuleLoader__.load({
 					setBusy(false);
 				}
 			};
-			const statusFor = (server) => statuses.find((status) => status.serverName === server.serverName);
-			const stateFor = (server) => !server.enabled ? "disabled" : statusFor(server)?.state ?? "disconnected";
+			const statusFor = (server) => statuses.find((status) => status.serverName === server.serverName) ?? probed.find((status) => status.serverName === server.serverName);
+			const stateFor = (server) => {
+				if (!server.enabled) return "disabled";
+				return statusFor(server)?.state ?? "unknown";
+			};
 			const query = searchQuery.trim().toLocaleLowerCase();
 			const matchingServers = servers.filter((server) => {
 				const nameMatches = query === "" || server.serverName.toLocaleLowerCase().includes(query);
@@ -1161,6 +1226,7 @@ window.__ModuleLoader__.load({
 			const displayedServers = servers.filter((server) => matchingServers.includes(server) || server.id === activeEditorId);
 			const hasFilters = searchQuery !== "" || stateFilter !== "all" || transportFilter !== "all";
 			const isEditingExisting = servers.some((server) => server.id === draft.id);
+			const connectedCount = servers.filter((server) => stateFor(server) === "connected").length;
 			const editor = /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.fieldGroup,
 				"aria-label": t("managed.editor"),
@@ -1348,54 +1414,67 @@ window.__ModuleLoader__.load({
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 										className: mcp_settings_module_css_default.field,
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-											className: mcp_settings_module_css_default.secretInput,
-											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-												type: row.visible ? "text" : "password",
-												autoComplete: "new-password",
-												value: row.value,
-												disabled: busy,
-												onChange: (event) => setDraft({
-													...draft,
-													secrets: draft.secrets.map((item) => item.id === row.id ? {
-														...item,
-														value: event.currentTarget.value
-													} : item)
-												})
-											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-												variant: "outline",
-												size: "sm",
-												className: mcp_settings_module_css_default.secretVisibilityButton,
-												"aria-label": t(row.visible ? "managed.secret.hide" : "managed.secret.show"),
-												"aria-pressed": row.visible,
-												disabled: busy,
-												onClick: () => setDraft({
-													...draft,
-													secrets: draft.secrets.map((item) => item.id === row.id ? {
-														...item,
-														visible: !item.visible
-													} : item)
-												}),
-												children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
-													viewBox: "0 0 24 24",
-													"aria-hidden": "true",
-													focusable: "false",
-													children: row.visible ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" }),
-														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
+										children: [
+											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.secret") }),
+											/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+												className: mcp_settings_module_css_default.secretInput,
+												children: [row.visible ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+													type: "text",
+													autoComplete: "new-password",
+													value: row.value,
+													placeholder: t("managed.secret.placeholder"),
+													disabled: busy,
+													onChange: (event) => setDraft({
+														...draft,
+														secrets: draft.secrets.map((item) => item.id === row.id ? {
+															...item,
+															value: event.currentTarget.value
+														} : item)
+													})
+												}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+													className: mcp_settings_module_css_default.secretMask,
+													type: "text",
+													readOnly: true,
+													value: "*".repeat(22),
+													title: t("managed.secret.hidden"),
+													"aria-label": t("managed.secret.hidden"),
+													disabled: busy
+												}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+													variant: "outline",
+													size: "sm",
+													className: mcp_settings_module_css_default.secretVisibilityButton,
+													"aria-label": t(row.visible ? "managed.secret.hide" : "managed.secret.show"),
+													"aria-pressed": row.visible,
+													disabled: busy,
+													onClick: () => setDraft({
+														...draft,
+														secrets: draft.secrets.map((item) => item.id === row.id ? {
+															...item,
+															visible: !item.visible
+														} : item)
+													}),
+													children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
+														viewBox: "0 0 24 24",
+														"aria-hidden": "true",
+														focusable: "false",
+														children: row.visible ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+															/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" }),
+															/* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
+																cx: "12",
+																cy: "12",
+																r: "2.5"
+															}),
+															/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "m4 4 16 16" })
+														] }) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
 															cx: "12",
 															cy: "12",
 															r: "2.5"
-														}),
-														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "m4 4 16 16" })
-													] }) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M2.5 12s3.25-6 9.5-6 9.5 6 9.5 6-3.25 6-9.5 6-9.5-6-9.5-6Z" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
-														cx: "12",
-														cy: "12",
-														r: "2.5"
-													})] })
-												})
-											})]
-										})]
+														})] })
+													})
+												})]
+											}),
+											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: row.visible ? t("managed.secret.placeholder") : t("managed.secret.hint") })
+										]
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 										variant: "outline",
@@ -1461,65 +1540,55 @@ window.__ModuleLoader__.load({
 				]
 			});
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
-				className: mcp_settings_module_css_default.card,
+				className: mcp_settings_module_css_default.connections,
 				"aria-label": t("managed.title"),
 				children: [
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-						className: mcp_settings_module_css_default.cardHeader,
+						className: mcp_settings_module_css_default.pageHeader,
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: mcp_settings_module_css_default.cardIdentity,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: mcp_settings_module_css_default.cardIcon,
-								"aria-hidden": "true",
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 24 })
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: mcp_settings_module_css_default.cardCopy,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
-									className: mcp_settings_module_css_default.cardTitle,
-									children: t("managed.title")
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-									className: mcp_settings_module_css_default.cardDescription,
-									children: t("managed.description")
-								})]
+							className: mcp_settings_module_css_default.pageCopy,
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h2", {
+								className: mcp_settings_module_css_default.pageTitle,
+								children: t("managed.title")
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								className: mcp_settings_module_css_default.pageDescription,
+								children: servers.length === 0 ? t("managed.description") : t("managed.summary").replace("{connected}", String(connectedCount)).replace("{total}", String(servers.length))
 							})]
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: mcp_settings_module_css_default.actions,
-							children: [
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "primary",
-									disabled: busy || !snapshot.writable,
-									"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
-									onClick: () => {
-										if (!isEditingExisting && activeEditorId === draft.id) closeEditor();
-										else {
-											const next = emptyDraft();
-											setDraft(next);
-											setActiveEditorId(next.id);
-										}
-										setFailure(void 0);
-										setCheckState(void 0);
-									},
-									children: t("managed.add")
-								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-									variant: "outline",
-									disabled: servers.length === 0,
-									onClick: exportServers,
-									children: t("managed.export")
-								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", {
-									className: mcp_settings_module_css_default.exportHint,
-									children: t("managed.export.notice")
-								})
-							]
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								variant: "outline",
+								disabled: servers.length === 0,
+								onClick: exportServers,
+								children: t("managed.export")
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								variant: "primary",
+								disabled: busy || !snapshot.writable,
+								"aria-expanded": !isEditingExisting && activeEditorId === draft.id,
+								onClick: () => {
+									if (!isEditingExisting && activeEditorId === draft.id) closeEditor();
+									else {
+										const next = emptyDraft();
+										setDraft(next);
+										setActiveEditorId(next.id);
+										setImportOpen(false);
+									}
+									setFailure(void 0);
+									setCheckState(void 0);
+								},
+								children: t("managed.add")
+							})]
 						})]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: mcp_settings_module_css_default.serverFilters,
+						className: mcp_settings_module_css_default.toolbar,
 						children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: `${mcp_settings_module_css_default.field} ${mcp_settings_module_css_default.searchField}`,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.search") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									className: mcp_settings_module_css_default.srOnly,
+									children: t("managed.search")
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 									type: "search",
 									value: searchQuery,
 									onChange: (event) => setSearchQuery(event.currentTarget.value),
@@ -1528,7 +1597,10 @@ window.__ModuleLoader__.load({
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: `${mcp_settings_module_css_default.field} ${mcp_settings_module_css_default.filterField}`,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.filter.state") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									className: mcp_settings_module_css_default.srOnly,
+									children: t("managed.filter.state")
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
 									value: stateFilter,
 									onChange: (event) => setStateFilter(event.currentTarget.value),
 									children: [
@@ -1537,16 +1609,12 @@ window.__ModuleLoader__.load({
 											children: t("managed.filter.allStates")
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-											value: "disabled",
-											children: t("managed.state.disabled")
+											value: "connected",
+											children: t("managed.state.connected")
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
 											value: "connecting",
 											children: t("managed.state.connecting")
-										}),
-										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-											value: "connected",
-											children: t("managed.state.connected")
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
 											value: "reconnecting",
@@ -1555,13 +1623,24 @@ window.__ModuleLoader__.load({
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
 											value: "disconnected",
 											children: t("managed.state.disconnected")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "unknown",
+											children: t("managed.state.unknown")
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "disabled",
+											children: t("managed.state.disabled")
 										})
 									]
 								})]
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: `${mcp_settings_module_css_default.field} ${mcp_settings_module_css_default.filterField}`,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.filter.transport") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									className: mcp_settings_module_css_default.srOnly,
+									children: t("managed.filter.transport")
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
 									value: transportFilter,
 									onChange: (event) => setTransportFilter(event.currentTarget.value),
 									children: [
@@ -1580,28 +1659,61 @@ window.__ModuleLoader__.load({
 									]
 								})]
 							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-								variant: "outline",
-								disabled: !hasFilters,
-								onClick: () => {
-									setSearchQuery("");
-									setStateFilter("all");
-									setTransportFilter("all");
-								},
-								children: t("managed.filter.clear")
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								className: mcp_settings_module_css_default.toolbarEnd,
+								children: [
+									hasFilters && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										variant: "ghost",
+										onClick: () => {
+											setSearchQuery("");
+											setStateFilter("all");
+											setTransportFilter("all");
+										},
+										children: t("managed.filter.clear")
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										variant: "ghost",
+										disabled: busy,
+										onClick: () => {
+											refreshStatuses();
+										},
+										children: t("managed.refresh")
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										variant: "outline",
+										"aria-expanded": importOpen,
+										onClick: () => {
+											setImportOpen(!importOpen);
+											setImportPreview(void 0);
+										},
+										children: t("managed.import")
+									})
+								]
 							})
 						]
 					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
-						id: "managed-mcp-import",
-						className: mcp_settings_module_css_default.fieldGroup,
+					statusProblem !== void 0 && probed.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						className: mcp_settings_module_css_default.statusProblem,
+						role: "status",
+						title: statusProblem,
+						children: t("managed.status.unavailable")
+					}),
+					importOpen && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+						className: mcp_settings_module_css_default.importPanel,
 						"aria-label": t("managed.import"),
 						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", {
+								className: mcp_settings_module_css_default.fieldGroupTitle,
+								children: t("managed.import")
+							}),
 							importPreview === void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 									className: mcp_settings_module_css_default.field,
-									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.import") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
-										rows: 8,
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: mcp_settings_module_css_default.srOnly,
+										children: t("managed.import")
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
+										rows: 6,
 										value: importJson,
 										disabled: busy,
 										onChange: (event) => {
@@ -1642,9 +1754,9 @@ window.__ModuleLoader__.load({
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.import.previewSummary").replace("{count}", String(importPreview.candidates.length)).replace("{skipped}", String(importPreview.skipped)) }),
 									importPreview.candidates.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: importPreview.candidates.map((candidate) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: candidate.server.serverName }),
-										" · ",
+										" 璺?",
 										t(candidate.server.transport === "stdio" ? "transport.stdio" : "transport.streamable-http"),
-										" · ",
+										" 璺?",
 										t(candidate.server.purpose === "project-memory" ? "managed.purpose.project-memory" : "managed.purpose.model-tools")
 									] }, candidate.server.serverName)) }),
 									importPreview.secretCount > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.import.credentialsNotice").replace("{count}", String(importPreview.secretCount)) }),
@@ -1671,8 +1783,12 @@ window.__ModuleLoader__.load({
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: mcp_settings_module_css_default.serverList,
 						children: [
-							servers.length === 0 && activeEditorId !== draft.id && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.empty") }),
+							servers.length === 0 && !(activeEditorId === draft.id) && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								className: mcp_settings_module_css_default.empty,
+								children: t("managed.empty")
+							}),
 							hasFilters && matchingServers.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								className: mcp_settings_module_css_default.empty,
 								role: "status",
 								children: t("managed.filter.noResults")
 							}),
@@ -1684,91 +1800,100 @@ window.__ModuleLoader__.load({
 									className: `${mcp_settings_module_css_default.serverCard} ${activeEditorId === server.id ? mcp_settings_module_css_default.serverCardEditing : ""}`,
 									children: [
 										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-											className: mcp_settings_module_css_default.serverHeading,
-											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-												className: mcp_settings_module_css_default.serverIdentity,
-												children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											className: mcp_settings_module_css_default.serverMain,
+											children: [
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+													className: mcp_settings_module_css_default.stateDot,
+													"data-state": state,
+													"aria-hidden": "true"
+												}),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 													className: mcp_settings_module_css_default.serverIcon,
 													"aria-hidden": "true",
-													children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 22 })
-												}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: server.serverName }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", { children: [
-													t(server.transport === "stdio" ? "transport.stdio" : "transport.streamable-http"),
-													" · ",
-													/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-														className: mcp_settings_module_css_default.serverState,
-														"data-state": state,
-														children: managedStateLabel(t, state)
-													})
-												] })] })]
-											}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-												className: mcp_settings_module_css_default.enableControl,
-												children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-													className: mcp_settings_module_css_default.enableLabel,
-													children: t("managed.enabled")
-												}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
+													children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 18 })
+												}),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+													className: mcp_settings_module_css_default.serverIdentity,
+													children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+														className: mcp_settings_module_css_default.serverNameRow,
+														children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", {
+															className: mcp_settings_module_css_default.serverName,
+															children: server.serverName
+														}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+															className: mcp_settings_module_css_default.statePill,
+															"data-state": state,
+															children: managedStateLabel(t, state)
+														})]
+													}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", {
+														className: mcp_settings_module_css_default.serverMeta,
+														children: [
+															t(server.transport === "stdio" ? "transport.stdio" : "transport.streamable-http"),
+															/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+																className: mcp_settings_module_css_default.separator,
+																"aria-hidden": "true",
+																children: "·"
+															}),
+															t("managed.toolCountInline").replace("{count}", String(status?.toolCount ?? 0))
+														]
+													})]
+												})
+											]
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+											className: mcp_settings_module_css_default.serverActions,
+											children: [
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+													variant: "ghost",
+													size: "sm",
+													disabled: busy || status === void 0 || state !== "connected",
+													"aria-expanded": toolsExpanded,
+													onClick: () => setExpandedToolIds((current) => {
+														const next = new Set(current);
+														if (next.has(server.id)) next.delete(server.id);
+														else next.add(server.id);
+														return next;
+													}),
+													children: t(toolsExpanded ? "managed.tools.hide" : "managed.tools.show")
+												}),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+													variant: "outline",
+													size: "sm",
+													disabled: busy || !snapshot.writable,
+													"aria-expanded": activeEditorId === server.id,
+													onClick: () => {
+														if (activeEditorId === server.id) closeEditor();
+														else {
+															setDraft(toDraft(server));
+															setActiveEditorId(server.id);
+														}
+														setFailure(void 0);
+														setCheckState(void 0);
+													},
+													children: t("managed.edit")
+												}),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+													variant: "ghost",
+													size: "sm",
+													disabled: busy || !snapshot.writable,
+													onClick: () => {
+														remove(server.id);
+													},
+													children: t("managed.delete")
+												}),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 													checked: server.enabled,
 													label: t("managed.enabled"),
 													disabled: busy || !snapshot.writable,
 													onChange: (value) => {
 														toggle(server, value);
 													}
-												})]
-											})]
-										}),
-										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", {
-											className: mcp_settings_module_css_default.toolCount,
-											children: [
-												t("toolCount"),
-												": ",
-												status?.toolCount ?? 0
+												})
 											]
 										}),
-										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-											className: mcp_settings_module_css_default.actions,
-											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-												variant: "outline",
-												disabled: busy || !snapshot.writable,
-												"aria-expanded": activeEditorId === server.id,
-												onClick: () => {
-													if (activeEditorId === server.id) closeEditor();
-													else {
-														setDraft(toDraft(server));
-														setActiveEditorId(server.id);
-													}
-													setFailure(void 0);
-													setCheckState(void 0);
-												},
-												children: t("managed.edit")
-											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-												variant: "outline",
-												disabled: busy || !snapshot.writable,
-												onClick: () => {
-													remove(server.id);
-												},
-												children: t("managed.delete")
-											})]
-										}),
-										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-											className: mcp_settings_module_css_default.toolDisclosure,
-											children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-												variant: "outline",
-												"aria-expanded": toolsExpanded,
-												onClick: () => setExpandedToolIds((current) => {
-													const next = new Set(current);
-													if (next.has(server.id)) next.delete(server.id);
-													else next.add(server.id);
-													return next;
-												}),
-												children: t(toolsExpanded ? "managed.tools.hide" : "managed.tools.show")
-											})
-										}),
-										toolsExpanded && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+										toolsExpanded && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("section", {
 											className: mcp_settings_module_css_default.toolInventory,
 											"aria-label": `${server.serverName} ${t("managed.tools.title")}`,
-											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: t("managed.tools.title") }), state !== "connected" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-												role: "status",
-												children: t("managed.tools.unavailable")
-											}) : status?.tools.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.tools.empty") }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: (status?.tools ?? []).map((tool) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: tool.name }), tool.description !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: tool.description })] }, tool.name)) })]
+											children: status?.tools === void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t(state === "connected" ? "managed.tools.unknown" : "managed.tools.unavailable") }) : status.tools.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.tools.empty") }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: status.tools.map((tool) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: tool.name }), tool.description !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: tool.description })] }, tool.name)) })
 										}),
 										activeEditorId === server.id && editor
 									]
@@ -1779,6 +1904,10 @@ window.__ModuleLoader__.load({
 								children: editor
 							})
 						]
+					}),
+					servers.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						className: mcp_settings_module_css_default.exportHint,
+						children: t("managed.export.notice")
 					})
 				]
 			});
@@ -1801,14 +1930,15 @@ window.__ModuleLoader__.load({
 				case "connected": return t("managed.state.connected");
 				case "reconnecting": return t("managed.state.reconnecting");
 				case "disconnected": return t("managed.state.disconnected");
+				case "unknown": return t("managed.state.unknown");
 			}
 		}
 		function managedCheckLabel(t, result) {
 			switch (result.state) {
 				case "ready": return t("managed.checkReady").replace("{count}", String(result.toolCount));
-				case "authorization-required": return `${t("managed.check.authorization-required")} · ${t("managed.check.advice.authorization-required")}`;
-				case "connection-failed": return `${t("managed.check.connection-failed")} · ${t("managed.check.advice.connection-failed")}`;
-				case "timed-out": return `${t("managed.check.timed-out")} · ${t("managed.check.advice.timed-out")}`;
+				case "authorization-required": return `${t("managed.check.authorization-required")} 璺?${t("managed.check.advice.authorization-required")}`;
+				case "connection-failed": return `${t("managed.check.connection-failed")} 璺?${t("managed.check.advice.connection-failed")}`;
+				case "timed-out": return `${t("managed.check.timed-out")} 璺?${t("managed.check.advice.timed-out")}`;
 			}
 		}
 		function managedFailureLabel(t, failure) {
@@ -1826,37 +1956,23 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region src/client/McpConnectionsPage.tsx
 		/** Show each managed connection on the shared MCP settings page when served. */
-		function McpConnectionsPage({ managedForm, remote, t }) {
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+		function McpConnectionsPage({ managedForm, remote, statusApi, managerApi, t }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: mcp_settings_module_css_default.connections,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-					className: mcp_settings_module_css_default.pageHeader,
-					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-						className: mcp_settings_module_css_default.pageIcon,
-						"aria-hidden": "true",
-						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSettingsOutlineMedium, { size: 24 })
-					}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: mcp_settings_module_css_default.pageCopy,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h2", {
-							className: mcp_settings_module_css_default.pageTitle,
-							children: t("pageTitle")
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-							className: mcp_settings_module_css_default.pageDescription,
-							children: t("pageDescription")
-						})]
-					})]
-				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ManagedMcpServers, {
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ManagedMcpServers, {
 					form: managedForm,
 					remote,
+					statusApi,
+					managerApi,
 					t
-				})]
+				})
 			});
 		}
 		//#endregion
 		//#region src/client/locales.ts
 		/** English strings for MCP server settings. */
 		const en = {
-			title: "MCP",
+			title: "MCP settings",
 			pageTitle: "MCP settings",
 			pageDescription: "Configure every MCP server in one managed list.",
 			endpointHint: "Use HTTPS, or HTTP on localhost or a private IPv4 address.",
@@ -1903,6 +2019,7 @@ window.__ModuleLoader__.load({
 			"managed.tools.title": "Available tools",
 			"managed.tools.empty": "No tools are available.",
 			"managed.tools.unavailable": "Tool list is unavailable while the server is disconnected.",
+			"managed.tools.unknown": "The connection is live, but the tool list could not be read.",
 			"managed.enabled": "Enabled",
 			"managed.edit": "Edit",
 			"managed.delete": "Delete",
@@ -1939,6 +2056,11 @@ window.__ModuleLoader__.load({
 			"managed.state.connected": "Connected",
 			"managed.state.reconnecting": "Reconnecting",
 			"managed.state.disconnected": "Disconnected",
+			"managed.state.unknown": "Status unknown",
+			"managed.summary": "{connected} of {total} connected",
+			"managed.toolCountInline": "{count} tools",
+			"managed.refresh": "Refresh",
+			"managed.status.unavailable": "Live connection status is unavailable right now, so the states and tool counts above may be stale.",
 			"managed.error.save": "Could not save the server settings.",
 			"managed.error.credential": "Could not store a credential.",
 			"managed.error.check": "Could not check this MCP server.",
@@ -1960,12 +2082,14 @@ window.__ModuleLoader__.load({
 			"managed.export.notice": "Credential values stay in the local credential store and must be configured separately in another profile.",
 			"managed.secret.show": "Show secret",
 			"managed.secret.hide": "Hide secret",
+			"managed.secret.placeholder": "Enter a new secret value",
+			"managed.secret.hint": "The secret is masked. Use the eye button to reveal it or type a new value.",
 			"managed.purpose.model-tools": "Model tools",
 			"managed.purpose.project-memory": "Project memory"
 		};
 		/** Simplified Chinese strings for MCP server settings. */
 		const zh = {
-			title: "MCP",
+			title: "MCP 设置",
 			pageTitle: "MCP 设置",
 			pageDescription: "在一个托管列表中配置所有 MCP 服务器。",
 			endpointHint: "请使用 HTTPS；HTTP 仅允许本机回环地址或私有 IPv4 地址。",
@@ -2012,6 +2136,7 @@ window.__ModuleLoader__.load({
 			"managed.tools.title": "可用工具",
 			"managed.tools.empty": "此服务没有可用工具。",
 			"managed.tools.unavailable": "服务未连接，暂时无法查看工具列表。",
+			"managed.tools.unknown": "连接正常，但暂时读不到工具清单。",
 			"managed.enabled": "启用",
 			"managed.edit": "编辑",
 			"managed.delete": "删除",
@@ -2048,6 +2173,11 @@ window.__ModuleLoader__.load({
 			"managed.state.connected": "已连接",
 			"managed.state.reconnecting": "重连中",
 			"managed.state.disconnected": "已断开",
+			"managed.state.unknown": "状态未知",
+			"managed.summary": "已连接 {connected} / 共 {total} 个",
+			"managed.toolCountInline": "{count} 个工具",
+			"managed.refresh": "刷新",
+			"managed.status.unavailable": "暂时无法读取实时连接状态，上面的状态和工具数量可能不是最新的。",
 			"managed.error.save": "无法保存 MCP 服务设置。",
 			"managed.error.credential": "无法保存凭据。",
 			"managed.error.check": "无法检查 MCP 服务连接。",
@@ -2069,6 +2199,8 @@ window.__ModuleLoader__.load({
 			"managed.export.notice": "密钥值仍保存在本地凭据库；在其他配置文件中需要单独设置。",
 			"managed.secret.show": "显示密钥",
 			"managed.secret.hide": "隐藏密钥",
+			"managed.secret.placeholder": "输入新的秘密值",
+			"managed.secret.hint": "秘密值已隐藏；点眼睛按钮可显示，或直接输入新的值。",
 			"managed.purpose.model-tools": "模型工具",
 			"managed.purpose.project-memory": "项目记忆"
 		};
@@ -2082,6 +2214,17 @@ window.__ModuleLoader__.load({
 			"configForms"
 		];
 		const NS = "settings.mcp";
+		/**
+		* Resolve a Remote namespace this plugin mounted itself.
+		* Property access on `ctx.remote` is gated by the Cordis inject declaration, so a
+		* namespace created by this plugin's own `$mount` is reached through `ctx.get`.
+		* @param ctx - Client root.
+		* @param namespace - Namespace mounted by `$mount` (e.g. `mcpClientStatus`).
+		* @returns The namespace facade, or undefined while it is not mounted.
+		*/
+		function remoteNamespace(ctx, namespace) {
+			return ctx.get(`remote.${namespace}`);
+		}
 		/** Register MCP settings while at least one managed MCP setting is available. */
 		async function apply(ctx) {
 			const unmountRemote = await ctx.remote.$mount(TYPERT_REMOTE);
@@ -2102,7 +2245,9 @@ window.__ModuleLoader__.load({
 					locale: NS,
 					inject: () => ({
 						managedForm: managed,
-						remote: ctx.remote
+						remote: ctx.remote,
+						statusApi: remoteNamespace(ctx, "mcpClientStatus"),
+						managerApi: remoteNamespace(ctx, "mcpServerManager")
 					})
 				}, McpConnectionsPage));
 				return () => stopSection?.();

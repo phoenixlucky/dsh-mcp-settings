@@ -1,6 +1,6 @@
 /** English strings for MCP server settings. */
 export const en = {
-  title: 'MCP',
+  title: 'MCP settings',
   pageTitle: 'MCP settings',
   pageDescription: 'Configure every MCP server in one managed list.',
   endpointHint: 'Use HTTPS, or HTTP on localhost or a private IPv4 address.',
@@ -15,7 +15,7 @@ export const en = {
   'managed.title': 'MCP servers', 'managed.description': 'Configure server connections, purpose, credentials, and live status in one list.', 'managed.add': 'Add server', 'managed.empty': 'No MCP servers are configured.',
   'managed.search': 'Search servers', 'managed.search.placeholder': 'Search by server name', 'managed.filter.state': 'Status', 'managed.filter.allStates': 'All statuses',
   'managed.filter.transport': 'Transport', 'managed.filter.allTransports': 'All transports', 'managed.filter.clear': 'Clear filters', 'managed.filter.noResults': 'No servers match these filters.',
-  'managed.tools.show': 'View tools', 'managed.tools.hide': 'Hide tools', 'managed.tools.title': 'Available tools', 'managed.tools.empty': 'No tools are available.', 'managed.tools.unavailable': 'Tool list is unavailable while the server is disconnected.',
+  'managed.tools.show': 'View tools', 'managed.tools.hide': 'Hide tools', 'managed.tools.title': 'Available tools', 'managed.tools.empty': 'No tools are available.', 'managed.tools.unavailable': 'Tool list is unavailable while the server is disconnected.', 'managed.tools.unknown': 'The connection is live, but the tool list could not be read.',
   'managed.enabled': 'Enabled', 'managed.edit': 'Edit', 'managed.delete': 'Delete', 'managed.editor': 'Server settings',
   'managed.endpoint': 'MCP endpoint', 'managed.command': 'Executable', 'managed.args': 'Arguments (one per line)', 'managed.cwd': 'Working directory',
   'managed.headers': 'HTTP headers', 'managed.credentials': 'Credential references', 'managed.environment': 'Secret environment variables', 'managed.headerName': 'Header name',
@@ -30,7 +30,9 @@ export const en = {
   'managed.check.advice.connection-failed': 'Check the endpoint or command and confirm the server is available.',
   'managed.check.advice.timed-out': 'Check whether the server is responsive, then retry.',
   'managed.state.disabled': 'Disabled', 'managed.state.connecting': 'Connecting', 'managed.state.connected': 'Connected',
-  'managed.state.reconnecting': 'Reconnecting', 'managed.state.disconnected': 'Disconnected',
+  'managed.state.reconnecting': 'Reconnecting', 'managed.state.disconnected': 'Disconnected', 'managed.state.unknown': 'Status unknown',
+  'managed.summary': '{connected} of {total} connected', 'managed.toolCountInline': '{count} tools', 'managed.refresh': 'Refresh',
+  'managed.status.unavailable': 'Live connection status is unavailable right now, so the states and tool counts above may be stale.',
   'managed.error.save': 'Could not save the server settings.', 'managed.error.credential': 'Could not store a credential.',
   'managed.error.check': 'Could not check this MCP server.', 'managed.error.invalid': 'Complete the required fields and use unique names.',
   'managed.import': 'Import JSON', 'managed.import.placeholder': 'Paste a configuration containing an mcpServers object.',
@@ -43,12 +45,14 @@ export const en = {
   'managed.export': 'Export settings',
   'managed.export.notice': 'Credential values stay in the local credential store and must be configured separately in another profile.',
   'managed.secret.show': 'Show secret', 'managed.secret.hide': 'Hide secret',
+  'managed.secret.placeholder': 'Enter a new secret value',
+  'managed.secret.hint': 'The secret is masked. Use the eye button to reveal it or type a new value.',
   'managed.purpose.model-tools': 'Model tools', 'managed.purpose.project-memory': 'Project memory',
 } as const
 
 /** Simplified Chinese strings for MCP server settings. */
 export const zh: Record<keyof typeof en, string> = {
-  title: 'MCP',
+  title: 'MCP 设置',
   pageTitle: 'MCP 设置',
   pageDescription: '在一个托管列表中配置所有 MCP 服务器。',
   endpointHint: '请使用 HTTPS；HTTP 仅允许本机回环地址或私有 IPv4 地址。',
@@ -63,7 +67,7 @@ export const zh: Record<keyof typeof en, string> = {
   'managed.title': 'MCP 服务器', 'managed.description': '在同一列表中配置服务器连接、用途、凭据和实时状态。', 'managed.add': '添加服务器', 'managed.empty': '尚未配置 MCP 服务器。',
   'managed.search': '搜索服务', 'managed.search.placeholder': '按服务名称搜索', 'managed.filter.state': '连接状态', 'managed.filter.allStates': '全部状态',
   'managed.filter.transport': '传输方式', 'managed.filter.allTransports': '全部传输方式', 'managed.filter.clear': '清除筛选', 'managed.filter.noResults': '没有符合这些筛选条件的服务。',
-  'managed.tools.show': '查看工具', 'managed.tools.hide': '收起工具', 'managed.tools.title': '可用工具', 'managed.tools.empty': '此服务没有可用工具。', 'managed.tools.unavailable': '服务未连接，暂时无法查看工具列表。',
+  'managed.tools.show': '查看工具', 'managed.tools.hide': '收起工具', 'managed.tools.title': '可用工具', 'managed.tools.empty': '此服务没有可用工具。', 'managed.tools.unavailable': '服务未连接，暂时无法查看工具列表。', 'managed.tools.unknown': '连接正常，但暂时读不到工具清单。',
   'managed.enabled': '启用', 'managed.edit': '编辑', 'managed.delete': '删除', 'managed.editor': '服务设置',
   'managed.endpoint': 'MCP 地址', 'managed.command': '可执行文件', 'managed.args': '参数（每行一个）', 'managed.cwd': '工作目录',
   'managed.headers': 'HTTP 请求头', 'managed.credentials': '凭据引用', 'managed.environment': '秘密环境变量', 'managed.headerName': '请求头名称',
@@ -78,7 +82,9 @@ export const zh: Record<keyof typeof en, string> = {
   'managed.check.advice.connection-failed': '请检查服务地址或命令，并确认服务器可用。',
   'managed.check.advice.timed-out': '请检查服务器是否响应，然后重试。',
   'managed.state.disabled': '已停用', 'managed.state.connecting': '连接中', 'managed.state.connected': '已连接',
-  'managed.state.reconnecting': '重连中', 'managed.state.disconnected': '已断开',
+  'managed.state.reconnecting': '重连中', 'managed.state.disconnected': '已断开', 'managed.state.unknown': '状态未知',
+  'managed.summary': '已连接 {connected} / 共 {total} 个', 'managed.toolCountInline': '{count} 个工具', 'managed.refresh': '刷新',
+  'managed.status.unavailable': '暂时无法读取实时连接状态，上面的状态和工具数量可能不是最新的。',
   'managed.error.save': '无法保存 MCP 服务设置。', 'managed.error.credential': '无法保存凭据。',
   'managed.error.check': '无法检查 MCP 服务连接。', 'managed.error.invalid': '请填写必填项，并确保名称唯一。',
   'managed.import': '导入 JSON', 'managed.import.placeholder': '粘贴包含 mcpServers 对象的配置。',
@@ -91,5 +97,7 @@ export const zh: Record<keyof typeof en, string> = {
   'managed.export': '导出配置',
   'managed.export.notice': '密钥值仍保存在本地凭据库；在其他配置文件中需要单独设置。',
   'managed.secret.show': '显示密钥', 'managed.secret.hide': '隐藏密钥',
+  'managed.secret.placeholder': '输入新的秘密值',
+  'managed.secret.hint': '秘密值已隐藏；点眼睛按钮可显示，或直接输入新的值。',
   'managed.purpose.model-tools': '模型工具', 'managed.purpose.project-memory': '项目记忆',
 }
