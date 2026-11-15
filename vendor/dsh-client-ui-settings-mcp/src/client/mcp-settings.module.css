@@ -325,6 +325,45 @@
   gap: 4px;
 }
 
+.serverMore {
+  position: relative;
+}
+
+.serverMore > summary {
+  min-height: 32px;
+  padding: 7px 10px;
+  border-radius: var(--dsw-radius-md);
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  font: var(--dsw-font-xs-13);
+  list-style: none;
+}
+
+.serverMore > summary::-webkit-details-marker { display: none; }
+.serverMore > summary::after { content: '⌄'; margin-inline-start: 6px; }
+.serverMore[open] > summary::after { content: '⌃'; }
+.serverMore > summary:hover { background: var(--dsw-alias-bg-layer-2); }
+.serverMore > summary:focus-visible,
+.resourceTemplates > summary:focus-visible,
+.resourceSelect:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-focus-primary, var(--dsw-static-amber-600));
+  outline-offset: 2px;
+}
+
+.serverMoreActions {
+  position: absolute;
+  z-index: 2;
+  inset-inline-end: 0;
+  top: calc(100% + 4px);
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--dsw-alias-settings-card-stroke);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-1);
+  box-shadow: var(--dsw-shadow-md, 0 4px 14px rgb(0 0 0 / 12%));
+}
+
 /* Expanded tool inventory */
 .toolInventory {
   display: grid;
@@ -337,6 +376,75 @@
   border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-1);
 }
+
+.resourceBrowser {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 8px;
+  min-width: 0;
+  container-type: inline-size;
+  padding: 12px;
+  border: 1px solid var(--dsw-alias-settings-card-stroke);
+  border-radius: var(--dsw-radius-lg);
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.resourceBrowser h4,
+.resourceBrowser h5,
+.resourceBrowser p { margin: 0; }
+
+.resourceHeader { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+
+.resourceBrowser ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+
+.resourceBrowser li { min-width: 0; }
+
+.resourceBrowser li > div:first-child { display: grid; gap: 4px; min-width: 0; }
+
+.resourceBrowser code { overflow-wrap: anywhere; color: var(--dsw-alias-label-secondary); font: var(--dsw-font-xs-13); }
+
+.resourceBrowser small { color: var(--dsw-alias-label-secondary); }
+
+.resourceColumns { display: grid; grid-template-columns: minmax(13rem, 0.42fr) minmax(0, 0.58fr); gap: 12px; min-width: 0; }
+
+.resourceList,
+.resourcePreview { display: grid; align-content: start; gap: 8px; min-width: 0; }
+
+.resourceList li { min-width: 0; }
+
+.resourceSelect {
+  display: grid;
+  width: 100%;
+  min-height: 44px;
+  gap: 3px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--dsw-radius-md);
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+  text-align: start;
+}
+
+.resourceSelect:hover { background: var(--dsw-alias-bg-layer-2); }
+.resourceSelect[aria-pressed='true'] { border-color: var(--dsw-alias-settings-card-stroke); background: var(--dsw-alias-bg-layer-2); }
+.resourceSearch { display: grid; gap: 4px; }
+.resourceSearch > span { color: var(--dsw-alias-label-secondary); font: var(--dsw-font-xs-13); }
+.resourceMetadata { display: grid; gap: 5px; min-width: 0; }
+.resourceMetadata p { color: var(--dsw-alias-label-secondary); }
+.resourceContent { display: grid; gap: 6px; margin-block: 4px; }
+
+.resourceTemplates {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--dsw-alias-settings-card-stroke);
+}
+
+.resourceTemplates > summary { width: fit-content; cursor: pointer; color: var(--dsw-alias-label-secondary); font: var(--dsw-font-xs-13); }
+.resourceTemplates[open] > summary { color: var(--dsw-alias-label-primary); }
+
+.resourceContent pre { max-height: 22rem; margin: 0; padding: 10px; overflow: auto; border-radius: var(--dsw-radius-md); background: var(--dsw-alias-bg-layer-2); white-space: pre-wrap; overflow-wrap: anywhere; font: var(--dsw-font-xs-13); }
 
 .toolInventory p {
   margin: 0;
@@ -513,6 +621,10 @@
   .toolbarEnd {
     margin-inline-start: 0;
   }
+}
+
+@container (max-width: 40rem) {
+  .resourceColumns { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (prefers-reduced-motion: reduce) {

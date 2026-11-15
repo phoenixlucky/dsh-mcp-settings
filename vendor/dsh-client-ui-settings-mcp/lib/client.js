@@ -180,6 +180,8 @@ window.__ModuleLoader__.load({
 		let _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema$value;
 		const _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema = () => _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema$value ??= zod.z.array(zod.z.object({
 			"id": zod.z.string().readonly(),
+			"managedServerId": zod.z.string().optional().readonly(),
+			"connectionRevision": zod.z.number().optional().readonly(),
 			"serverName": zod.z.string().readonly(),
 			"transport": zod.z.union([zod.z.literal("streamable-http"), zod.z.literal("stdio")]).readonly(),
 			"source": zod.z.string().readonly(),
@@ -252,6 +254,30 @@ window.__ModuleLoader__.load({
 			"cwd": zod.z.string().describe("Child working directory."),
 			"envRefs": zod.z.record(zod.z.string(), zod.z.string()).describe("Environment names mapped to credential references.")
 		})]);
+		const resourceSummarySchema = () => zod.z.object({
+			uri: zod.z.string(),
+			name: zod.z.string(),
+			title: zod.z.string().optional(),
+			description: zod.z.string().optional(),
+			mimeType: zod.z.string().optional(),
+			size: zod.z.number().optional()
+		});
+		const resourceTemplateSummarySchema = () => zod.z.object({
+			uriTemplate: zod.z.string(),
+			name: zod.z.string(),
+			title: zod.z.string().optional(),
+			description: zod.z.string().optional(),
+			mimeType: zod.z.string().optional()
+		});
+		const resourceResultSchema = (value) => zod.z.union([zod.z.object({
+			state: zod.z.literal("ready"),
+			value
+		}), zod.z.object({ state: zod.z.union([
+			zod.z.literal("unavailable"),
+			zod.z.literal("timed-out"),
+			zod.z.literal("failed"),
+			zod.z.literal("too-large")
+		]) })]);
 		const TYPERT_REMOTE = createTypertRemoteInfo({
 			package: "@deepseek-ai/dsh-mcp-client",
 			methods: {
@@ -310,6 +336,8 @@ window.__ModuleLoader__.load({
 								"type": "object",
 								"properties": {
 									"id": { "type": "string" },
+									"managedServerId": { "type": "string" },
+									"connectionRevision": { "type": "number" },
 									"serverName": { "type": "string" },
 									"transport": {
 										"type": "string",
@@ -453,6 +481,273 @@ window.__ModuleLoader__.load({
 						"column": 3
 					}
 				},
+				"mcpServerManager/listResources": {
+					service: "mcpServerManager",
+					description: "List one resource page from an enabled, connected managed server.",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "serverId",
+						description: "Stable settings identity.",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						}
+					}, {
+						name: "cursor",
+						description: "Opaque pagination cursor.",
+						source: "json",
+						optional: true,
+						codec: {
+							mode: "strict",
+							typeSymbol: "string | undefined",
+							create: () => zod.z.string().optional()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "string | undefined",
+							create: () => zod.z.string().optional()
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-mcp-client/managed#ManagedMcpResourceResult",
+						create: () => resourceResultSchema(zod.z.object({
+							resources: zod.z.array(resourceSummarySchema()),
+							nextCursor: zod.z.string().optional()
+						})),
+						description: "Safe resource metadata and the next page cursor.",
+						jsonSchema: { oneOf: [{
+							type: "object",
+							properties: {
+								state: { const: "ready" },
+								value: {
+									type: "object",
+									properties: {
+										resources: {
+											type: "array",
+											items: { type: "object" }
+										},
+										nextCursor: { type: "string" }
+									},
+									required: ["resources"]
+								}
+							},
+							required: ["state", "value"]
+						}, {
+							type: "object",
+							properties: { state: { enum: [
+								"unavailable",
+								"timed-out",
+								"failed",
+								"too-large"
+							] } },
+							required: ["state"]
+						}] }
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/managed.ts",
+						"line": 150,
+						"column": 3
+					}
+				},
+				"mcpServerManager/listResourceTemplates": {
+					service: "mcpServerManager",
+					description: "List one resource-template page from an enabled, connected managed server.",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "serverId",
+						description: "Stable settings identity.",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						}
+					}, {
+						name: "cursor",
+						description: "Opaque pagination cursor.",
+						source: "json",
+						optional: true,
+						codec: {
+							mode: "strict",
+							typeSymbol: "string | undefined",
+							create: () => zod.z.string().optional()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "string | undefined",
+							create: () => zod.z.string().optional()
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-mcp-client/managed#ManagedMcpResourceResult",
+						create: () => resourceResultSchema(zod.z.object({
+							resourceTemplates: zod.z.array(resourceTemplateSummarySchema()),
+							nextCursor: zod.z.string().optional()
+						})),
+						description: "Safe resource-template metadata and the next page cursor.",
+						jsonSchema: { oneOf: [{
+							type: "object",
+							properties: {
+								state: { const: "ready" },
+								value: {
+									type: "object",
+									properties: {
+										resourceTemplates: {
+											type: "array",
+											items: { type: "object" }
+										},
+										nextCursor: { type: "string" }
+									},
+									required: ["resourceTemplates"]
+								}
+							},
+							required: ["state", "value"]
+						}, {
+							type: "object",
+							properties: { state: { enum: [
+								"unavailable",
+								"timed-out",
+								"failed",
+								"too-large"
+							] } },
+							required: ["state"]
+						}] }
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/managed.ts",
+						"line": 153,
+						"column": 3
+					}
+				},
+				"mcpServerManager/readResource": {
+					service: "mcpServerManager",
+					description: "Read one selected resource; binary payloads and raw errors are omitted.",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "serverId",
+						description: "Stable settings identity.",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						}
+					}, {
+						name: "uri",
+						description: "Resource URI selected from the connected server.",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-mcp-client/managed#ManagedMcpResourceResult",
+						create: () => resourceResultSchema(zod.z.object({ contents: zod.z.array(zod.z.union([zod.z.object({
+							kind: zod.z.literal("text"),
+							uri: zod.z.string(),
+							mimeType: zod.z.string().optional(),
+							text: zod.z.string()
+						}), zod.z.object({
+							kind: zod.z.literal("binary"),
+							uri: zod.z.string(),
+							mimeType: zod.z.string().optional(),
+							size: zod.z.number()
+						})])) })),
+						description: "Text content or binary metadata with payload omitted.",
+						jsonSchema: { oneOf: [{
+							type: "object",
+							properties: {
+								state: { const: "ready" },
+								value: {
+									type: "object",
+									properties: { contents: {
+										type: "array",
+										items: { type: "object" }
+									} },
+									required: ["contents"]
+								}
+							},
+							required: ["state", "value"]
+						}, {
+							type: "object",
+							properties: { state: { enum: [
+								"unavailable",
+								"timed-out",
+								"failed",
+								"too-large"
+							] } },
+							required: ["state"]
+						}] }
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/managed.ts",
+						"line": 156,
+						"column": 3
+					}
+				},
+				"mcpServerManager/restart": {
+					service: "mcpServerManager",
+					description: "Restart one enabled managed server.",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "serverId",
+						description: "Stable settings identity.",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "string",
+							create: () => zod.z.string()
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-mcp-client/managed#ManagedMcpRestartResult",
+						create: () => zod.z.object({ state: zod.z.union([zod.z.literal("scheduled"), zod.z.literal("unavailable")]) }),
+						description: "Whether the selected server restart was scheduled.",
+						jsonSchema: {
+							type: "object",
+							properties: { state: { enum: ["scheduled", "unavailable"] } },
+							required: ["state"]
+						}
+					},
+					sourceLocation: {
+						"file": "packages/mcp/mcp-client/src/managed.ts",
+						"line": 159,
+						"column": 3
+					}
+				},
 				"mcpServerManager/revealSecret": {
 					service: "mcpServerManager",
 					description: "Resolve one stored credential reference for the settings UI.",
@@ -525,7 +820,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
-		const css = ".oetn4G_connections{--mcp-gap:12px;--mcp-gap-sm:8px;width:100%;max-width:60rem;color:var(--dsw-alias-label-primary);grid-template-columns:minmax(0,1fr);gap:16px;margin-inline:auto;display:grid;container-type:inline-size}.oetn4G_actions{justify-content:flex-end;align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_pageHeader{justify-content:space-between;align-items:flex-start;gap:16px;min-width:0;display:flex}.oetn4G_pageCopy{gap:4px;min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:600 18px/26px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);margin:0}.oetn4G_toolbar{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_toolbarEnd{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;margin-inline-start:auto;display:flex}.oetn4G_searchField{flex:14rem;min-width:10rem}.oetn4G_filterField{flex:0 auto;min-width:8.5rem}.oetn4G_srOnly{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.oetn4G_statusProblem{border:1px solid color-mix(in srgb, var(--dsw-static-amber-600) 26%, var(--dsw-alias-settings-card-stroke));border-radius:var(--dsw-radius-lg);background:color-mix(in srgb, var(--dsw-static-amber-100) 22%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0;padding:8px 12px}.oetn4G_field{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);gap:6px;display:grid}.oetn4G_field input,.oetn4G_field select,.oetn4G_field textarea{box-sizing:border-box;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);width:100%;min-width:0;min-height:2.125rem;color:var(--dsw-alias-label-primary);font:inherit;padding:6px 10px}.oetn4G_field textarea{resize:vertical;line-height:1.5}.oetn4G_field input:focus-visible,.oetn4G_field select:focus-visible,.oetn4G_field textarea:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:1px}.oetn4G_field input:disabled,.oetn4G_field select:disabled,.oetn4G_field textarea:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_importPanel{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;padding:16px;display:grid}.oetn4G_importPreview{gap:var(--mcp-gap-sm);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);min-width:0;padding:12px;display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere;font:var(--dsw-font-xs-13)}.oetn4G_serverList{gap:var(--mcp-gap-sm);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_empty{border:1px dashed var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);text-align:center;margin:0;padding:20px 16px}.oetn4G_serverCard{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;min-width:0;padding:10px 12px;transition:border-color .14s,background-color .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 16%, var(--dsw-alias-settings-card-stroke))}.oetn4G_serverMain{align-items:center;gap:10px;min-width:0;display:flex}.oetn4G_stateDot{background:var(--dsw-alias-label-secondary);border-radius:999px;flex:none;width:8px;height:8px}.oetn4G_stateDot[data-state=connected]{background:var(--dsw-alias-state-success-primary)}.oetn4G_stateDot[data-state=connecting],.oetn4G_stateDot[data-state=reconnecting]{background:var(--dsw-static-amber-600)}.oetn4G_stateDot[data-state=disconnected]{background:var(--dsw-alias-state-error-primary)}.oetn4G_stateDot[data-state=disabled]{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 45%, transparent)}.oetn4G_serverIcon{border-radius:var(--dsw-radius-md);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, transparent);width:28px;height:28px;color:var(--dsw-alias-label-secondary);flex:none;place-items:center;display:grid}.oetn4G_serverIdentity{gap:2px;min-width:0;display:grid}.oetn4G_serverNameRow{align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_serverName{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.oetn4G_statePill{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 12%, transparent);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;flex:none;padding:1px 8px;line-height:1.5}.oetn4G_statePill[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, transparent);color:var(--dsw-alias-state-success-primary)}.oetn4G_statePill[data-state=connecting],.oetn4G_statePill[data-state=reconnecting]{background:color-mix(in srgb, var(--dsw-static-amber-600) 14%, transparent);color:var(--dsw-static-amber-600)}.oetn4G_statePill[data-state=disconnected]{background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);color:var(--dsw-alias-state-error-primary)}.oetn4G_serverMeta{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_separator{padding-inline:4px}.oetn4G_serverActions{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px;display:flex}.oetn4G_toolInventory{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;gap:6px;min-width:0;margin-top:4px;padding:10px 12px;display:grid}.oetn4G_toolInventory p{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_toolInventory ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xs-13);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:2px}.oetn4G_fieldGroup{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;min-width:0;margin-top:8px;padding:14px;display:grid}.oetn4G_fieldGroupTitle{border-bottom:1px solid var(--dsw-alias-settings-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0;padding-bottom:8px}.oetn4G_formGrid{gap:var(--mcp-gap);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_secretRow{align-items:end;gap:var(--mcp-gap-sm);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_secretInput{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:6px}.oetn4G_secretMask{letter-spacing:1.5px;color:var(--dsw-alias-label-secondary);user-select:none}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-gap);border-top:1px solid var(--dsw-alias-settings-card-stroke);grid-template-columns:minmax(0,1fr) auto;padding-top:10px;display:grid}.oetn4G_status{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_error{color:var(--dsw-alias-state-error-primary);font:var(--dsw-font-xs-13);grid-column:1/-1;margin:0}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_card{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;color:var(--dsw-alias-label-primary);padding:16px;display:grid}.oetn4G_switchRow{justify-content:space-between;align-items:center;gap:var(--mcp-gap);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);display:flex}.oetn4G_serverCardEditing{background:var(--dsw-alias-settings-card-fill);border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 18%, var(--dsw-alias-settings-card-stroke));grid-template-columns:minmax(0,1fr)}@container (width<=42rem){.oetn4G_pageHeader{flex-direction:column;align-items:stretch}.oetn4G_pageHeader>.oetn4G_actions{justify-content:flex-start}.oetn4G_formGrid,.oetn4G_secretRow,.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}}@container (width<=34rem){.oetn4G_serverCard{grid-template-columns:minmax(0,1fr)}.oetn4G_serverActions{justify-content:flex-start}.oetn4G_toolbarEnd{margin-inline-start:0}}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}";
+		const css = ".oetn4G_connections{--mcp-gap:12px;--mcp-gap-sm:8px;width:100%;max-width:60rem;color:var(--dsw-alias-label-primary);grid-template-columns:minmax(0,1fr);gap:16px;margin-inline:auto;display:grid;container-type:inline-size}.oetn4G_actions{justify-content:flex-end;align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_pageHeader{justify-content:space-between;align-items:flex-start;gap:16px;min-width:0;display:flex}.oetn4G_pageCopy{gap:4px;min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:600 18px/26px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);margin:0}.oetn4G_toolbar{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_toolbarEnd{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;margin-inline-start:auto;display:flex}.oetn4G_searchField{flex:14rem;min-width:10rem}.oetn4G_filterField{flex:0 auto;min-width:8.5rem}.oetn4G_srOnly{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.oetn4G_statusProblem{border:1px solid color-mix(in srgb, var(--dsw-static-amber-600) 26%, var(--dsw-alias-settings-card-stroke));border-radius:var(--dsw-radius-lg);background:color-mix(in srgb, var(--dsw-static-amber-100) 22%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0;padding:8px 12px}.oetn4G_field{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);gap:6px;display:grid}.oetn4G_field input,.oetn4G_field select,.oetn4G_field textarea{box-sizing:border-box;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);width:100%;min-width:0;min-height:2.125rem;color:var(--dsw-alias-label-primary);font:inherit;padding:6px 10px}.oetn4G_field textarea{resize:vertical;line-height:1.5}.oetn4G_field input:focus-visible,.oetn4G_field select:focus-visible,.oetn4G_field textarea:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:1px}.oetn4G_field input:disabled,.oetn4G_field select:disabled,.oetn4G_field textarea:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_importPanel{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;padding:16px;display:grid}.oetn4G_importPreview{gap:var(--mcp-gap-sm);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);min-width:0;padding:12px;display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere;font:var(--dsw-font-xs-13)}.oetn4G_serverList{gap:var(--mcp-gap-sm);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_empty{border:1px dashed var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);text-align:center;margin:0;padding:20px 16px}.oetn4G_serverCard{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;min-width:0;padding:10px 12px;transition:border-color .14s,background-color .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 16%, var(--dsw-alias-settings-card-stroke))}.oetn4G_serverMain{align-items:center;gap:10px;min-width:0;display:flex}.oetn4G_stateDot{background:var(--dsw-alias-label-secondary);border-radius:999px;flex:none;width:8px;height:8px}.oetn4G_stateDot[data-state=connected]{background:var(--dsw-alias-state-success-primary)}.oetn4G_stateDot[data-state=connecting],.oetn4G_stateDot[data-state=reconnecting]{background:var(--dsw-static-amber-600)}.oetn4G_stateDot[data-state=disconnected]{background:var(--dsw-alias-state-error-primary)}.oetn4G_stateDot[data-state=disabled]{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 45%, transparent)}.oetn4G_serverIcon{border-radius:var(--dsw-radius-md);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, transparent);width:28px;height:28px;color:var(--dsw-alias-label-secondary);flex:none;place-items:center;display:grid}.oetn4G_serverIdentity{gap:2px;min-width:0;display:grid}.oetn4G_serverNameRow{align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_serverName{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.oetn4G_statePill{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 12%, transparent);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;flex:none;padding:1px 8px;line-height:1.5}.oetn4G_statePill[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, transparent);color:var(--dsw-alias-state-success-primary)}.oetn4G_statePill[data-state=connecting],.oetn4G_statePill[data-state=reconnecting]{background:color-mix(in srgb, var(--dsw-static-amber-600) 14%, transparent);color:var(--dsw-static-amber-600)}.oetn4G_statePill[data-state=disconnected]{background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);color:var(--dsw-alias-state-error-primary)}.oetn4G_serverMeta{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_separator{padding-inline:4px}.oetn4G_serverActions{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px;display:flex}.oetn4G_serverMore{position:relative}.oetn4G_serverMore>summary{border-radius:var(--dsw-radius-md);min-height:32px;color:var(--dsw-alias-label-secondary);cursor:pointer;font:var(--dsw-font-xs-13);padding:7px 10px;list-style:none}.oetn4G_serverMore>summary::-webkit-details-marker{display:none}.oetn4G_serverMore>summary:after{content:\"⌄\";margin-inline-start:6px}.oetn4G_serverMore[open]>summary:after{content:\"⌃\"}.oetn4G_serverMore>summary:hover{background:var(--dsw-alias-bg-layer-2)}.oetn4G_serverMore>summary:focus-visible,.oetn4G_resourceTemplates>summary:focus-visible,.oetn4G_resourceSelect:focus-visible{outline:2px solid var(--dsw-alias-state-focus-primary,var(--dsw-static-amber-600));outline-offset:2px}.oetn4G_serverMoreActions{z-index:2;inset-inline-end:0;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);box-shadow:var(--dsw-shadow-md,0 4px 14px #0000001f);gap:4px;padding:6px;display:flex;position:absolute;top:calc(100% + 4px)}.oetn4G_toolInventory{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;gap:6px;min-width:0;margin-top:4px;padding:10px 12px;display:grid}.oetn4G_resourceBrowser{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;gap:8px;min-width:0;padding:12px;display:grid;container-type:inline-size}.oetn4G_resourceBrowser h4,.oetn4G_resourceBrowser h5,.oetn4G_resourceBrowser p{margin:0}.oetn4G_resourceHeader{justify-content:space-between;align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_resourceBrowser ul{gap:6px;margin:0;padding:0;list-style:none;display:grid}.oetn4G_resourceBrowser li{min-width:0}.oetn4G_resourceBrowser li>div:first-child{gap:4px;min-width:0;display:grid}.oetn4G_resourceBrowser code{overflow-wrap:anywhere;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceBrowser small{color:var(--dsw-alias-label-secondary)}.oetn4G_resourceColumns{grid-template-columns:minmax(13rem,.42fr) minmax(0,.58fr);gap:12px;min-width:0;display:grid}.oetn4G_resourceList,.oetn4G_resourcePreview{align-content:start;gap:8px;min-width:0;display:grid}.oetn4G_resourceList li{min-width:0}.oetn4G_resourceSelect{border-radius:var(--dsw-radius-md);width:100%;min-height:44px;color:var(--dsw-alias-label-primary);cursor:pointer;text-align:start;background:0 0;border:1px solid #0000;gap:3px;padding:8px 10px;display:grid}.oetn4G_resourceSelect:hover{background:var(--dsw-alias-bg-layer-2)}.oetn4G_resourceSelect[aria-pressed=true]{border-color:var(--dsw-alias-settings-card-stroke);background:var(--dsw-alias-bg-layer-2)}.oetn4G_resourceSearch{gap:4px;display:grid}.oetn4G_resourceSearch>span{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceMetadata{gap:5px;min-width:0;display:grid}.oetn4G_resourceMetadata p{color:var(--dsw-alias-label-secondary)}.oetn4G_resourceContent{gap:6px;margin-block:4px;display:grid}.oetn4G_resourceTemplates{border-top:1px solid var(--dsw-alias-settings-card-stroke);gap:8px;padding-top:8px;display:grid}.oetn4G_resourceTemplates>summary{cursor:pointer;width:fit-content;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceTemplates[open]>summary{color:var(--dsw-alias-label-primary)}.oetn4G_resourceContent pre{border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-2);white-space:pre-wrap;overflow-wrap:anywhere;max-height:22rem;font:var(--dsw-font-xs-13);margin:0;padding:10px;overflow:auto}.oetn4G_toolInventory p{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_toolInventory ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xs-13);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:2px}.oetn4G_fieldGroup{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;min-width:0;margin-top:8px;padding:14px;display:grid}.oetn4G_fieldGroupTitle{border-bottom:1px solid var(--dsw-alias-settings-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0;padding-bottom:8px}.oetn4G_formGrid{gap:var(--mcp-gap);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_secretRow{align-items:end;gap:var(--mcp-gap-sm);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_secretInput{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:6px}.oetn4G_secretMask{letter-spacing:1.5px;color:var(--dsw-alias-label-secondary);user-select:none}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-gap);border-top:1px solid var(--dsw-alias-settings-card-stroke);grid-template-columns:minmax(0,1fr) auto;padding-top:10px;display:grid}.oetn4G_status{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_error{color:var(--dsw-alias-state-error-primary);font:var(--dsw-font-xs-13);grid-column:1/-1;margin:0}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_card{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;color:var(--dsw-alias-label-primary);padding:16px;display:grid}.oetn4G_switchRow{justify-content:space-between;align-items:center;gap:var(--mcp-gap);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);display:flex}.oetn4G_serverCardEditing{background:var(--dsw-alias-settings-card-fill);border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 18%, var(--dsw-alias-settings-card-stroke));grid-template-columns:minmax(0,1fr)}@container (width<=42rem){.oetn4G_pageHeader{flex-direction:column;align-items:stretch}.oetn4G_pageHeader>.oetn4G_actions{justify-content:flex-start}.oetn4G_formGrid,.oetn4G_secretRow,.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}}@container (width<=34rem){.oetn4G_serverCard{grid-template-columns:minmax(0,1fr)}.oetn4G_serverActions{justify-content:flex-start}.oetn4G_toolbarEnd{margin-inline-start:0}}@container (width<=40rem){.oetn4G_resourceColumns{grid-template-columns:minmax(0,1fr)}}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}";
 		const tagId = "@tinyforge/dsh-mcp-settings/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -553,6 +848,16 @@ window.__ModuleLoader__.load({
 			"pageDescription": "oetn4G_pageDescription",
 			"pageHeader": "oetn4G_pageHeader",
 			"pageTitle": "oetn4G_pageTitle",
+			"resourceBrowser": "oetn4G_resourceBrowser",
+			"resourceColumns": "oetn4G_resourceColumns",
+			"resourceContent": "oetn4G_resourceContent",
+			"resourceHeader": "oetn4G_resourceHeader",
+			"resourceList": "oetn4G_resourceList",
+			"resourceMetadata": "oetn4G_resourceMetadata",
+			"resourcePreview": "oetn4G_resourcePreview",
+			"resourceSearch": "oetn4G_resourceSearch",
+			"resourceSelect": "oetn4G_resourceSelect",
+			"resourceTemplates": "oetn4G_resourceTemplates",
 			"searchField": "oetn4G_searchField",
 			"secretInput": "oetn4G_secretInput",
 			"secretMask": "oetn4G_secretMask",
@@ -567,6 +872,8 @@ window.__ModuleLoader__.load({
 			"serverList": "oetn4G_serverList",
 			"serverMain": "oetn4G_serverMain",
 			"serverMeta": "oetn4G_serverMeta",
+			"serverMore": "oetn4G_serverMore",
+			"serverMoreActions": "oetn4G_serverMoreActions",
 			"serverName": "oetn4G_serverName",
 			"serverNameRow": "oetn4G_serverNameRow",
 			"srOnly": "oetn4G_srOnly",
@@ -770,6 +1077,337 @@ window.__ModuleLoader__.load({
 			return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 		}
 		//#endregion
+		//#region src/client/McpResources.tsx
+		function pageResult(reply, key) {
+			const envelope = reply?.ok ? reply.value : void 0;
+			if (envelope?.state !== "ready" || envelope.value === void 0) return void 0;
+			const data = envelope.value;
+			const items = data[key];
+			return Array.isArray(items) ? {
+				items,
+				cursor: typeof data.nextCursor === "string" ? data.nextCursor : void 0
+			} : void 0;
+		}
+		function failureKey(reply) {
+			const value = reply?.value;
+			return reply?.ok && value?.state ? `managed.resources.${value.state}` : "managed.resources.failed";
+		}
+		/** User initiated, transient browser for resources exposed by one connected server. */
+		function McpResources({ server, managerApi, connected, statusId, connectionRevision, t }) {
+			const [open, setOpen] = (0, react.useState)(false);
+			const [loading, setLoading] = (0, react.useState)({
+				resources: false,
+				templates: false
+			});
+			const [problem, setProblem] = (0, react.useState)();
+			const [resources, setResources] = (0, react.useState)([]);
+			const [resourceCursor, setResourceCursor] = (0, react.useState)();
+			const [templates, setTemplates] = (0, react.useState)([]);
+			const [templateCursor, setTemplateCursor] = (0, react.useState)();
+			const [query, setQuery] = (0, react.useState)("");
+			const [selectedUri, setSelectedUri] = (0, react.useState)();
+			const [selectedContent, setSelectedContent] = (0, react.useState)();
+			const [readingUri, setReadingUri] = (0, react.useState)();
+			const requestId = (0, react.useRef)({
+				resources: 0,
+				templates: 0,
+				read: 0
+			});
+			const connectionRevisionKey = `${statusId ?? ""}:${connectionRevision ?? ""}`;
+			const connectionRevisionRef = (0, react.useRef)(connectionRevisionKey);
+			const filteredResources = (0, react.useMemo)(() => {
+				const needle = query.trim().toLocaleLowerCase();
+				if (!needle) return resources;
+				return resources.filter((resource) => [
+					resource.title,
+					resource.name,
+					resource.uri,
+					resource.description,
+					resource.mimeType
+				].some((value) => value?.toLocaleLowerCase().includes(needle)));
+			}, [query, resources]);
+			(0, react.useEffect)(() => () => {
+				requestId.current.resources++;
+				requestId.current.templates++;
+				requestId.current.read++;
+			}, []);
+			(0, react.useEffect)(() => {
+				const changedConnection = connectionRevisionRef.current !== connectionRevisionKey;
+				connectionRevisionRef.current = connectionRevisionKey;
+				if (connected && !changedConnection) return;
+				setOpen(false);
+				setResources([]);
+				setResourceCursor(void 0);
+				setTemplates([]);
+				setTemplateCursor(void 0);
+				setSelectedUri(void 0);
+				setSelectedContent(void 0);
+				setReadingUri(void 0);
+				setProblem(void 0);
+				setQuery("");
+				requestId.current.resources++;
+				requestId.current.templates++;
+				requestId.current.read++;
+			}, [connected, connectionRevisionKey]);
+			const loadPage = async (kind, cursor) => {
+				if (managerApi === void 0 || !connected) return;
+				const id = ++requestId.current[kind];
+				setLoading((current) => ({
+					...current,
+					[kind]: true
+				}));
+				setProblem(void 0);
+				try {
+					if (kind === "resources") {
+						const reply = await managerApi.listResources(server.id, cursor);
+						if (id !== requestId.current.resources) return;
+						const page = pageResult(reply, "resources");
+						if (page === void 0) {
+							const failure = failureKey(reply);
+							setProblem(failure);
+							if (failure === "managed.resources.unavailable") {
+								setOpen(false);
+								setResources([]);
+								setTemplates([]);
+								setSelectedUri(void 0);
+								setSelectedContent(void 0);
+								requestId.current.resources++;
+								requestId.current.templates++;
+								requestId.current.read++;
+							}
+							return;
+						}
+						setResources((current) => cursor === void 0 ? page.items : [...current, ...page.items]);
+						setResourceCursor(page.cursor);
+					} else {
+						const reply = await managerApi.listResourceTemplates(server.id, cursor);
+						if (id !== requestId.current.templates) return;
+						const page = pageResult(reply, "resourceTemplates");
+						if (page === void 0) {
+							const failure = failureKey(reply);
+							setProblem(failure);
+							if (failure === "managed.resources.unavailable") {
+								setOpen(false);
+								setResources([]);
+								setTemplates([]);
+								setSelectedUri(void 0);
+								setSelectedContent(void 0);
+								requestId.current.resources++;
+								requestId.current.templates++;
+								requestId.current.read++;
+							}
+							return;
+						}
+						setTemplates((current) => cursor === void 0 ? page.items : [...current, ...page.items]);
+						setTemplateCursor(page.cursor);
+					}
+				} catch {
+					if (id === requestId.current[kind]) setProblem("managed.resources.failed");
+				} finally {
+					if (id === requestId.current[kind]) setLoading((current) => ({
+						...current,
+						[kind]: false
+					}));
+				}
+			};
+			const browse = () => {
+				const next = !open;
+				setOpen(next);
+				if (!next) {
+					requestId.current.resources++;
+					requestId.current.templates++;
+					requestId.current.read++;
+					setSelectedUri(void 0);
+					setSelectedContent(void 0);
+					setQuery("");
+					return;
+				}
+				setResources([]);
+				setResourceCursor(void 0);
+				setTemplates([]);
+				setTemplateCursor(void 0);
+				setSelectedUri(void 0);
+				setSelectedContent(void 0);
+				setQuery("");
+				if (next) {
+					loadPage("resources");
+					loadPage("templates");
+				}
+			};
+			const read = async (resource) => {
+				if (managerApi === void 0) return;
+				const { uri } = resource;
+				const id = ++requestId.current.read;
+				setSelectedUri(uri);
+				setSelectedContent(void 0);
+				setReadingUri(uri);
+				setProblem(void 0);
+				try {
+					const reply = await managerApi.readResource(server.id, uri);
+					if (id !== requestId.current.read) return;
+					const value = reply.value;
+					if (reply.ok && value?.state === "ready" && "value" in value) setSelectedContent(value.value.contents);
+					else {
+						const failure = failureKey(reply);
+						setProblem(failure);
+						if (failure === "managed.resources.unavailable") {
+							setOpen(false);
+							setResources([]);
+							setTemplates([]);
+							setSelectedUri(void 0);
+							setSelectedContent(void 0);
+							requestId.current.resources++;
+							requestId.current.templates++;
+							requestId.current.read++;
+						}
+					}
+				} catch {
+					if (id === requestId.current.read) setProblem("managed.resources.failed");
+				} finally {
+					if (id === requestId.current.read) setReadingUri(void 0);
+				}
+			};
+			const refresh = () => {
+				if (loading.resources || loading.templates || managerApi === void 0 || !connected) return;
+				requestId.current.read++;
+				setSelectedUri(void 0);
+				setSelectedContent(void 0);
+				setReadingUri(void 0);
+				setProblem(void 0);
+				setResources([]);
+				setResourceCursor(void 0);
+				setTemplates([]);
+				setTemplateCursor(void 0);
+				loadPage("resources");
+				loadPage("templates");
+			};
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+				variant: "ghost",
+				size: "sm",
+				disabled: !connected || managerApi === void 0,
+				"aria-expanded": open,
+				onClick: browse,
+				children: t(open ? "managed.resources.hide" : "managed.resources.show")
+			}), open && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+				className: mcp_settings_module_css_default.resourceBrowser,
+				"aria-label": `${server.serverName} ${t("managed.resources.title")}`,
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
+						className: mcp_settings_module_css_default.resourceHeader,
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h4", { children: t("managed.resources.title") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+							variant: "ghost",
+							size: "sm",
+							disabled: loading.resources || loading.templates || !connected,
+							onClick: refresh,
+							children: t("managed.resources.refresh")
+						})]
+					}),
+					problem !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						className: mcp_settings_module_css_default.statusProblem,
+						role: "status",
+						children: t(problem)
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+						className: `${mcp_settings_module_css_default.field} ${mcp_settings_module_css_default.resourceSearch}`,
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("managed.resources.search") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+							type: "search",
+							value: query,
+							onChange: (event) => setQuery(event.currentTarget.value),
+							placeholder: t("managed.resources.search.placeholder")
+						})]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: mcp_settings_module_css_default.resourceColumns,
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+							className: mcp_settings_module_css_default.resourceList,
+							"aria-label": t("managed.resources.items"),
+							children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h5", { children: t("managed.resources.items") }),
+								resources.length === 0 && !loading.resources && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.resources.empty") }),
+								resources.length > 0 && filteredResources.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t(resourceCursor ? "managed.resources.noMatchesMore" : "managed.resources.noMatches") }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: filteredResources.map((resource) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+									type: "button",
+									className: mcp_settings_module_css_default.resourceSelect,
+									"aria-pressed": selectedUri === resource.uri,
+									onClick: () => {
+										read(resource);
+									},
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: resource.title || resource.name }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("code", { children: resource.uri })]
+								}) }, resource.uri)) }),
+								resourceCursor && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									variant: "outline",
+									disabled: loading.resources,
+									onClick: () => {
+										loadPage("resources", resourceCursor);
+									},
+									children: t("managed.resources.more")
+								})
+							]
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+							className: mcp_settings_module_css_default.resourcePreview,
+							"aria-label": t("managed.resources.preview"),
+							"aria-busy": readingUri !== void 0,
+							children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h5", { children: t("managed.resources.preview") }),
+								selectedUri === void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.resources.selectPrompt") }),
+								selectedUri !== void 0 && (() => {
+									const resource = resources.find((item) => item.uri === selectedUri);
+									return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+										resource && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+											className: mcp_settings_module_css_default.resourceMetadata,
+											children: [
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: resource.title || resource.name }),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("code", { children: resource.uri }),
+												resource.description && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: resource.description }),
+												(resource.mimeType || resource.size !== void 0) && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: [resource.mimeType, resource.size !== void 0 ? `${resource.size} bytes` : void 0].filter(Boolean).join(" · ") })
+											]
+										}),
+										readingUri === selectedUri && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+											role: "status",
+											children: t("managed.resources.reading")
+										}),
+										selectedContent?.map((content, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+											className: mcp_settings_module_css_default.resourceContent,
+											children: content.kind === "text" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("small", { children: content.mimeType || t("managed.resources.text") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("pre", { children: content.text })] }) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", { children: [t("managed.resources.binary").replace("{size}", String(content.size)), content.mimeType ? ` · ${content.mimeType}` : ""] })
+										}, `${content.uri}-${index}`))
+									] });
+								})()
+							]
+						})]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("details", {
+						className: mcp_settings_module_css_default.resourceTemplates,
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("summary", { children: [
+								t("managed.resources.templates"),
+								" (",
+								templates.length,
+								")"
+							] }),
+							templates.length === 0 && !loading.templates && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.resources.empty") }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: templates.map((template) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: template.title || template.name }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("code", { children: template.uriTemplate }),
+								template.description && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: template.description })
+							] }) }, template.uriTemplate)) }),
+							templateCursor && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+								variant: "outline",
+								disabled: loading.templates,
+								onClick: () => {
+									loadPage("templates", templateCursor);
+								},
+								children: t("managed.resources.more")
+							})
+						]
+					}),
+					(loading.resources || loading.templates) && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						role: "status",
+						children: t("managed.resources.loading")
+					})
+				]
+			})] });
+		}
+		//#endregion
 		//#region src/client/ManagedMcpServers.tsx
 		function emptyDraft() {
 			return {
@@ -784,6 +1422,9 @@ window.__ModuleLoader__.load({
 				cwd: "",
 				secrets: []
 			};
+		}
+		function toolProbeSignature(server, status) {
+			return `${status?.id ?? ""}:${status?.connectionRevision ?? ""}:${JSON.stringify(server)}`;
 		}
 		function toDraft(server) {
 			const secrets = server.transport === "streamable-http" ? server.headerRefs : server.envRefs;
@@ -840,6 +1481,7 @@ window.__ModuleLoader__.load({
 					if (!reply.ok) continue;
 					const result = reply.value;
 					if (result?.state === "ready") rows.push({
+						managedServerId: server.id,
 						serverName: server.serverName,
 						transport: server.transport,
 						state: "connected",
@@ -872,7 +1514,11 @@ window.__ModuleLoader__.load({
 			const [transportFilter, setTransportFilter] = (0, react.useState)("all");
 			const [expandedToolIds, setExpandedToolIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
 			const [toolProbes, setToolProbes] = (0, react.useState)({});
+			const [restartingIds, setRestartingIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
+			const [restartResults, setRestartResults] = (0, react.useState)({});
+			const restartBaselines = (0, react.useRef)({});
 			const statusRequestId = (0, react.useRef)(0);
+			const toolProbeRequestIds = (0, react.useRef)(/* @__PURE__ */ new Map());
 			const checkSignature = (0, react.useRef)("");
 			const draftRef = (0, react.useRef)(draft);
 			draftRef.current = draft;
@@ -919,7 +1565,27 @@ window.__ModuleLoader__.load({
 			};
 			const saveServers = async (next) => {
 				if (!await form.set("servers", next)) throw new Error("settings refused");
+				const nextById = new Map(next.map((server) => [server.id, server]));
+				for (const previous of servers) {
+					const updated = nextById.get(previous.id);
+					if (updated === void 0 || JSON.stringify(updated) !== JSON.stringify(previous)) invalidateToolProbe(previous.id);
+				}
 				await refreshStatuses();
+			};
+			const invalidateToolProbe = (id) => {
+				toolProbeRequestIds.current.set(id, (toolProbeRequestIds.current.get(id) ?? 0) + 1);
+				setToolProbes((current) => {
+					if (!(id in current)) return current;
+					const next = { ...current };
+					delete next[id];
+					return next;
+				});
+				setExpandedToolIds((current) => {
+					if (!current.has(id)) return current;
+					const next = new Set(current);
+					next.delete(id);
+					return next;
+				});
 			};
 			const closeEditor = () => {
 				setActiveEditorId(void 0);
@@ -1319,31 +1985,117 @@ window.__ModuleLoader__.load({
 					setBusy(false);
 				}
 			};
-			const statusFor = (server) => statuses.find((status) => status.serverName === server.serverName) ?? probed.find((status) => status.serverName === server.serverName);
+			const statusFor = (server) => statuses.find((status) => status.managedServerId === server.id) ?? probed.find((status) => status.managedServerId === server.id);
+			(0, react.useEffect)(() => {
+				const rows = [...statuses, ...probed];
+				const completed = /* @__PURE__ */ new Map();
+				for (const [id, result] of Object.entries(restartResults)) {
+					if (result !== "pending") continue;
+					const server = servers.find((item) => item.id === id);
+					if (server === void 0 || !server.enabled) {
+						completed.set(id, "unavailable");
+						continue;
+					}
+					const row = rows.find((item) => item.managedServerId === server.id);
+					if (row?.id === void 0 || row.id === restartBaselines.current[server.id]) continue;
+					if (row.state === "connected" || row.state === "disconnected") completed.set(id, row.state);
+				}
+				if (completed.size === 0) return;
+				setRestartResults((current) => {
+					const next = { ...current };
+					for (const [id, state] of completed) next[id] = state;
+					return next;
+				});
+				setRestartingIds((current) => {
+					const next = new Set(current);
+					for (const id of completed.keys()) next.delete(id);
+					return next;
+				});
+			}, [
+				statuses,
+				probed,
+				servers,
+				restartResults
+			]);
 			/** Read one connected row's tool list on demand when live status carries no inventory. */
 			const probeTools = async (server) => {
 				if (managerApi === void 0) return;
-				if (toolProbes[server.id]?.state === "loading" || toolProbes[server.id]?.state === "ready") return;
+				const signature = toolProbeSignature(server, statusFor(server));
+				const previous = toolProbes[server.id];
+				if (previous?.signature === signature && (previous.state === "loading" || previous.state === "ready")) return;
+				const requestId = (toolProbeRequestIds.current.get(server.id) ?? 0) + 1;
+				toolProbeRequestIds.current.set(server.id, requestId);
 				setToolProbes((current) => ({
 					...current,
-					[server.id]: { state: "loading" }
+					[server.id]: {
+						state: "loading",
+						signature
+					}
 				}));
 				try {
 					const reply = await managerApi.check(server);
+					if (toolProbeRequestIds.current.get(server.id) !== requestId) return;
 					const value = reply.ok ? reply.value : void 0;
 					setToolProbes((current) => ({
 						...current,
 						[server.id]: value?.state === "ready" ? {
 							state: "ready",
+							signature,
 							tools: value.tools,
 							toolCount: value.toolCount
-						} : { state: "failed" }
+						} : {
+							state: "failed",
+							signature
+						}
 					}));
 				} catch {
-					setToolProbes((current) => ({
+					if (toolProbeRequestIds.current.get(server.id) === requestId) setToolProbes((current) => ({
 						...current,
-						[server.id]: { state: "failed" }
+						[server.id]: {
+							state: "failed",
+							signature
+						}
 					}));
+				}
+			};
+			const restartServer = async (server) => {
+				if (!server.enabled || managerApi === void 0) return;
+				invalidateToolProbe(server.id);
+				setRestartingIds((current) => new Set(current).add(server.id));
+				setRestartResults((current) => {
+					const next = { ...current };
+					delete next[server.id];
+					return next;
+				});
+				restartBaselines.current = {
+					...restartBaselines.current,
+					[server.id]: statusFor(server)?.id
+				};
+				let pending = false;
+				try {
+					const reply = await managerApi.restart(server.id);
+					if ((reply.ok ? reply.value?.state : void 0) === "scheduled") {
+						pending = true;
+						setRestartResults((current) => ({
+							...current,
+							[server.id]: "pending"
+						}));
+					} else setRestartResults((current) => ({
+						...current,
+						[server.id]: "unavailable"
+					}));
+					await refreshStatuses();
+				} catch {
+					setRestartResults((current) => ({
+						...current,
+						[server.id]: "failed"
+					}));
+				} finally {
+					if (!pending) setRestartingIds((current) => {
+						const next = new Set(current);
+						next.delete(server.id);
+						return next;
+					});
 				}
 			};
 			const stateFor = (server) => {
@@ -1884,9 +2636,17 @@ window.__ModuleLoader__.load({
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.import.previewSummary").replace("{count}", String(importPreview.candidates.length)).replace("{skipped}", String(importPreview.skipped)) }),
 									importPreview.candidates.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { children: importPreview.candidates.map((candidate) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", { children: [
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: candidate.server.serverName }),
-										" 璺?",
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											className: mcp_settings_module_css_default.separator,
+											"aria-hidden": "true",
+											children: "·"
+										}),
 										t(candidate.server.transport === "stdio" ? "transport.stdio" : "transport.streamable-http"),
-										" 璺?",
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											className: mcp_settings_module_css_default.separator,
+											"aria-hidden": "true",
+											children: "·"
+										}),
 										t(candidate.server.purpose === "project-memory" ? "managed.purpose.project-memory" : "managed.purpose.model-tools")
 									] }, candidate.server.serverName)) }),
 									importPreview.secretCount > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: t("managed.import.credentialsNotice").replace("{count}", String(importPreview.secretCount)) }),
@@ -1926,8 +2686,10 @@ window.__ModuleLoader__.load({
 								const status = statusFor(server);
 								const state = stateFor(server);
 								const toolsExpanded = expandedToolIds.has(server.id);
-								const probe = toolProbes[server.id];
+								const rawProbe = toolProbes[server.id];
+								const probe = rawProbe?.signature === toolProbeSignature(server, status) ? rawProbe : void 0;
 								const inventory = (status?.tools !== void 0 && (status.tools.length > 0 || status.toolCount === 0) ? status.tools : void 0) ?? (probe?.state === "ready" ? probe.tools : void 0);
+								const restarting = restartingIds.has(server.id);
 								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 									className: `${mcp_settings_module_css_default.serverCard} ${activeEditorId === server.id ? mcp_settings_module_css_default.serverCardEditing : ""}`,
 									children: [
@@ -1974,6 +2736,23 @@ window.__ModuleLoader__.load({
 										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 											className: mcp_settings_module_css_default.serverActions,
 											children: [
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(McpResources, {
+													server,
+													managerApi,
+													statusId: status?.id,
+													connectionRevision: status?.connectionRevision,
+													connected: server.enabled && server.purpose !== "project-memory" && state === "connected" && !restarting,
+													t
+												}),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+													variant: "outline",
+													size: "sm",
+													disabled: busy || restarting || !server.enabled || managerApi === void 0,
+													onClick: () => {
+														restartServer(server);
+													},
+													children: t(restarting ? "managed.restart.loading" : "managed.restart.action")
+												}),
 												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 													variant: "ghost",
 													size: "sm",
@@ -1990,31 +2769,6 @@ window.__ModuleLoader__.load({
 													},
 													children: t(toolsExpanded ? "managed.tools.hide" : "managed.tools.show")
 												}),
-												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-													variant: "outline",
-													size: "sm",
-													disabled: busy || !snapshot.writable,
-													"aria-expanded": activeEditorId === server.id,
-													onClick: () => {
-														if (activeEditorId === server.id) closeEditor();
-														else {
-															setDraft(toDraft(server));
-															setActiveEditorId(server.id);
-														}
-														setFailure(void 0);
-														setCheckState(void 0);
-													},
-													children: t("managed.edit")
-												}),
-												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-													variant: "ghost",
-													size: "sm",
-													disabled: busy || !snapshot.writable,
-													onClick: () => {
-														remove(server.id);
-													},
-													children: t("managed.delete")
-												}),
 												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Switch, {
 													checked: server.enabled,
 													label: t("managed.enabled"),
@@ -2022,8 +2776,43 @@ window.__ModuleLoader__.load({
 													onChange: (value) => {
 														toggle(server, value);
 													}
+												}),
+												/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("details", {
+													className: mcp_settings_module_css_default.serverMore,
+													children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("summary", { children: t("managed.more") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+														className: mcp_settings_module_css_default.serverMoreActions,
+														children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+															variant: "outline",
+															size: "sm",
+															disabled: busy || !snapshot.writable,
+															"aria-expanded": activeEditorId === server.id,
+															onClick: () => {
+																if (activeEditorId === server.id) closeEditor();
+																else {
+																	setDraft(toDraft(server));
+																	setActiveEditorId(server.id);
+																}
+																setFailure(void 0);
+																setCheckState(void 0);
+															},
+															children: t("managed.edit")
+														}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+															variant: "ghost",
+															size: "sm",
+															disabled: busy || !snapshot.writable,
+															onClick: () => {
+																remove(server.id);
+															},
+															children: t("managed.delete")
+														})]
+													})]
 												})
 											]
+										}),
+										restartResults[server.id] !== void 0 && restartResults[server.id] !== "pending" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+											className: restartResults[server.id] === "connected" ? mcp_settings_module_css_default.status : mcp_settings_module_css_default.statusProblem,
+											role: "status",
+											children: t(`managed.restart.${restartResults[server.id]}`)
 										}),
 										toolsExpanded && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("section", {
 											className: mcp_settings_module_css_default.toolInventory,
@@ -2160,6 +2949,7 @@ window.__ModuleLoader__.load({
 			"managed.enabled": "Enabled",
 			"managed.edit": "Edit",
 			"managed.delete": "Delete",
+			"managed.more": "More",
 			"managed.editor": "Server settings",
 			"managed.endpoint": "MCP endpoint",
 			"managed.command": "Executable",
@@ -2195,6 +2985,35 @@ window.__ModuleLoader__.load({
 			"managed.state.reconnecting": "Reconnecting",
 			"managed.state.disconnected": "Disconnected",
 			"managed.state.unknown": "Status unknown",
+			"managed.restart.action": "Reconnect",
+			"managed.restart.loading": "Reconnecting…",
+			"managed.restart.connected": "Server reconnected.",
+			"managed.restart.disconnected": "Reconnect finished, but the server is still disconnected.",
+			"managed.restart.unavailable": "This server cannot be reconnected.",
+			"managed.restart.failed": "Could not reconnect this server.",
+			"managed.resources.show": "Resources",
+			"managed.resources.hide": "Hide resources",
+			"managed.resources.title": "Server resources",
+			"managed.resources.refresh": "Refresh lists",
+			"managed.resources.items": "Resources",
+			"managed.resources.templates": "Resource templates",
+			"managed.resources.preview": "Preview",
+			"managed.resources.search": "Search loaded resources",
+			"managed.resources.search.placeholder": "Name, URI, type, or description",
+			"managed.resources.noMatches": "No resources match this search.",
+			"managed.resources.noMatchesMore": "No loaded resources match. Load more pages to search further.",
+			"managed.resources.selectPrompt": "Select a resource to read its content.",
+			"managed.resources.empty": "No resources were returned.",
+			"managed.resources.loading": "Loading resource list…",
+			"managed.resources.more": "Load more",
+			"managed.resources.read": "Read",
+			"managed.resources.reading": "Reading…",
+			"managed.resources.text": "Text",
+			"managed.resources.binary": "Binary content omitted ({size} bytes).",
+			"managed.resources.unavailable": "Resources are unavailable while this server is disconnected.",
+			"managed.resources.timed-out": "The resource request timed out.",
+			"managed.resources.failed": "Could not read resources from this server.",
+			"managed.resources.too-large": "This resource is too large to display.",
 			"managed.summary": "{connected} of {total} connected",
 			"managed.toolCountInline": "{count} tools",
 			"managed.refresh": "Refresh",
@@ -2279,6 +3098,7 @@ window.__ModuleLoader__.load({
 			"managed.enabled": "启用",
 			"managed.edit": "编辑",
 			"managed.delete": "删除",
+			"managed.more": "更多",
 			"managed.editor": "服务设置",
 			"managed.endpoint": "MCP 地址",
 			"managed.command": "可执行文件",
@@ -2314,6 +3134,35 @@ window.__ModuleLoader__.load({
 			"managed.state.reconnecting": "重连中",
 			"managed.state.disconnected": "已断开",
 			"managed.state.unknown": "状态未知",
+			"managed.restart.action": "重连",
+			"managed.restart.loading": "正在重连…",
+			"managed.restart.connected": "服务器已重新连接。",
+			"managed.restart.disconnected": "重连结束，但服务器仍处于断开状态。",
+			"managed.restart.unavailable": "当前无法重连此服务。",
+			"managed.restart.failed": "无法重连此服务。",
+			"managed.resources.show": "资源",
+			"managed.resources.hide": "收起资源",
+			"managed.resources.title": "服务器资源",
+			"managed.resources.refresh": "刷新列表",
+			"managed.resources.items": "资源",
+			"managed.resources.templates": "资源模板",
+			"managed.resources.preview": "预览",
+			"managed.resources.search": "搜索已加载资源",
+			"managed.resources.search.placeholder": "名称、URI、类型或描述",
+			"managed.resources.noMatches": "没有匹配的资源。",
+			"managed.resources.noMatchesMore": "已加载的资源中没有匹配项；继续加载以搜索后续资源。",
+			"managed.resources.selectPrompt": "选择一项资源以读取内容。",
+			"managed.resources.empty": "服务器没有返回资源。",
+			"managed.resources.loading": "正在加载资源列表…",
+			"managed.resources.more": "加载更多",
+			"managed.resources.read": "读取",
+			"managed.resources.reading": "读取中…",
+			"managed.resources.text": "文本",
+			"managed.resources.binary": "二进制内容不显示（{size} 字节）。",
+			"managed.resources.unavailable": "服务未连接，暂时无法访问资源。",
+			"managed.resources.timed-out": "资源请求超时。",
+			"managed.resources.failed": "无法读取此服务器的资源。",
+			"managed.resources.too-large": "资源过大，无法显示。",
 			"managed.summary": "已连接 {connected} / 共 {total} 个",
 			"managed.toolCountInline": "{count} 个工具",
 			"managed.refresh": "刷新",

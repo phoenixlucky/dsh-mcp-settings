@@ -5,6 +5,7 @@ import type {
   TypertRemoteMethod,
 } from '@deepseek-ai/dsh-typert-protocol'
 import type { ChromeConnectionCheck, ManagedMcpCheck, ManagedMcpServer, McpServerStatus } from '@deepseek-ai/dsh-mcp-client/types'
+import type { ManagedMcpResourceContent, ManagedMcpResourceResult, ManagedMcpResourceSummary, ManagedMcpResourceTemplateSummary, ManagedMcpRestartResult } from '@deepseek-ai/dsh-mcp-client/managed'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$6368726f6d654d6370 {
@@ -15,11 +16,19 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
   }
   interface TypertRemoteNamespace$6d63705365727665724d616e61676572 {
     check: (server: ManagedMcpServer) => Promise<RemoteResult<ManagedMcpCheck>>
+    listResources: (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resources: readonly ManagedMcpResourceSummary[]; nextCursor?: string }>>>
+    listResourceTemplates: (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>>
+    readResource: (serverId: string, uri: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>>
+    restart: (serverId: string) => Promise<RemoteResult<ManagedMcpRestartResult>>
   }
   interface TypertRemoteMap {
     'chromeMcp/checkChromeConnection': () => Promise<RemoteResult<ChromeConnectionCheck>>
     'mcpClientStatus/list': () => Promise<RemoteResult<readonly McpServerStatus[]>>
     'mcpServerManager/check': (server: ManagedMcpServer) => Promise<RemoteResult<ManagedMcpCheck>>
+    'mcpServerManager/listResources': (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resources: readonly ManagedMcpResourceSummary[]; nextCursor?: string }>>>
+    'mcpServerManager/listResourceTemplates': (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>>
+    'mcpServerManager/readResource': (serverId: string, uri: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>>
+    'mcpServerManager/restart': (serverId: string) => Promise<RemoteResult<ManagedMcpRestartResult>>
   }
   interface TypertRemoteNamespaceMap {
     'chromeMcp': TypertRemoteNamespace$6368726f6d654d6370
@@ -32,6 +41,10 @@ export declare const TYPERT_REMOTE: TypertRemoteInfo<{
   readonly 'chromeMcp/checkChromeConnection': TypertRemoteMethod<{  }, ChromeConnectionCheck>
   readonly 'mcpClientStatus/list': TypertRemoteMethod<{  }, readonly McpServerStatus[]>
   readonly 'mcpServerManager/check': TypertRemoteMethod<{ readonly 'server': ManagedMcpServer }, ManagedMcpCheck>
+  readonly 'mcpServerManager/listResources': TypertRemoteMethod<{ readonly 'serverId': string; readonly 'cursor'?: string }, ManagedMcpResourceResult<{ resources: readonly ManagedMcpResourceSummary[]; nextCursor?: string }>>
+  readonly 'mcpServerManager/listResourceTemplates': TypertRemoteMethod<{ readonly 'serverId': string; readonly 'cursor'?: string }, ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>
+  readonly 'mcpServerManager/readResource': TypertRemoteMethod<{ readonly 'serverId': string; readonly 'uri': string }, ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>
+  readonly 'mcpServerManager/restart': TypertRemoteMethod<{ readonly 'serverId': string }, ManagedMcpRestartResult>
 }>
 export default TYPERT_REMOTE
 //# sourceMappingURL=typert.remote-client.d.ts.map

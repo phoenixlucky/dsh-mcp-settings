@@ -47,6 +47,8 @@ let McpClientStatusCatalog = (() => {
         }
         static inject = ['typert'];
         rows = (__runInitializers(this, _instanceExtraInitializers), new Map());
+        managedResources = new Map();
+        revisions = new Map();
         nextId = 0;
         constructor(ctx) { super(ctx, 'mcpClientStatus', { namespace: 'mcpClientStatus' }); }
         /** Return live connection summaries with credentials and command arguments omitted.
@@ -58,17 +60,45 @@ let McpClientStatusCatalog = (() => {
          * @param input - Credential-safe connection details for the server.
          * @returns Functions that update or remove the registered row.
          */
-        register(input) {
+        register(input, managedServerId) {
             const id = `${input.serverName}:${++this.nextId}`;
-            this.rows.set(id, { ...input, tools: [...input.tools], id });
+            this.rows.set(id, { ...input, ...(managedServerId === undefined ? {} : { managedServerId }), connectionRevision: 0, tools: [...input.tools], id });
+            this.revisions.set(id, 0);
             return {
                 update: (patch) => {
                     const current = this.rows.get(id);
-                    if (current !== undefined)
-                        this.rows.set(id, { ...current, ...patch, tools: patch.tools === undefined ? current.tools : [...patch.tools] });
+                    if (current !== undefined) {
+                        const revision = (this.revisions.get(id) ?? 0) + (patch.state !== undefined && patch.state !== current.state ? 1 : 0);
+                        this.revisions.set(id, revision);
+                        this.rows.set(id, { ...current, ...patch, connectionRevision: revision, tools: patch.tools === undefined ? current.tools : [...patch.tools] });
+                    }
                 },
-                dispose: () => { this.rows.delete(id); },
+                setResourceProvider: (provider) => {
+                    if (managedServerId === undefined)
+                        return;
+                    if (provider === undefined) {
+                        if (this.managedResources.get(managedServerId)?.statusId === id)
+                            this.managedResources.delete(managedServerId);
+                    }
+                    else {
+                        this.managedResources.set(managedServerId, { statusId: id, provider });
+                    }
+                },
+                dispose: () => {
+                    this.rows.delete(id);
+                    this.revisions.delete(id);
+                    if (managedServerId !== undefined && this.managedResources.get(managedServerId)?.statusId === id)
+                        this.managedResources.delete(managedServerId);
+                },
             };
+        }
+        /** Resolve a live provider only while its exact managed connection is connected. */
+        getManagedResourceHandle(managedServerId) {
+            const entry = this.managedResources.get(managedServerId);
+            const row = entry === undefined ? undefined : this.rows.get(entry.statusId);
+            if (entry === undefined || row === undefined)
+                return undefined;
+            return { provider: entry.provider, revision: this.revisions.get(entry.statusId) ?? 0, state: row.state };
         }
     };
 })();

@@ -26,6 +26,8 @@ Then open **Settings → MCP Servers** to add a server or import a configuration
 - Configure Streamable HTTP and stdio MCP servers.
 - Import Streamable HTTP entries from an `mcpServers` JSON object.
 - Search and filter servers by name, connection state, and transport; inspect tool names and descriptions while connected.
+- Browse resource and resource-template metadata for connected `model-tools` servers, then explicitly read selected resources. Text is shown transiently; binary contents are omitted.
+- Reconnect one enabled server from its settings card and see its resulting connection state.
 - Preview JSON imports before saving, and reveal individual secret fields only when needed.
 - Export managed settings as JSON. Credential values stay in the local credential store and must be configured separately in another profile.
 - Store sensitive headers, including `Authorization`, in DSH's credential store.
@@ -39,7 +41,7 @@ The default server list is empty. Installing the bundle does not preconfigure or
 
 ## Compatibility and implementation
 
-This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The MCP client runtime is included under `vendor/`. The bundle disables the built-in MCP settings page, adds the managed server manager, and exports Host Typert metadata for connection checks. The base MCP client provides live connection status.
+This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The MCP client runtime is included under `vendor/`. The bundle disables the built-in MCP settings page, adds the managed server manager, and exports Host Typert metadata for connection checks, resource browsing, and per-server reconnects. Resource reads are user initiated, limited to 512 KiB of serialized response data, and never persisted or passed into model context. The base MCP client provides live connection status and the resource connection handle.
 
 ## Import limitation
 

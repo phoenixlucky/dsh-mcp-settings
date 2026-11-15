@@ -66,8 +66,12 @@ export const Config = z.object({
 });
 /** Cordis entry name. */
 export const name = 'mcp-server-manager';
-/** Services used to resolve secret references and start delegated MCP clients. */
-export const inject = ['credentials', ...mcpClientInject];
+/**
+ * Services used to start delegated MCP clients. `credentials` is deliberately
+ * absent: a profile may run without a credential provider, and a server row
+ * that references no secret needs none.
+ */
+export const inject = [...mcpClientInject];
 /** Host service for server-list reconciliation and isolated connection checks. */
 let ManagedMcpServerManager = (() => {
     let _classSuper = TypertRemoteService;
@@ -80,7 +84,7 @@ let ManagedMcpServerManager = (() => {
             __esDecorate(this, null, _check_decorators, { kind: "method", name: "check", static: false, private: false, access: { has: obj => "check" in obj, get: obj => obj.check }, metadata: _metadata }, null, _instanceExtraInitializers);
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
-        static inject = ['credentials', 'tools'];
+        static inject = ['tools'];
         static Config = Config;
         config = __runInitializers(this, _instanceExtraInitializers);
         credentials;
@@ -96,7 +100,7 @@ let ManagedMcpServerManager = (() => {
         constructor(ctx, config) {
             super(ctx, 'mcpServerManager', { namespace: 'mcpServerManager' });
             this.config = config;
-            this.credentials = ctx.credentials;
+            this.credentials = ctx.get('credentials');
             this.stopVolatile = ctx.on('loader/volatile-update', (paths) => {
                 if (paths.some(([field]) => field === 'servers'))
                     return this.reconcile(config.servers.get()).catch((error) => {
@@ -348,6 +352,7 @@ async function resolveClientConfig(credentials, server) {
     if (server.transport === 'streamable-http') {
         const url = validateHttpUrl(server.url);
         const headers = { ...server.headers, ...await resolveSecretMap(credentials, server.headerRefs) };
+        normalizeAuthorization(headers);
         return { transport: 'streamable-http', serverName: server.serverName, url: url.href, headers, toolCallTimeoutMs: 60_000, failOnStartupError: false };
     }
     const env = await resolveSecretMap(credentials, server.envRefs);
@@ -359,10 +364,29 @@ async function startManagedClient(ctx, credentials, server) {
     const fiber = await ctx.plugin({ name: 'mcp-server-manager:' + server.id, inject: mcpClientInject, apply: applyMcpClient }, runtime);
     return () => fiber.dispose();
 }
+/** HTTP authorization scheme prefixes an `Authorization` value may already carry. */
+const AUTHORIZATION_SCHEME = /^(?:Bearer|Basic|Token|Digest|Hoba|Mutual|Negotiate|NTLM|OAuth|ApiKey|AWS4-HMAC-SHA256)\s+/iu;
+/** Add the `Bearer` scheme to a bare token stored as an `Authorization` value. */
+function normalizeAuthorization(headers) {
+    for (const name of Object.keys(headers)) {
+        if (name.toLowerCase() !== 'authorization')
+            continue;
+        const value = headers[name];
+        if (typeof value !== 'string')
+            continue;
+        const trimmed = value.trim();
+        if (trimmed === '' || AUTHORIZATION_SCHEME.test(trimmed))
+            continue;
+        headers[name] = `Bearer ${trimmed}`;
+    }
+    return headers;
+}
 /** Resolve every configured secret and refuse to start with a missing reference. */
 async function resolveSecretMap(credentials, refs) {
     const resolved = {};
     for (const [key, ref] of Object.entries(refs)) {
+        if (credentials === undefined)
+            throw new Error('a referenced credential is not configured');
         const hit = await credentials.resolve(credentialRef(ref));
         if (hit === undefined)
             throw new Error('a referenced credential is not configured');

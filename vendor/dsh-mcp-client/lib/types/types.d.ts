@@ -10,6 +10,10 @@ export interface McpToolSummary {
 /** Credential-safe information displayed on an MCP server card. */
 export interface McpServerStatus {
     readonly id: string;
+    /** Stable managed settings identity, present only for manager-owned rows. */
+    readonly managedServerId?: string;
+    /** Incremented when this connection changes between live states. */
+    readonly connectionRevision?: number;
     readonly serverName: string;
     readonly transport: 'stdio' | 'streamable-http';
     readonly source: string;

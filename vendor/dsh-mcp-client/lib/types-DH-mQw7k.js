@@ -847,6 +847,8 @@ let McpClientStatusCatalog = (() => {
 		}
 		static inject = ["typert"];
 		rows = (__runInitializers(this, _instanceExtraInitializers), /* @__PURE__ */ new Map());
+		managedResources = /* @__PURE__ */ new Map();
+		revisions = /* @__PURE__ */ new Map();
 		nextId = 0;
 		constructor(ctx) {
 			super(ctx, "mcpClientStatus", { namespace: "mcpClientStatus" });
@@ -862,27 +864,48 @@ let McpClientStatusCatalog = (() => {
 		* @param input - Credential-safe connection details for the server.
 		* @returns Functions that update or remove the registered row.
 		*/
-		register(input) {
+		register(input, managedServerId) {
 			const id = `${input.serverName}:${++this.nextId}`;
 			this.rows.set(id, {
 				...input,
+				...(managedServerId === void 0 ? {} : { managedServerId }),
+				connectionRevision: 0,
 				id,
 				tools: [...(input.tools ?? [])]
 			});
+			this.revisions.set(id, 0);
 			return {
 				update: (patch) => {
 					const current = this.rows.get(id);
 					if (current === void 0) return;
+					const revision = (this.revisions.get(id) ?? 0) + (patch.state !== void 0 && patch.state !== current.state ? 1 : 0);
+					this.revisions.set(id, revision);
 					this.rows.set(id, {
 						...current,
 						...patch,
+						connectionRevision: revision,
 						tools: [...(patch.tools ?? current.tools)]
 					});
 				},
+				setResourceProvider: (provider) => {
+					if (managedServerId === void 0) return;
+					if (provider === void 0) {
+						if (this.managedResources.get(managedServerId)?.statusId === id) this.managedResources.delete(managedServerId);
+					} else this.managedResources.set(managedServerId, { statusId: id, provider });
+				},
 				dispose: () => {
 					this.rows.delete(id);
+					this.revisions.delete(id);
+					if (managedServerId !== void 0 && this.managedResources.get(managedServerId)?.statusId === id) this.managedResources.delete(managedServerId);
 				}
 			};
+		}
+		/** Resolve a live provider only while its exact managed connection is connected. */
+		getManagedResourceHandle(managedServerId) {
+			const entry = this.managedResources.get(managedServerId);
+			const row = entry === void 0 ? void 0 : this.rows.get(entry.statusId);
+			if (entry === void 0 || row === void 0) return void 0;
+			return { provider: entry.provider, revision: this.revisions.get(entry.statusId) ?? 0, state: row.state };
 		}
 	};
 })();
@@ -968,7 +991,7 @@ async function apply(ctx, config) {
 		state: "connecting",
 		toolCount: 0,
 		tools: []
-	});
+	}, config.managedServerId);
 	ctx.effect(() => status.dispose, "mcp-client.status");
 	const reconnect = resolveReconnectPolicy(config.reconnect, `mcp-client(${config.serverName}): reconnect`);
 	ctx.effect(() => {
@@ -989,6 +1012,7 @@ async function apply(ctx, config) {
 			tools
 		});
 	});
+	status.setResourceProvider(connection.resources);
 	registerServerContext(ctx, config.serverName, connection);
 	let stopping;
 	const dispose = () => stopping ??= connection.dispose();

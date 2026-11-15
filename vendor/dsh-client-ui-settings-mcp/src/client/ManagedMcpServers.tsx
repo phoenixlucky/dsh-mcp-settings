@@ -5,6 +5,7 @@ import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
 import type { ManagedMcpCheck, ManagedMcpServer } from '@deepseek-ai/dsh-mcp-client'
+import { McpResources } from './McpResources.tsx'
 import css from './mcp-settings.module.css'
 
 type Remote = ClientContext['remote']
@@ -13,6 +14,9 @@ type ServerState = 'disabled' | 'connecting' | 'connected' | 'reconnecting' | 'd
 type StatusFilter = 'all' | ServerState
 type TransportFilter = 'all' | Transport
 interface StatusRow {
+  id?: string
+  managedServerId?: string
+  connectionRevision?: number
   serverName: string
   transport: Transport
   state: Exclude<ServerState, 'disabled' | 'unknown'>
@@ -22,6 +26,7 @@ interface StatusRow {
 /** One bounded, user-initiated tool inventory probe for a connected row. */
 interface ToolProbe {
   state: 'loading' | 'ready' | 'failed'
+  signature: string
   tools?: readonly { name: string, description: string }[]
   toolCount?: number
 }
@@ -33,6 +38,10 @@ export interface McpStatusApi { list(): Promise<RemoteReply<readonly StatusRow[]
 export interface McpManagerApi {
   check(server: ManagedMcpServer): Promise<RemoteReply<ManagedMcpCheck>>
   revealSecret?(ref: string): Promise<RemoteReply<{ value?: string }>>
+  listResources(serverId: string, cursor?: string): Promise<RemoteReply<{ state: 'ready'; value: { resources: readonly { uri: string; name: string; title?: string; description?: string; mimeType?: string; size?: number }[]; nextCursor?: string } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
+  listResourceTemplates(serverId: string, cursor?: string): Promise<RemoteReply<{ state: 'ready'; value: { resourceTemplates: readonly { uriTemplate: string; name: string; title?: string; description?: string; mimeType?: string }[]; nextCursor?: string } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
+  readResource(serverId: string, uri: string): Promise<RemoteReply<{ state: 'ready'; value: { contents: readonly ({ kind: 'text'; uri: string; mimeType?: string; text: string } | { kind: 'binary'; uri: string; mimeType?: string; size: number })[] } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
+  restart(serverId: string): Promise<RemoteReply<{ state: 'scheduled' | 'unavailable' }>>
 }
 interface Injected {
   form: ConfigForm<{ servers?: ManagedMcpServer[] }>
@@ -59,6 +68,10 @@ interface Draft {
 
 function emptyDraft(): Draft {
   return { id: randomUUID(), serverName: '', enabled: true, transport: 'streamable-http', url: '', headers: [], command: '', args: '', cwd: '', secrets: [] }
+}
+
+function toolProbeSignature(server: ManagedMcpServer, status?: Pick<StatusRow, 'id' | 'connectionRevision'>): string {
+  return `${status?.id ?? ''}:${status?.connectionRevision ?? ''}:${JSON.stringify(server)}`
 }
 
 function toDraft(server: ManagedMcpServer): Draft {
@@ -97,7 +110,7 @@ async function probeServers(managerApi: McpManagerApi | undefined, servers: read
       if (!reply.ok) continue
       const result = reply.value
       if (result?.state === 'ready') {
-        rows.push({ serverName: server.serverName, transport: server.transport, state: 'connected', toolCount: result.toolCount, tools: result.tools })
+        rows.push({ managedServerId: server.id, serverName: server.serverName, transport: server.transport, state: 'connected', toolCount: result.toolCount, tools: result.tools })
       }
     } catch {
       // A failed probe leaves the row unknown rather than claiming a disconnect.
@@ -128,7 +141,11 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   const [transportFilter, setTransportFilter] = useState<TransportFilter>('all')
   const [expandedToolIds, setExpandedToolIds] = useState<ReadonlySet<string>>(() => new Set())
   const [toolProbes, setToolProbes] = useState<Readonly<Record<string, ToolProbe>>>({})
+  const [restartingIds, setRestartingIds] = useState<ReadonlySet<string>>(() => new Set())
+  const [restartResults, setRestartResults] = useState<Readonly<Record<string, 'pending' | 'connected' | 'disconnected' | 'unavailable' | 'failed'>>>({})
+  const restartBaselines = useRef<Readonly<Record<string, string | undefined>>>({})
   const statusRequestId = useRef(0)
+  const toolProbeRequestIds = useRef(new Map<string, number>())
   const checkSignature = useRef('')
   const draftRef = useRef(draft)
   draftRef.current = draft
@@ -170,7 +187,27 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   const saveServers = async (next: ManagedMcpServer[]) => {
     const accepted = await form.set('servers', next)
     if (!accepted) throw new Error('settings refused')
+    const nextById = new Map(next.map(server => [server.id, server]))
+    for (const previous of servers) {
+      const updated = nextById.get(previous.id)
+      if (updated === undefined || JSON.stringify(updated) !== JSON.stringify(previous)) invalidateToolProbe(previous.id)
+    }
     await refreshStatuses()
+  }
+  const invalidateToolProbe = (id: string) => {
+    toolProbeRequestIds.current.set(id, (toolProbeRequestIds.current.get(id) ?? 0) + 1)
+    setToolProbes(current => {
+      if (!(id in current)) return current
+      const next = { ...current }
+      delete next[id]
+      return next
+    })
+    setExpandedToolIds(current => {
+      if (!current.has(id)) return current
+      const next = new Set(current)
+      next.delete(id)
+      return next
+    })
   }
   const closeEditor = () => {
     setActiveEditorId(undefined)
@@ -460,21 +497,66 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
       setImportFailure('save')
     } finally { setBusy(false) }
   }
-  const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.serverName === server.serverName)
-    ?? probed.find(status => status.serverName === server.serverName)
+  const statusFor = (server: ManagedMcpServer) => statuses.find(status => status.managedServerId === server.id)
+    ?? probed.find(status => status.managedServerId === server.id)
+  useEffect(() => {
+    const rows = [...statuses, ...probed]
+    const completed = new Map<string, 'connected' | 'disconnected' | 'unavailable'>()
+    for (const [id, result] of Object.entries(restartResults)) {
+      if (result !== 'pending') continue
+      const server = servers.find(item => item.id === id)
+      if (server === undefined || !server.enabled) { completed.set(id, 'unavailable'); continue }
+      const row = rows.find(item => item.managedServerId === server.id)
+      if (row?.id === undefined || row.id === restartBaselines.current[server.id]) continue
+      if (row.state === 'connected' || row.state === 'disconnected') completed.set(id, row.state)
+    }
+    if (completed.size === 0) return
+    setRestartResults(current => {
+      const next = { ...current }
+      for (const [id, state] of completed) next[id] = state
+      return next
+    })
+    setRestartingIds(current => { const next = new Set(current); for (const id of completed.keys()) next.delete(id); return next })
+  }, [statuses, probed, servers, restartResults])
   /** Read one connected row's tool list on demand when live status carries no inventory. */
   const probeTools = async (server: ManagedMcpServer) => {
     if (managerApi === undefined) return
-    if (toolProbes[server.id]?.state === 'loading' || toolProbes[server.id]?.state === 'ready') return
-    setToolProbes(current => ({ ...current, [server.id]: { state: 'loading' } }))
+    const signature = toolProbeSignature(server, statusFor(server))
+    const previous = toolProbes[server.id]
+    if (previous?.signature === signature && (previous.state === 'loading' || previous.state === 'ready')) return
+    const requestId = (toolProbeRequestIds.current.get(server.id) ?? 0) + 1
+    toolProbeRequestIds.current.set(server.id, requestId)
+    setToolProbes(current => ({ ...current, [server.id]: { state: 'loading', signature } }))
     try {
       const reply = await managerApi.check(server)
+      if (toolProbeRequestIds.current.get(server.id) !== requestId) return
       const value = reply.ok ? reply.value : undefined
       setToolProbes(current => ({ ...current, [server.id]: value?.state === 'ready'
-        ? { state: 'ready', tools: value.tools, toolCount: value.toolCount }
-        : { state: 'failed' } }))
+        ? { state: 'ready', signature, tools: value.tools, toolCount: value.toolCount }
+        : { state: 'failed', signature } }))
     } catch {
-      setToolProbes(current => ({ ...current, [server.id]: { state: 'failed' } }))
+      if (toolProbeRequestIds.current.get(server.id) === requestId) setToolProbes(current => ({ ...current, [server.id]: { state: 'failed', signature } }))
+    }
+  }
+  const restartServer = async (server: ManagedMcpServer) => {
+    if (!server.enabled || managerApi === undefined) return
+    invalidateToolProbe(server.id)
+    setRestartingIds(current => new Set(current).add(server.id))
+    setRestartResults(current => { const next = { ...current }; delete next[server.id]; return next })
+    restartBaselines.current = { ...restartBaselines.current, [server.id]: statusFor(server)?.id }
+    let pending = false
+    try {
+      const reply = await managerApi.restart(server.id)
+      const state = reply.ok ? reply.value?.state : undefined
+      if (state === 'scheduled') {
+        pending = true
+        setRestartResults(current => ({ ...current, [server.id]: 'pending' }))
+      } else setRestartResults(current => ({ ...current, [server.id]: 'unavailable' }))
+      await refreshStatuses()
+    } catch {
+      setRestartResults(current => ({ ...current, [server.id]: 'failed' }))
+    } finally {
+      if (!pending) setRestartingIds(current => { const next = new Set(current); next.delete(server.id); return next })
     }
   }
   const stateFor = (server: ManagedMcpServer): ServerState => {
@@ -645,7 +727,11 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
         <h4>{t('managed.import.previewTitle')}</h4>
         <p>{t('managed.import.previewSummary').replace('{count}', String(importPreview.candidates.length)).replace('{skipped}', String(importPreview.skipped))}</p>
         {importPreview.candidates.length > 0 && <ul>{importPreview.candidates.map(candidate => <li key={candidate.server.serverName}>
-          <strong>{candidate.server.serverName}</strong> 璺?{t(candidate.server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')} 璺?{t(candidate.server.purpose === 'project-memory' ? 'managed.purpose.project-memory' : 'managed.purpose.model-tools')}
+          <strong>{candidate.server.serverName}</strong>
+          <span className={css.separator} aria-hidden="true">·</span>
+          {t(candidate.server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')}
+          <span className={css.separator} aria-hidden="true">·</span>
+          {t(candidate.server.purpose === 'project-memory' ? 'managed.purpose.project-memory' : 'managed.purpose.model-tools')}
         </li>)}</ul>}
         {importPreview.secretCount > 0 && <p>{t('managed.import.credentialsNotice').replace('{count}', String(importPreview.secretCount))}</p>}
         <div className={css.actions}>
@@ -662,11 +748,13 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
         const status = statusFor(server)
         const state = stateFor(server)
         const toolsExpanded = expandedToolIds.has(server.id)
-        const probe = toolProbes[server.id]
+        const rawProbe = toolProbes[server.id]
+        const probe = rawProbe?.signature === toolProbeSignature(server, status) ? rawProbe : undefined
         const liveTools = status?.tools !== undefined && (status.tools.length > 0 || status.toolCount === 0)
           ? status.tools
           : undefined
         const inventory = liveTools ?? (probe?.state === 'ready' ? probe.tools : undefined)
+        const restarting = restartingIds.has(server.id)
         return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
           <div className={css.serverMain}>
             <span className={css.stateDot} data-state={state} aria-hidden="true" />
@@ -684,6 +772,8 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
             </div>
           </div>
           <div className={css.serverActions}>
+            <McpResources server={server} managerApi={managerApi} statusId={status?.id} connectionRevision={status?.connectionRevision} connected={server.enabled && server.purpose !== 'project-memory' && state === 'connected' && !restarting} t={t} />
+            <Button variant="outline" size="sm" disabled={busy || restarting || !server.enabled || managerApi === undefined} onClick={() => { void restartServer(server) }}>{t(restarting ? 'managed.restart.loading' : 'managed.restart.action')}</Button>
             <Button variant="ghost" size="sm" disabled={busy || status === undefined || state !== 'connected'} aria-expanded={toolsExpanded} onClick={() => {
               const next = new Set(expandedToolIds)
               if (next.has(server.id)) next.delete(server.id)
@@ -693,18 +783,24 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
               }
               setExpandedToolIds(next)
             }}>{t(toolsExpanded ? 'managed.tools.hide' : 'managed.tools.show')}</Button>
-            <Button variant="outline" size="sm" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
-              if (activeEditorId === server.id) closeEditor()
-              else {
-                setDraft(toDraft(server))
-                setActiveEditorId(server.id)
-              }
-              setFailure(undefined)
-              setCheckState(undefined)
-            }}>{t('managed.edit')}</Button>
-            <Button variant="ghost" size="sm" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id) }}>{t('managed.delete')}</Button>
             <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
+            <details className={css.serverMore}>
+              <summary>{t('managed.more')}</summary>
+              <div className={css.serverMoreActions}>
+                <Button variant="outline" size="sm" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
+                  if (activeEditorId === server.id) closeEditor()
+                  else {
+                    setDraft(toDraft(server))
+                    setActiveEditorId(server.id)
+                  }
+                  setFailure(undefined)
+                  setCheckState(undefined)
+                }}>{t('managed.edit')}</Button>
+                <Button variant="ghost" size="sm" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id) }}>{t('managed.delete')}</Button>
+              </div>
+            </details>
           </div>
+          {restartResults[server.id] !== undefined && restartResults[server.id] !== 'pending' && <p className={restartResults[server.id] === 'connected' ? css.status : css.statusProblem} role="status">{t(`managed.restart.${restartResults[server.id]}` as never)}</p>}
           {toolsExpanded && <section className={css.toolInventory} aria-label={`${server.serverName} ${t('managed.tools.title')}`}>
             {inventory !== undefined
               ? inventory.length === 0

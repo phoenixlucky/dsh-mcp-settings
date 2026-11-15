@@ -26,6 +26,8 @@ pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings
 - 配置 Streamable HTTP 和 stdio MCP 服务。
 - 从 `mcpServers` JSON 对象导入 Streamable HTTP 服务。
 - 按名称、连接状态和传输方式搜索筛选服务；连接成功时可查看工具名称和描述。
+- 浏览已连接 `model-tools` 服务的资源及资源模板元数据，并按需读取选中的资源。文本仅临时显示，二进制内容不会传回页面。
+- 在服务器卡片中单独重连某个已启用服务，并查看重连后的连接状态。
 - 导入前预览 JSON；需要时可单独显示某个密钥输入框。
 - 将托管配置导出为 JSON。密钥值保存在本地凭据库中，需要在其他配置文件中单独设置。
 - `Authorization` 等敏感请求头会保存到 DSH credential store。
@@ -39,7 +41,7 @@ pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings
 
 ## 兼容性与实现
 
-此版本要求 DSH `0.2.2-alpha.2` 或后续稳定版 `0.2.x`。MCP client 运行时包含在 `vendor/` 中。bundle 会停用内置 MCP 设置页、添加托管服务管理器，并导出连接检查所需的 Host Typert 描述。实时连接状态由基础 MCP client 提供。
+此版本要求 DSH `0.2.2-alpha.2` 或后续稳定版 `0.2.x`。MCP client 运行时包含在 `vendor/` 中。bundle 会停用内置 MCP 设置页、添加托管服务管理器，并导出连接检查、资源浏览和单服务重连所需的 Host Typert 描述。资源读取由用户主动触发，序列化响应限制为 512 KiB，不会持久化，也不会进入模型上下文。实时连接状态和资源连接句柄由基础 MCP client 提供。
 
 ## 导入限制
 

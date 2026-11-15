@@ -30,6 +30,33 @@ export interface ManagedConfig {
         maxAttempts: number;
     };
 }
+/** Metadata shown for one MCP resource in the settings browser. */
+export interface ManagedMcpResourceSummary {
+    uri: string;
+    name: string;
+    title?: string;
+    description?: string;
+    mimeType?: string;
+    size?: number;
+}
+/** Metadata shown for one parameterized MCP resource. */
+export interface ManagedMcpResourceTemplateSummary {
+    uriTemplate: string;
+    name: string;
+    title?: string;
+    description?: string;
+    mimeType?: string;
+}
+/** Resource content projected for the settings UI; binary payloads are omitted. */
+export type ManagedMcpResourceContent =
+    | { kind: 'text'; uri: string; mimeType?: string; text: string }
+    | { kind: 'binary'; uri: string; mimeType?: string; size: number };
+/** Safe result envelope for one settings-page resource request. */
+export type ManagedMcpResourceResult<T> =
+    | { state: 'ready'; value: T }
+    | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' };
+/** Result after a one-server restart has been scheduled. */
+export type ManagedMcpRestartResult = { state: 'scheduled' | 'unavailable' };
 type ManagedConfigInput = Partial<{
     servers: ManagedMcpServer[];
     checkTimeoutMs: number;
@@ -75,6 +102,14 @@ export declare class ManagedMcpServerManager extends TypertRemoteService {
      * @returns A safe result classification and discovered tool count on success.
      */
     check(server: ManagedMcpServer): Promise<ManagedMcpCheck>;
+    /** List one resource page from an enabled, connected managed server. */
+    listResources(serverId: string, cursor?: string): Promise<ManagedMcpResourceResult<{ resources: readonly ManagedMcpResourceSummary[]; nextCursor?: string }>>;
+    /** List one resource-template page from an enabled, connected managed server. */
+    listResourceTemplates(serverId: string, cursor?: string): Promise<ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>;
+    /** Read one resource, omitting binary payload data and raw transport errors. */
+    readResource(serverId: string, uri: string): Promise<ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>;
+    /** Restart one enabled managed server and return its observed state. */
+    restart(serverId: string): Promise<ManagedMcpRestartResult>;
     /** Tell upgrade shims whether a managed row now owns this name.
      * @param serverName - Server namespace to look up.
      * @returns Whether any persisted managed row claims the namespace.
