@@ -152,7 +152,6 @@ const $remote = createTypertRemoteInfo({
       },
       sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":122,"column":3},
     },
-  },
     'mcpServerManager/listResources': {
       service: 'mcpServerManager', description: 'List one resource page from an enabled, connected managed server.', invocation: { kind: 'direct' },
       parameters: [
@@ -186,6 +185,7 @@ const $remote = createTypertRemoteInfo({
       result: { mode: 'strict', typeSymbol: '@deepseek-ai/dsh-mcp-client/managed#ManagedMcpRestartResult', create: () => z.object({ state: z.union([z.literal('scheduled'), z.literal('unavailable')]) }), description: 'Whether the selected server restart was scheduled.', jsonSchema: { type: 'object', properties: { state: { enum: ['scheduled', 'unavailable'] } }, required: ['state'] } },
       sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":159,"column":3},
     },
+  },
 }, z)
 
 export const TYPERT = {

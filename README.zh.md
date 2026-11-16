@@ -3,13 +3,17 @@ description: "可选 bundle，通过 profile patch 添加和管理 MCP 服务。
 kind: "package-bundle"
 ---
 
+<p align="center"><img src="assets/icon.png" width="88" height="88" alt="@tinyforge/dsh-mcp-settings 图标"></p>
+
 # `@tinyforge/dsh-mcp-settings`
 
 [English](README.md) | 中文
 
 一个可选的 DSH bundle，可在 DSH 设置中配置 Streamable HTTP 和 stdio MCP 服务。
 
-![MCP 服务器设置与 JSON 导入界面](assets/mcp-settings.webp)
+![MCP 服务器设置概览](assets/mcp-settings-overview.webp)
+![MCP 服务器资源面板](assets/mcp-settings-resources.webp)
+![MCP 服务器工具列表](assets/mcp-settings-tools.webp)
 
 ## 快速开始
 

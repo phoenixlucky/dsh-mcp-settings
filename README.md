@@ -3,13 +3,17 @@ description: "Optional bundle for adding and managing MCP servers through profil
 kind: "package-bundle"
 ---
 
+<p align="center"><img src="assets/icon.png" width="88" height="88" alt="@tinyforge/dsh-mcp-settings icon"></p>
+
 # `@tinyforge/dsh-mcp-settings`
 
 English | [中文](README.zh.md)
 
 An optional DSH bundle for configuring Streamable HTTP and stdio MCP servers from DSH Settings.
 
-![MCP server settings with JSON import](assets/mcp-settings.webp)
+![MCP server settings overview](assets/mcp-settings-overview.webp)
+![MCP server settings resources panel](assets/mcp-settings-resources.webp)
+![MCP server settings tools list](assets/mcp-settings-tools.webp)
 
 ## Quick start
 

@@ -25,9 +25,23 @@ function failureKey(reply: { ok: boolean; value?: unknown } | undefined): string
   return reply?.ok && value?.state ? `managed.resources.${value.state}` : 'managed.resources.failed'
 }
 
-/** User initiated, transient browser for resources exposed by one connected server. */
-export function McpResources({ server, managerApi, connected, statusId, connectionRevision, t }: { server: ManagedMcpServer; managerApi?: McpManagerApi | undefined; connected: boolean; statusId?: string | undefined; connectionRevision?: number | undefined; t: Translate }) {
-  const [open, setOpen] = useState(false)
+/**
+ * User initiated, transient browser for the resources one connected server exposes.
+ *
+ * It is a full-width section of the server card and is mounted only while its
+ * disclosure is open, so closing it discards every transient list, cursor, and
+ * preview. It must stay a direct child of the card grid: container-type gives the
+ * panel no intrinsic width, and inside the card's flex action row that collapsed
+ * the whole panel to its padding.
+ */
+export function McpResourcesPanel({ server, managerApi, connected, panelId, onClose, t }: {
+  server: ManagedMcpServer
+  managerApi?: McpManagerApi | undefined
+  connected: boolean
+  panelId: string
+  onClose: () => void
+  t: Translate
+}) {
   const [loading, setLoading] = useState({ resources: false, templates: false })
   const [problem, setProblem] = useState<string>()
   const [resources, setResources] = useState<readonly Resource[]>([])
@@ -39,8 +53,6 @@ export function McpResources({ server, managerApi, connected, statusId, connecti
   const [selectedContent, setSelectedContent] = useState<readonly ResourceContent[]>()
   const [readingUri, setReadingUri] = useState<string>()
   const requestId = useRef({ resources: 0, templates: 0, read: 0 })
-  const connectionRevisionKey = `${statusId ?? ''}:${connectionRevision ?? ''}`
-  const connectionRevisionRef = useRef(connectionRevisionKey)
   const filteredResources = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase()
     if (!needle) return resources
@@ -49,13 +61,6 @@ export function McpResources({ server, managerApi, connected, statusId, connecti
   }, [query, resources])
 
   useEffect(() => () => { requestId.current.resources++; requestId.current.templates++; requestId.current.read++ }, [])
-  useEffect(() => {
-    const changedConnection = connectionRevisionRef.current !== connectionRevisionKey
-    connectionRevisionRef.current = connectionRevisionKey
-    if (connected && !changedConnection) return
-    setOpen(false); setResources([]); setResourceCursor(undefined); setTemplates([]); setTemplateCursor(undefined); setSelectedUri(undefined); setSelectedContent(undefined); setReadingUri(undefined); setProblem(undefined); setQuery('')
-    requestId.current.resources++; requestId.current.templates++; requestId.current.read++
-  }, [connected, connectionRevisionKey])
 
   const loadPage = async (kind: 'resources' | 'templates', cursor?: string) => {
     if (managerApi === undefined || !connected) return
@@ -70,7 +75,7 @@ export function McpResources({ server, managerApi, connected, statusId, connecti
         if (page === undefined) {
           const failure = failureKey(reply)
           setProblem(failure)
-          if (failure === 'managed.resources.unavailable') { setOpen(false); setResources([]); setTemplates([]); setSelectedUri(undefined); setSelectedContent(undefined); requestId.current.resources++; requestId.current.templates++; requestId.current.read++ }
+          if (failure === 'managed.resources.unavailable') onClose()
           return
         }
         setResources(current => cursor === undefined ? page.items : [...current, ...page.items])
@@ -82,7 +87,7 @@ export function McpResources({ server, managerApi, connected, statusId, connecti
         if (page === undefined) {
           const failure = failureKey(reply)
           setProblem(failure)
-          if (failure === 'managed.resources.unavailable') { setOpen(false); setResources([]); setTemplates([]); setSelectedUri(undefined); setSelectedContent(undefined); requestId.current.resources++; requestId.current.templates++; requestId.current.read++ }
+          if (failure === 'managed.resources.unavailable') onClose()
           return
         }
         setTemplates(current => cursor === undefined ? page.items : [...current, ...page.items])
@@ -95,13 +100,17 @@ export function McpResources({ server, managerApi, connected, statusId, connecti
     }
   }
 
-  const browse = () => {
-    const next = !open
-    setOpen(next)
-    if (!next) { requestId.current.resources++; requestId.current.templates++; requestId.current.read++; setSelectedUri(undefined); setSelectedContent(undefined); setQuery(''); return }
-    setResources([]); setResourceCursor(undefined); setTemplates([]); setTemplateCursor(undefined); setSelectedUri(undefined); setSelectedContent(undefined); setQuery('')
-    if (next) { void loadPage('resources'); void loadPage('templates') }
+  const loadFirstPages = () => {
+    if (managerApi === undefined || !connected) return
+    requestId.current.read++
+    setSelectedUri(undefined); setSelectedContent(undefined); setReadingUri(undefined); setProblem(undefined)
+    setResources([]); setResourceCursor(undefined); setTemplates([]); setTemplateCursor(undefined)
+    void loadPage('resources')
+    void loadPage('templates')
   }
+
+  // Opening the disclosure is the only trigger for the first list/template page.
+  useEffect(() => { loadFirstPages() }, [])
 
   const read = async (resource: Resource) => {
     if (managerApi === undefined) return
@@ -117,7 +126,7 @@ export function McpResources({ server, managerApi, connected, statusId, connecti
       else {
         const failure = failureKey(reply)
         setProblem(failure)
-        if (failure === 'managed.resources.unavailable') { setOpen(false); setResources([]); setTemplates([]); setSelectedUri(undefined); setSelectedContent(undefined); requestId.current.resources++; requestId.current.templates++; requestId.current.read++ }
+        if (failure === 'managed.resources.unavailable') onClose()
       }
     } catch {
       if (id === requestId.current.read) setProblem('managed.resources.failed')
@@ -126,65 +135,53 @@ export function McpResources({ server, managerApi, connected, statusId, connecti
     }
   }
 
-  const refresh = () => {
-    if (loading.resources || loading.templates || managerApi === undefined || !connected) return
-    requestId.current.read++
-    setSelectedUri(undefined); setSelectedContent(undefined); setReadingUri(undefined); setProblem(undefined)
-    setResources([]); setResourceCursor(undefined); setTemplates([]); setTemplateCursor(undefined)
-    void loadPage('resources')
-    void loadPage('templates')
-  }
-
-  return <>
-    <Button variant="ghost" size="sm" disabled={!connected || managerApi === undefined} aria-expanded={open} onClick={browse}>{t(open ? 'managed.resources.hide' : 'managed.resources.show')}</Button>
-    {open && <section className={css.resourceBrowser} aria-label={`${server.serverName} ${t('managed.resources.title')}`}>
-      <header className={css.resourceHeader}>
-        <h4>{t('managed.resources.title')}</h4>
-        <Button variant="ghost" size="sm" disabled={loading.resources || loading.templates || !connected} onClick={refresh}>{t('managed.resources.refresh')}</Button>
-      </header>
-      {problem !== undefined && <p className={css.statusProblem} role="status">{t(problem as 'managed.resources.unavailable' | 'managed.resources.timed-out' | 'managed.resources.failed' | 'managed.resources.too-large')}</p>}
-      <label className={`${css.field} ${css.resourceSearch}`}>
-        <span>{t('managed.resources.search')}</span>
-        <input type="search" value={query} onChange={event => setQuery(event.currentTarget.value)} placeholder={t('managed.resources.search.placeholder')} />
-      </label>
-      <div className={css.resourceColumns}>
-        <section className={css.resourceList} aria-label={t('managed.resources.items')}>
-          <h5>{t('managed.resources.items')}</h5>
-          {resources.length === 0 && !loading.resources && <p>{t('managed.resources.empty')}</p>}
-          {resources.length > 0 && filteredResources.length === 0 && <p>{t(resourceCursor ? 'managed.resources.noMatchesMore' : 'managed.resources.noMatches')}</p>}
-          <ul>{filteredResources.map(resource => <li key={resource.uri}>
-            <button type="button" className={css.resourceSelect} aria-pressed={selectedUri === resource.uri} onClick={() => { void read(resource) }}>
+  return <section className={css.resourceBrowser} id={panelId} aria-label={`${server.serverName} ${t('managed.resources.title')}`}>
+    <header className={css.resourceHeader}>
+      <h4>{t('managed.resources.title')}</h4>
+      <Button variant="ghost" size="sm" disabled={loading.resources || loading.templates || !connected} onClick={loadFirstPages}>{t('managed.resources.refresh')}</Button>
+    </header>
+    {problem !== undefined && <p className={css.statusProblem} role="status">{t(problem as 'managed.resources.unavailable' | 'managed.resources.timed-out' | 'managed.resources.failed' | 'managed.resources.too-large')}</p>}
+    <label className={`${css.field} ${css.resourceSearch}`}>
+      <span>{t('managed.resources.search')}</span>
+      <input type="search" value={query} onChange={event => setQuery(event.currentTarget.value)} placeholder={t('managed.resources.search.placeholder')} />
+    </label>
+    <div className={css.resourceColumns}>
+      <section className={css.resourceList} aria-label={t('managed.resources.items')}>
+        <h5>{t('managed.resources.items')}</h5>
+        {resources.length === 0 && !loading.resources && <p>{t('managed.resources.empty')}</p>}
+        {resources.length > 0 && filteredResources.length === 0 && <p>{t(resourceCursor ? 'managed.resources.noMatchesMore' : 'managed.resources.noMatches')}</p>}
+        <ul>{filteredResources.map(resource => <li key={resource.uri}>
+          <button type="button" className={css.resourceSelect} aria-pressed={selectedUri === resource.uri} onClick={() => { void read(resource) }}>
+            <strong>{resource.title || resource.name}</strong><code>{resource.uri}</code>
+          </button>
+        </li>)}</ul>
+        {resourceCursor && <Button variant="outline" disabled={loading.resources} onClick={() => { void loadPage('resources', resourceCursor) }}>{t('managed.resources.more')}</Button>}
+      </section>
+      <section className={css.resourcePreview} aria-label={t('managed.resources.preview')} aria-busy={readingUri !== undefined}>
+        <h5>{t('managed.resources.preview')}</h5>
+        {selectedUri === undefined && <p>{t('managed.resources.selectPrompt')}</p>}
+        {selectedUri !== undefined && (() => {
+          const resource = resources.find(item => item.uri === selectedUri)
+          return <>
+            {resource && <div className={css.resourceMetadata}>
               <strong>{resource.title || resource.name}</strong><code>{resource.uri}</code>
-            </button>
-          </li>)}</ul>
-          {resourceCursor && <Button variant="outline" disabled={loading.resources} onClick={() => { void loadPage('resources', resourceCursor) }}>{t('managed.resources.more')}</Button>}
-        </section>
-        <section className={css.resourcePreview} aria-label={t('managed.resources.preview')} aria-busy={readingUri !== undefined}>
-          <h5>{t('managed.resources.preview')}</h5>
-          {selectedUri === undefined && <p>{t('managed.resources.selectPrompt')}</p>}
-          {selectedUri !== undefined && (() => {
-            const resource = resources.find(item => item.uri === selectedUri)
-            return <>
-              {resource && <div className={css.resourceMetadata}>
-                <strong>{resource.title || resource.name}</strong><code>{resource.uri}</code>
-                {resource.description && <p>{resource.description}</p>}
-                {(resource.mimeType || resource.size !== undefined) && <small>{[resource.mimeType, resource.size !== undefined ? `${resource.size} bytes` : undefined].filter(Boolean).join(' · ')}</small>}
-              </div>}
-              {readingUri === selectedUri && <p role="status">{t('managed.resources.reading')}</p>}
-              {selectedContent?.map((content, index) => <div className={css.resourceContent} key={`${content.uri}-${index}`}>
-                {content.kind === 'text' ? <><small>{content.mimeType || t('managed.resources.text')}</small><pre>{content.text}</pre></> : <p>{t('managed.resources.binary').replace('{size}', String(content.size))}{content.mimeType ? ` · ${content.mimeType}` : ''}</p>}
-              </div>)}
-            </>
-          })()}
-        </section>
-      </div>
-      <details className={css.resourceTemplates}>
-        <summary>{t('managed.resources.templates')} ({templates.length})</summary>
-        {templates.length === 0 && !loading.templates && <p>{t('managed.resources.empty')}</p>}
-        <ul>{templates.map(template => <li key={template.uriTemplate}><div><strong>{template.title || template.name}</strong><code>{template.uriTemplate}</code>{template.description && <p>{template.description}</p>}</div></li>)}</ul>
-        {templateCursor && <Button variant="outline" disabled={loading.templates} onClick={() => { void loadPage('templates', templateCursor) }}>{t('managed.resources.more')}</Button>}
-      </details>
-      {(loading.resources || loading.templates) && <p role="status">{t('managed.resources.loading')}</p>}
-    </section>}
-  </>
+              {resource.description && <p>{resource.description}</p>}
+              {(resource.mimeType || resource.size !== undefined) && <small>{[resource.mimeType, resource.size !== undefined ? `${resource.size} bytes` : undefined].filter(Boolean).join(' · ')}</small>}
+            </div>}
+            {readingUri === selectedUri && <p role="status">{t('managed.resources.reading')}</p>}
+            {selectedContent?.map((content, index) => <div className={css.resourceContent} key={`${content.uri}-${index}`}>
+              {content.kind === 'text' ? <><small>{content.mimeType || t('managed.resources.text')}</small><pre>{content.text}</pre></> : <p>{t('managed.resources.binary').replace('{size}', String(content.size))}{content.mimeType ? ` · ${content.mimeType}` : ''}</p>}
+            </div>)}
+          </>
+        })()}
+      </section>
+    </div>
+    <details className={css.resourceTemplates}>
+      <summary>{t('managed.resources.templates')} ({templates.length})</summary>
+      {templates.length === 0 && !loading.templates && <p>{t('managed.resources.empty')}</p>}
+      <ul>{templates.map(template => <li key={template.uriTemplate}><div><strong>{template.title || template.name}</strong><code>{template.uriTemplate}</code>{template.description && <p>{template.description}</p>}</div></li>)}</ul>
+      {templateCursor && <Button variant="outline" disabled={loading.templates} onClick={() => { void loadPage('templates', templateCursor) }}>{t('managed.resources.more')}</Button>}
+    </details>
+    {(loading.resources || loading.templates) && <p role="status">{t('managed.resources.loading')}</p>}
+  </section>
 }

@@ -820,7 +820,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:E:\home\dsh-mcp\vendor\dsh-client-ui-settings-mcp\src\client\mcp-settings.module.css.mjs
-		const css = ".oetn4G_connections{--mcp-gap:12px;--mcp-gap-sm:8px;width:100%;max-width:60rem;color:var(--dsw-alias-label-primary);grid-template-columns:minmax(0,1fr);gap:16px;margin-inline:auto;display:grid;container-type:inline-size}.oetn4G_actions{justify-content:flex-end;align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_pageHeader{justify-content:space-between;align-items:flex-start;gap:16px;min-width:0;display:flex}.oetn4G_pageCopy{gap:4px;min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:600 18px/26px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);margin:0}.oetn4G_toolbar{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_toolbarEnd{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;margin-inline-start:auto;display:flex}.oetn4G_searchField{flex:14rem;min-width:10rem}.oetn4G_filterField{flex:0 auto;min-width:8.5rem}.oetn4G_srOnly{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.oetn4G_statusProblem{border:1px solid color-mix(in srgb, var(--dsw-static-amber-600) 26%, var(--dsw-alias-settings-card-stroke));border-radius:var(--dsw-radius-lg);background:color-mix(in srgb, var(--dsw-static-amber-100) 22%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0;padding:8px 12px}.oetn4G_field{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);gap:6px;display:grid}.oetn4G_field input,.oetn4G_field select,.oetn4G_field textarea{box-sizing:border-box;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);width:100%;min-width:0;min-height:2.125rem;color:var(--dsw-alias-label-primary);font:inherit;padding:6px 10px}.oetn4G_field textarea{resize:vertical;line-height:1.5}.oetn4G_field input:focus-visible,.oetn4G_field select:focus-visible,.oetn4G_field textarea:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:1px}.oetn4G_field input:disabled,.oetn4G_field select:disabled,.oetn4G_field textarea:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_importPanel{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;padding:16px;display:grid}.oetn4G_importPreview{gap:var(--mcp-gap-sm);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);min-width:0;padding:12px;display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere;font:var(--dsw-font-xs-13)}.oetn4G_serverList{gap:var(--mcp-gap-sm);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_empty{border:1px dashed var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);text-align:center;margin:0;padding:20px 16px}.oetn4G_serverCard{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;min-width:0;padding:10px 12px;transition:border-color .14s,background-color .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 16%, var(--dsw-alias-settings-card-stroke))}.oetn4G_serverMain{align-items:center;gap:10px;min-width:0;display:flex}.oetn4G_stateDot{background:var(--dsw-alias-label-secondary);border-radius:999px;flex:none;width:8px;height:8px}.oetn4G_stateDot[data-state=connected]{background:var(--dsw-alias-state-success-primary)}.oetn4G_stateDot[data-state=connecting],.oetn4G_stateDot[data-state=reconnecting]{background:var(--dsw-static-amber-600)}.oetn4G_stateDot[data-state=disconnected]{background:var(--dsw-alias-state-error-primary)}.oetn4G_stateDot[data-state=disabled]{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 45%, transparent)}.oetn4G_serverIcon{border-radius:var(--dsw-radius-md);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, transparent);width:28px;height:28px;color:var(--dsw-alias-label-secondary);flex:none;place-items:center;display:grid}.oetn4G_serverIdentity{gap:2px;min-width:0;display:grid}.oetn4G_serverNameRow{align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_serverName{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.oetn4G_statePill{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 12%, transparent);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;flex:none;padding:1px 8px;line-height:1.5}.oetn4G_statePill[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, transparent);color:var(--dsw-alias-state-success-primary)}.oetn4G_statePill[data-state=connecting],.oetn4G_statePill[data-state=reconnecting]{background:color-mix(in srgb, var(--dsw-static-amber-600) 14%, transparent);color:var(--dsw-static-amber-600)}.oetn4G_statePill[data-state=disconnected]{background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);color:var(--dsw-alias-state-error-primary)}.oetn4G_serverMeta{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_separator{padding-inline:4px}.oetn4G_serverActions{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px;display:flex}.oetn4G_serverMore{position:relative}.oetn4G_serverMore>summary{border-radius:var(--dsw-radius-md);min-height:32px;color:var(--dsw-alias-label-secondary);cursor:pointer;font:var(--dsw-font-xs-13);padding:7px 10px;list-style:none}.oetn4G_serverMore>summary::-webkit-details-marker{display:none}.oetn4G_serverMore>summary:after{content:\"⌄\";margin-inline-start:6px}.oetn4G_serverMore[open]>summary:after{content:\"⌃\"}.oetn4G_serverMore>summary:hover{background:var(--dsw-alias-bg-layer-2)}.oetn4G_serverMore>summary:focus-visible,.oetn4G_resourceTemplates>summary:focus-visible,.oetn4G_resourceSelect:focus-visible{outline:2px solid var(--dsw-alias-state-focus-primary,var(--dsw-static-amber-600));outline-offset:2px}.oetn4G_serverMoreActions{z-index:2;inset-inline-end:0;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);box-shadow:var(--dsw-shadow-md,0 4px 14px #0000001f);gap:4px;padding:6px;display:flex;position:absolute;top:calc(100% + 4px)}.oetn4G_toolInventory{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;gap:6px;min-width:0;margin-top:4px;padding:10px 12px;display:grid}.oetn4G_resourceBrowser{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;gap:8px;min-width:0;padding:12px;display:grid;container-type:inline-size}.oetn4G_resourceBrowser h4,.oetn4G_resourceBrowser h5,.oetn4G_resourceBrowser p{margin:0}.oetn4G_resourceHeader{justify-content:space-between;align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_resourceBrowser ul{gap:6px;margin:0;padding:0;list-style:none;display:grid}.oetn4G_resourceBrowser li{min-width:0}.oetn4G_resourceBrowser li>div:first-child{gap:4px;min-width:0;display:grid}.oetn4G_resourceBrowser code{overflow-wrap:anywhere;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceBrowser small{color:var(--dsw-alias-label-secondary)}.oetn4G_resourceColumns{grid-template-columns:minmax(13rem,.42fr) minmax(0,.58fr);gap:12px;min-width:0;display:grid}.oetn4G_resourceList,.oetn4G_resourcePreview{align-content:start;gap:8px;min-width:0;display:grid}.oetn4G_resourceList li{min-width:0}.oetn4G_resourceSelect{border-radius:var(--dsw-radius-md);width:100%;min-height:44px;color:var(--dsw-alias-label-primary);cursor:pointer;text-align:start;background:0 0;border:1px solid #0000;gap:3px;padding:8px 10px;display:grid}.oetn4G_resourceSelect:hover{background:var(--dsw-alias-bg-layer-2)}.oetn4G_resourceSelect[aria-pressed=true]{border-color:var(--dsw-alias-settings-card-stroke);background:var(--dsw-alias-bg-layer-2)}.oetn4G_resourceSearch{gap:4px;display:grid}.oetn4G_resourceSearch>span{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceMetadata{gap:5px;min-width:0;display:grid}.oetn4G_resourceMetadata p{color:var(--dsw-alias-label-secondary)}.oetn4G_resourceContent{gap:6px;margin-block:4px;display:grid}.oetn4G_resourceTemplates{border-top:1px solid var(--dsw-alias-settings-card-stroke);gap:8px;padding-top:8px;display:grid}.oetn4G_resourceTemplates>summary{cursor:pointer;width:fit-content;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceTemplates[open]>summary{color:var(--dsw-alias-label-primary)}.oetn4G_resourceContent pre{border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-2);white-space:pre-wrap;overflow-wrap:anywhere;max-height:22rem;font:var(--dsw-font-xs-13);margin:0;padding:10px;overflow:auto}.oetn4G_toolInventory p{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_toolInventory ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xs-13);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:2px}.oetn4G_fieldGroup{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;min-width:0;margin-top:8px;padding:14px;display:grid}.oetn4G_fieldGroupTitle{border-bottom:1px solid var(--dsw-alias-settings-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0;padding-bottom:8px}.oetn4G_formGrid{gap:var(--mcp-gap);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_secretRow{align-items:end;gap:var(--mcp-gap-sm);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_secretInput{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:6px}.oetn4G_secretMask{letter-spacing:1.5px;color:var(--dsw-alias-label-secondary);user-select:none}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-gap);border-top:1px solid var(--dsw-alias-settings-card-stroke);grid-template-columns:minmax(0,1fr) auto;padding-top:10px;display:grid}.oetn4G_status{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_error{color:var(--dsw-alias-state-error-primary);font:var(--dsw-font-xs-13);grid-column:1/-1;margin:0}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_card{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;color:var(--dsw-alias-label-primary);padding:16px;display:grid}.oetn4G_switchRow{justify-content:space-between;align-items:center;gap:var(--mcp-gap);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);display:flex}.oetn4G_serverCardEditing{background:var(--dsw-alias-settings-card-fill);border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 18%, var(--dsw-alias-settings-card-stroke));grid-template-columns:minmax(0,1fr)}@container (width<=42rem){.oetn4G_pageHeader{flex-direction:column;align-items:stretch}.oetn4G_pageHeader>.oetn4G_actions{justify-content:flex-start}.oetn4G_formGrid,.oetn4G_secretRow,.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}}@container (width<=34rem){.oetn4G_serverCard{grid-template-columns:minmax(0,1fr)}.oetn4G_serverActions{justify-content:flex-start}.oetn4G_toolbarEnd{margin-inline-start:0}}@container (width<=40rem){.oetn4G_resourceColumns{grid-template-columns:minmax(0,1fr)}}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}";
+		const css = ".oetn4G_connections{--mcp-gap:12px;--mcp-gap-sm:8px;width:100%;max-width:60rem;color:var(--dsw-alias-label-primary);grid-template-columns:minmax(0,1fr);gap:16px;margin-inline:auto;display:grid;container-type:inline-size}.oetn4G_actions{justify-content:flex-end;align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_pageHeader{justify-content:space-between;align-items:flex-start;gap:16px;min-width:0;display:flex}.oetn4G_pageCopy{gap:4px;min-width:0;display:grid}.oetn4G_pageTitle{color:var(--dsw-alias-label-primary);font:600 18px/26px var(--dsw-font-family);margin:0}.oetn4G_pageDescription{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);margin:0}.oetn4G_toolbar{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;display:flex}.oetn4G_toolbarEnd{align-items:center;gap:var(--mcp-gap-sm);flex-wrap:wrap;margin-inline-start:auto;display:flex}.oetn4G_searchField{flex:14rem;min-width:10rem}.oetn4G_filterField{flex:0 auto;min-width:8.5rem}.oetn4G_srOnly{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.oetn4G_statusProblem{border:1px solid color-mix(in srgb, var(--dsw-static-amber-600) 26%, var(--dsw-alias-settings-card-stroke));border-radius:var(--dsw-radius-lg);background:color-mix(in srgb, var(--dsw-static-amber-100) 22%, var(--dsw-alias-bg-layer-1));color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0;padding:8px 12px}.oetn4G_field{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);gap:6px;display:grid}.oetn4G_field input,.oetn4G_field select,.oetn4G_field textarea{box-sizing:border-box;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);width:100%;min-width:0;min-height:2.125rem;color:var(--dsw-alias-label-primary);font:inherit;padding:6px 10px}.oetn4G_field textarea{resize:vertical;line-height:1.5}.oetn4G_field input:focus-visible,.oetn4G_field select:focus-visible,.oetn4G_field textarea:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:1px}.oetn4G_field input:disabled,.oetn4G_field select:disabled,.oetn4G_field textarea:disabled{opacity:.6}.oetn4G_field small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_importPanel{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;padding:16px;display:grid}.oetn4G_importPreview{gap:var(--mcp-gap-sm);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);min-width:0;padding:12px;display:grid}.oetn4G_importPreview h4,.oetn4G_importPreview p{margin:0}.oetn4G_importPreview ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_importPreview li{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere;font:var(--dsw-font-xs-13)}.oetn4G_serverList{gap:var(--mcp-gap-sm);min-width:0;display:grid}.oetn4G_serverList h4{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0}.oetn4G_serverList>small{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_empty{border:1px dashed var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-s-14);text-align:center;margin:0;padding:20px 16px}.oetn4G_serverCard{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;min-width:0;padding:10px 12px;transition:border-color .14s,background-color .14s;display:grid}.oetn4G_serverCard:not(.oetn4G_serverCardEditing):hover{border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 16%, var(--dsw-alias-settings-card-stroke))}.oetn4G_serverMain{align-items:center;gap:10px;min-width:0;display:flex}.oetn4G_stateDot{background:var(--dsw-alias-label-secondary);border-radius:999px;flex:none;width:8px;height:8px}.oetn4G_stateDot[data-state=connected]{background:var(--dsw-alias-state-success-primary)}.oetn4G_stateDot[data-state=connecting],.oetn4G_stateDot[data-state=reconnecting]{background:var(--dsw-static-amber-600)}.oetn4G_stateDot[data-state=disconnected]{background:var(--dsw-alias-state-error-primary)}.oetn4G_stateDot[data-state=disabled]{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 45%, transparent)}.oetn4G_serverIcon{border-radius:var(--dsw-radius-md);background:color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, transparent);width:28px;height:28px;color:var(--dsw-alias-label-secondary);flex:none;place-items:center;display:grid}.oetn4G_serverIdentity{gap:2px;min-width:0;display:grid}.oetn4G_serverNameRow{align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_serverName{color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.oetn4G_statePill{background:color-mix(in srgb, var(--dsw-alias-label-secondary) 12%, transparent);color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);border-radius:999px;flex:none;padding:1px 8px;line-height:1.5}.oetn4G_statePill[data-state=connected]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, transparent);color:var(--dsw-alias-state-success-primary)}.oetn4G_statePill[data-state=connecting],.oetn4G_statePill[data-state=reconnecting]{background:color-mix(in srgb, var(--dsw-static-amber-600) 14%, transparent);color:var(--dsw-static-amber-600)}.oetn4G_statePill[data-state=disconnected]{background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);color:var(--dsw-alias-state-error-primary)}.oetn4G_serverMeta{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_separator{padding-inline:4px}.oetn4G_serverActions{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px;display:flex}.oetn4G_serverMore{position:relative}.oetn4G_serverMore>summary{border-radius:var(--dsw-radius-md);min-height:32px;color:var(--dsw-alias-label-secondary);cursor:pointer;font:var(--dsw-font-xs-13);padding:7px 10px;list-style:none}.oetn4G_serverMore>summary::-webkit-details-marker{display:none}.oetn4G_serverMore>summary:after{content:\"⌄\";margin-inline-start:6px}.oetn4G_serverMore[open]>summary:after{content:\"⌃\"}.oetn4G_serverMore>summary:hover{background:var(--dsw-alias-bg-layer-2)}.oetn4G_serverMore>summary:focus-visible,.oetn4G_resourceTemplates>summary:focus-visible,.oetn4G_resourceSelect:focus-visible{outline:2px solid var(--dsw-alias-state-focus-primary,var(--dsw-static-amber-600));outline-offset:2px}.oetn4G_serverMoreActions{z-index:2;inset-inline-end:0;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);box-shadow:var(--dsw-shadow-md,0 4px 14px #0000001f);gap:4px;padding:6px;display:flex;position:absolute;top:calc(100% + 4px)}.oetn4G_toolInventory{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;gap:6px;min-width:0;margin-top:4px;padding:10px 12px;display:grid}.oetn4G_resourceBrowser{border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0;padding:12px;display:grid;container-type:inline-size}.oetn4G_resourceBrowser h4,.oetn4G_resourceBrowser h5,.oetn4G_resourceBrowser p{margin:0}.oetn4G_resourceHeader{justify-content:space-between;align-items:center;gap:8px;min-width:0;display:flex}.oetn4G_resourceBrowser ul{gap:6px;margin:0;padding:0;list-style:none;display:grid}.oetn4G_resourceBrowser li{min-width:0}.oetn4G_resourceBrowser li>div:first-child{gap:4px;min-width:0;display:grid}.oetn4G_resourceBrowser code{overflow-wrap:anywhere;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceBrowser small{color:var(--dsw-alias-label-secondary)}.oetn4G_resourceColumns{grid-template-columns:13rem minmax(0,1fr);gap:12px;min-width:0;display:grid}.oetn4G_resourceList,.oetn4G_resourcePreview{align-content:start;gap:8px;min-width:0;display:grid}.oetn4G_resourceList li{min-width:0}.oetn4G_resourceSelect{border-radius:var(--dsw-radius-md);width:100%;min-height:44px;color:var(--dsw-alias-label-primary);cursor:pointer;text-align:start;background:0 0;border:1px solid #0000;gap:3px;padding:8px 10px;display:grid}.oetn4G_resourceSelect:hover{background:var(--dsw-alias-bg-layer-2)}.oetn4G_resourceSelect[aria-pressed=true]{border-color:var(--dsw-alias-settings-card-stroke);background:var(--dsw-alias-bg-layer-2)}.oetn4G_resourceSearch{gap:4px;display:grid}.oetn4G_resourceSearch>span{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceMetadata{gap:5px;min-width:0;display:grid}.oetn4G_resourceMetadata p{color:var(--dsw-alias-label-secondary)}.oetn4G_resourceContent{gap:6px;margin-block:4px;display:grid}.oetn4G_resourceTemplates{border-top:1px solid var(--dsw-alias-settings-card-stroke);gap:8px;padding-top:8px;display:grid}.oetn4G_resourceTemplates>summary{cursor:pointer;width:fit-content;color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13)}.oetn4G_resourceTemplates[open]>summary{color:var(--dsw-alias-label-primary)}.oetn4G_resourceContent pre{border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-2);white-space:pre-wrap;overflow-wrap:anywhere;max-height:22rem;font:var(--dsw-font-xs-13);margin:0;padding:10px;overflow:auto}.oetn4G_toolInventory p{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_toolInventory ul{gap:6px;margin:0;padding-inline-start:1.1rem;display:grid}.oetn4G_toolInventory li{min-width:0;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xs-13);overflow-wrap:anywhere}.oetn4G_toolInventory li p{margin-top:2px}.oetn4G_fieldGroup{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-bg-layer-1);grid-column:1/-1;min-width:0;margin-top:8px;padding:14px;display:grid}.oetn4G_fieldGroupTitle{border-bottom:1px solid var(--dsw-alias-settings-card-stroke);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-strong-14);margin:0;padding-bottom:8px}.oetn4G_formGrid{gap:var(--mcp-gap);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.oetn4G_secretRow{align-items:end;gap:var(--mcp-gap-sm);grid-template-columns:repeat(3,minmax(0,1fr)) auto;display:grid}.oetn4G_secretInput{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;display:grid}.oetn4G_secretVisibilityButton{padding-inline:6px}.oetn4G_secretMask{letter-spacing:1.5px;color:var(--dsw-alias-label-secondary);user-select:none}.oetn4G_secretVisibilityButton svg{fill:none;stroke:currentColor;stroke-width:1.7px;stroke-linecap:round;stroke-linejoin:round;width:1rem;height:1rem}.oetn4G_cardFooter{align-items:center;gap:var(--mcp-gap);border-top:1px solid var(--dsw-alias-settings-card-stroke);grid-template-columns:minmax(0,1fr) auto;padding-top:10px;display:grid}.oetn4G_status{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_error{color:var(--dsw-alias-state-error-primary);font:var(--dsw-font-xs-13);grid-column:1/-1;margin:0}.oetn4G_exportHint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:0}.oetn4G_card{gap:var(--mcp-gap);border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-settings-card-fill);min-width:0;color:var(--dsw-alias-label-primary);padding:16px;display:grid}.oetn4G_switchRow{justify-content:space-between;align-items:center;gap:var(--mcp-gap);color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);display:flex}.oetn4G_serverCardEditing{background:var(--dsw-alias-settings-card-fill);border-color:color-mix(in srgb, var(--dsw-alias-label-primary) 18%, var(--dsw-alias-settings-card-stroke));grid-template-columns:minmax(0,1fr)}@container (width<=42rem){.oetn4G_pageHeader{flex-direction:column;align-items:stretch}.oetn4G_pageHeader>.oetn4G_actions{justify-content:flex-start}.oetn4G_formGrid,.oetn4G_secretRow,.oetn4G_cardFooter{grid-template-columns:minmax(0,1fr)}}@container (width<=34rem){.oetn4G_serverCard{grid-template-columns:minmax(0,1fr)}.oetn4G_serverActions{justify-content:flex-start}.oetn4G_toolbarEnd{margin-inline-start:0}}@container (width<=30rem){.oetn4G_resourceColumns{grid-template-columns:minmax(0,1fr)}}@media (prefers-reduced-motion:reduce){.oetn4G_serverCard{transition:none}}";
 		const tagId = "@tinyforge/dsh-mcp-settings/mcp-settings.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -1092,9 +1092,16 @@ window.__ModuleLoader__.load({
 			const value = reply?.value;
 			return reply?.ok && value?.state ? `managed.resources.${value.state}` : "managed.resources.failed";
 		}
-		/** User initiated, transient browser for resources exposed by one connected server. */
-		function McpResources({ server, managerApi, connected, statusId, connectionRevision, t }) {
-			const [open, setOpen] = (0, react.useState)(false);
+		/**
+		* User initiated, transient browser for the resources one connected server exposes.
+		*
+		* It is a full-width section of the server card and is mounted only while its
+		* disclosure is open, so closing it discards every transient list, cursor, and
+		* preview. It must stay a direct child of the card grid: container-type gives the
+		* panel no intrinsic width, and inside the card's flex action row that collapsed
+		* the whole panel to its padding.
+		*/
+		function McpResourcesPanel({ server, managerApi, connected, panelId, onClose, t }) {
 			const [loading, setLoading] = (0, react.useState)({
 				resources: false,
 				templates: false
@@ -1113,8 +1120,6 @@ window.__ModuleLoader__.load({
 				templates: 0,
 				read: 0
 			});
-			const connectionRevisionKey = `${statusId ?? ""}:${connectionRevision ?? ""}`;
-			const connectionRevisionRef = (0, react.useRef)(connectionRevisionKey);
 			const filteredResources = (0, react.useMemo)(() => {
 				const needle = query.trim().toLocaleLowerCase();
 				if (!needle) return resources;
@@ -1131,24 +1136,6 @@ window.__ModuleLoader__.load({
 				requestId.current.templates++;
 				requestId.current.read++;
 			}, []);
-			(0, react.useEffect)(() => {
-				const changedConnection = connectionRevisionRef.current !== connectionRevisionKey;
-				connectionRevisionRef.current = connectionRevisionKey;
-				if (connected && !changedConnection) return;
-				setOpen(false);
-				setResources([]);
-				setResourceCursor(void 0);
-				setTemplates([]);
-				setTemplateCursor(void 0);
-				setSelectedUri(void 0);
-				setSelectedContent(void 0);
-				setReadingUri(void 0);
-				setProblem(void 0);
-				setQuery("");
-				requestId.current.resources++;
-				requestId.current.templates++;
-				requestId.current.read++;
-			}, [connected, connectionRevisionKey]);
 			const loadPage = async (kind, cursor) => {
 				if (managerApi === void 0 || !connected) return;
 				const id = ++requestId.current[kind];
@@ -1165,16 +1152,7 @@ window.__ModuleLoader__.load({
 						if (page === void 0) {
 							const failure = failureKey(reply);
 							setProblem(failure);
-							if (failure === "managed.resources.unavailable") {
-								setOpen(false);
-								setResources([]);
-								setTemplates([]);
-								setSelectedUri(void 0);
-								setSelectedContent(void 0);
-								requestId.current.resources++;
-								requestId.current.templates++;
-								requestId.current.read++;
-							}
+							if (failure === "managed.resources.unavailable") onClose();
 							return;
 						}
 						setResources((current) => cursor === void 0 ? page.items : [...current, ...page.items]);
@@ -1186,16 +1164,7 @@ window.__ModuleLoader__.load({
 						if (page === void 0) {
 							const failure = failureKey(reply);
 							setProblem(failure);
-							if (failure === "managed.resources.unavailable") {
-								setOpen(false);
-								setResources([]);
-								setTemplates([]);
-								setSelectedUri(void 0);
-								setSelectedContent(void 0);
-								requestId.current.resources++;
-								requestId.current.templates++;
-								requestId.current.read++;
-							}
+							if (failure === "managed.resources.unavailable") onClose();
 							return;
 						}
 						setTemplates((current) => cursor === void 0 ? page.items : [...current, ...page.items]);
@@ -1210,30 +1179,23 @@ window.__ModuleLoader__.load({
 					}));
 				}
 			};
-			const browse = () => {
-				const next = !open;
-				setOpen(next);
-				if (!next) {
-					requestId.current.resources++;
-					requestId.current.templates++;
-					requestId.current.read++;
-					setSelectedUri(void 0);
-					setSelectedContent(void 0);
-					setQuery("");
-					return;
-				}
+			const loadFirstPages = () => {
+				if (managerApi === void 0 || !connected) return;
+				requestId.current.read++;
+				setSelectedUri(void 0);
+				setSelectedContent(void 0);
+				setReadingUri(void 0);
+				setProblem(void 0);
 				setResources([]);
 				setResourceCursor(void 0);
 				setTemplates([]);
 				setTemplateCursor(void 0);
-				setSelectedUri(void 0);
-				setSelectedContent(void 0);
-				setQuery("");
-				if (next) {
-					loadPage("resources");
-					loadPage("templates");
-				}
+				loadPage("resources");
+				loadPage("templates");
 			};
+			(0, react.useEffect)(() => {
+				loadFirstPages();
+			}, []);
 			const read = async (resource) => {
 				if (managerApi === void 0) return;
 				const { uri } = resource;
@@ -1250,16 +1212,7 @@ window.__ModuleLoader__.load({
 					else {
 						const failure = failureKey(reply);
 						setProblem(failure);
-						if (failure === "managed.resources.unavailable") {
-							setOpen(false);
-							setResources([]);
-							setTemplates([]);
-							setSelectedUri(void 0);
-							setSelectedContent(void 0);
-							requestId.current.resources++;
-							requestId.current.templates++;
-							requestId.current.read++;
-						}
+						if (failure === "managed.resources.unavailable") onClose();
 					}
 				} catch {
 					if (id === requestId.current.read) setProblem("managed.resources.failed");
@@ -1267,29 +1220,9 @@ window.__ModuleLoader__.load({
 					if (id === requestId.current.read) setReadingUri(void 0);
 				}
 			};
-			const refresh = () => {
-				if (loading.resources || loading.templates || managerApi === void 0 || !connected) return;
-				requestId.current.read++;
-				setSelectedUri(void 0);
-				setSelectedContent(void 0);
-				setReadingUri(void 0);
-				setProblem(void 0);
-				setResources([]);
-				setResourceCursor(void 0);
-				setTemplates([]);
-				setTemplateCursor(void 0);
-				loadPage("resources");
-				loadPage("templates");
-			};
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-				variant: "ghost",
-				size: "sm",
-				disabled: !connected || managerApi === void 0,
-				"aria-expanded": open,
-				onClick: browse,
-				children: t(open ? "managed.resources.hide" : "managed.resources.show")
-			}), open && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 				className: mcp_settings_module_css_default.resourceBrowser,
+				id: panelId,
 				"aria-label": `${server.serverName} ${t("managed.resources.title")}`,
 				children: [
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
@@ -1298,7 +1231,7 @@ window.__ModuleLoader__.load({
 							variant: "ghost",
 							size: "sm",
 							disabled: loading.resources || loading.templates || !connected,
-							onClick: refresh,
+							onClick: loadFirstPages,
 							children: t("managed.resources.refresh")
 						})]
 					}),
@@ -1405,7 +1338,7 @@ window.__ModuleLoader__.load({
 						children: t("managed.resources.loading")
 					})
 				]
-			})] });
+			});
 		}
 		//#endregion
 		//#region src/client/ManagedMcpServers.tsx
@@ -1513,6 +1446,7 @@ window.__ModuleLoader__.load({
 			const [stateFilter, setStateFilter] = (0, react.useState)("all");
 			const [transportFilter, setTransportFilter] = (0, react.useState)("all");
 			const [expandedToolIds, setExpandedToolIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
+			const [resourceOpenIds, setResourceOpenIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
 			const [toolProbes, setToolProbes] = (0, react.useState)({});
 			const [restartingIds, setRestartingIds] = (0, react.useState)(() => /* @__PURE__ */ new Set());
 			const [restartResults, setRestartResults] = (0, react.useState)({});
@@ -2109,6 +2043,13 @@ window.__ModuleLoader__.load({
 				const transportMatches = transportFilter === "all" || server.transport === transportFilter;
 				return nameMatches && stateMatches && transportMatches;
 			});
+			/** The resource browser panel is a card section, so its disclosure state lives here. */
+			const toggleResourceBrowser = (id) => setResourceOpenIds((current) => {
+				const next = new Set(current);
+				if (next.has(id)) next.delete(id);
+				else next.add(id);
+				return next;
+			});
 			const displayedServers = servers.filter((server) => matchingServers.includes(server) || server.id === activeEditorId);
 			const hasFilters = searchQuery !== "" || stateFilter !== "all" || transportFilter !== "all";
 			const isEditingExisting = servers.some((server) => server.id === draft.id);
@@ -2690,6 +2631,10 @@ window.__ModuleLoader__.load({
 								const probe = rawProbe?.signature === toolProbeSignature(server, status) ? rawProbe : void 0;
 								const inventory = (status?.tools !== void 0 && (status.tools.length > 0 || status.toolCount === 0) ? status.tools : void 0) ?? (probe?.state === "ready" ? probe.tools : void 0);
 								const restarting = restartingIds.has(server.id);
+								const resourcesConnected = server.enabled && server.purpose !== "project-memory" && state === "connected" && !restarting;
+								const resourcesOpen = resourcesConnected && resourceOpenIds.has(server.id);
+								const resourcesPanelId = `mcp-resources-${server.id}`;
+								const resourcesRevision = `${status?.id ?? ""}:${status?.connectionRevision ?? ""}`;
 								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 									className: `${mcp_settings_module_css_default.serverCard} ${activeEditorId === server.id ? mcp_settings_module_css_default.serverCardEditing : ""}`,
 									children: [
@@ -2736,13 +2681,16 @@ window.__ModuleLoader__.load({
 										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 											className: mcp_settings_module_css_default.serverActions,
 											children: [
-												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(McpResources, {
-													server,
-													managerApi,
-													statusId: status?.id,
-													connectionRevision: status?.connectionRevision,
-													connected: server.enabled && server.purpose !== "project-memory" && state === "connected" && !restarting,
-													t
+												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+													variant: "ghost",
+													size: "sm",
+													disabled: !resourcesConnected || managerApi === void 0,
+													"aria-expanded": resourcesOpen,
+													"aria-controls": resourcesOpen ? resourcesPanelId : void 0,
+													onClick: () => {
+														toggleResourceBrowser(server.id);
+													},
+													children: t(resourcesOpen ? "managed.resources.hide" : "managed.resources.show")
 												}),
 												/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 													variant: "outline",
@@ -2809,6 +2757,16 @@ window.__ModuleLoader__.load({
 												})
 											]
 										}),
+										resourcesOpen && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(McpResourcesPanel, {
+											server,
+											managerApi,
+											connected: resourcesConnected,
+											panelId: resourcesPanelId,
+											onClose: () => {
+												toggleResourceBrowser(server.id);
+											},
+											t
+										}, resourcesRevision),
 										restartResults[server.id] !== void 0 && restartResults[server.id] !== "pending" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 											className: restartResults[server.id] === "connected" ? mcp_settings_module_css_default.status : mcp_settings_module_css_default.statusProblem,
 											role: "status",

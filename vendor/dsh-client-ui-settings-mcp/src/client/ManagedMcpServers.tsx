@@ -5,7 +5,7 @@ import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
 import type { ManagedMcpCheck, ManagedMcpServer } from '@deepseek-ai/dsh-mcp-client'
-import { McpResources } from './McpResources.tsx'
+import { McpResourcesPanel } from './McpResources.tsx'
 import css from './mcp-settings.module.css'
 
 type Remote = ClientContext['remote']
@@ -140,6 +140,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   const [stateFilter, setStateFilter] = useState<StatusFilter>('all')
   const [transportFilter, setTransportFilter] = useState<TransportFilter>('all')
   const [expandedToolIds, setExpandedToolIds] = useState<ReadonlySet<string>>(() => new Set())
+  const [resourceOpenIds, setResourceOpenIds] = useState<ReadonlySet<string>>(() => new Set())
   const [toolProbes, setToolProbes] = useState<Readonly<Record<string, ToolProbe>>>({})
   const [restartingIds, setRestartingIds] = useState<ReadonlySet<string>>(() => new Set())
   const [restartResults, setRestartResults] = useState<Readonly<Record<string, 'pending' | 'connected' | 'disconnected' | 'unavailable' | 'failed'>>>({})
@@ -570,6 +571,13 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     const transportMatches = transportFilter === 'all' || server.transport === transportFilter
     return nameMatches && stateMatches && transportMatches
   })
+  /** The resource browser panel is a card section, so its disclosure state lives here. */
+  const toggleResourceBrowser = (id: string) => setResourceOpenIds(current => {
+    const next = new Set(current)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    return next
+  })
   const displayedServers = servers.filter(server => matchingServers.includes(server) || server.id === activeEditorId)
   const hasFilters = searchQuery !== '' || stateFilter !== 'all' || transportFilter !== 'all'
   const isEditingExisting = servers.some(server => server.id === draft.id)
@@ -755,6 +763,10 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
           : undefined
         const inventory = liveTools ?? (probe?.state === 'ready' ? probe.tools : undefined)
         const restarting = restartingIds.has(server.id)
+        const resourcesConnected = server.enabled && server.purpose !== 'project-memory' && state === 'connected' && !restarting
+        const resourcesOpen = resourcesConnected && resourceOpenIds.has(server.id)
+        const resourcesPanelId = `mcp-resources-${server.id}`
+        const resourcesRevision = `${status?.id ?? ''}:${status?.connectionRevision ?? ''}`
         return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
           <div className={css.serverMain}>
             <span className={css.stateDot} data-state={state} aria-hidden="true" />
@@ -772,7 +784,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
             </div>
           </div>
           <div className={css.serverActions}>
-            <McpResources server={server} managerApi={managerApi} statusId={status?.id} connectionRevision={status?.connectionRevision} connected={server.enabled && server.purpose !== 'project-memory' && state === 'connected' && !restarting} t={t} />
+            <Button variant="ghost" size="sm" disabled={!resourcesConnected || managerApi === undefined} aria-expanded={resourcesOpen} aria-controls={resourcesOpen ? resourcesPanelId : undefined} onClick={() => { toggleResourceBrowser(server.id) }}>{t(resourcesOpen ? 'managed.resources.hide' : 'managed.resources.show')}</Button>
             <Button variant="outline" size="sm" disabled={busy || restarting || !server.enabled || managerApi === undefined} onClick={() => { void restartServer(server) }}>{t(restarting ? 'managed.restart.loading' : 'managed.restart.action')}</Button>
             <Button variant="ghost" size="sm" disabled={busy || status === undefined || state !== 'connected'} aria-expanded={toolsExpanded} onClick={() => {
               const next = new Set(expandedToolIds)
@@ -800,6 +812,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
               </div>
             </details>
           </div>
+          {resourcesOpen && <McpResourcesPanel key={resourcesRevision} server={server} managerApi={managerApi} connected={resourcesConnected} panelId={resourcesPanelId} onClose={() => { toggleResourceBrowser(server.id) }} t={t} />}
           {restartResults[server.id] !== undefined && restartResults[server.id] !== 'pending' && <p className={restartResults[server.id] === 'connected' ? css.status : css.statusProblem} role="status">{t(`managed.restart.${restartResults[server.id]}` as never)}</p>}
           {toolsExpanded && <section className={css.toolInventory} aria-label={`${server.serverName} ${t('managed.tools.title')}`}>
             {inventory !== undefined

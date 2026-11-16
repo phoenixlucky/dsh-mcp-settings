@@ -1,2 +1,6 @@
 node_modules/
 **/*.tsbuildinfo
+
+# Generated package archives and local backups
+*.tgz
+backups/

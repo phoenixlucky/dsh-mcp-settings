@@ -378,8 +378,13 @@
 }
 
 .resourceBrowser {
+  /* A card-level section: it spans both card columns and never sits inside the
+     action row, whose flex layout would collapse it to its padding. The explicit
+     single track keeps the header, search field, and columns filling the row
+     instead of shrinking to the widest content. */
   display: grid;
   grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   min-width: 0;
   container-type: inline-size;
@@ -405,7 +410,9 @@
 
 .resourceBrowser small { color: var(--dsw-alias-label-secondary); }
 
-.resourceColumns { display: grid; grid-template-columns: minmax(13rem, 0.42fr) minmax(0, 0.58fr); gap: 12px; min-width: 0; }
+/* A fixed list rail plus a preview that takes the rest: proportional fr tracks
+   stop filling the row once one of them hits its minimum. */
+.resourceColumns { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 12px; min-width: 0; }
 
 .resourceList,
 .resourcePreview { display: grid; align-content: start; gap: 8px; min-width: 0; }
@@ -623,7 +630,9 @@
   }
 }
 
-@container (max-width: 40rem) {
+/* The panel's content box is the query width: the standard settings pane keeps
+   the list and the preview side by side, and only a genuinely narrow panel stacks them. */
+@container (max-width: 30rem) {
   .resourceColumns { grid-template-columns: minmax(0, 1fr); }
 }
 
