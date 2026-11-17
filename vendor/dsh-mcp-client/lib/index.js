@@ -810,7 +810,7 @@ const Config = z.union([z.object({
 async function apply(ctx, config) {
 	const reconnect = resolveReconnectPolicy(config.reconnect, `mcp-client(${config.serverName}): reconnect`);
 	ctx.effect(() => {
-		const owner = scopeOf(ctx) ?? ctx.root;
+		const owner = scopeOf(ctx) ?? (() => { try { return ctx[Symbol.for("cordis.root")] ?? ctx.root } catch { return ctx } })();
 		let names = activeServerNames.get(owner);
 		if (!names) {
 			names = /* @__PURE__ */ new Set();

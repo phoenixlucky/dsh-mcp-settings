@@ -8,8 +8,29 @@ import { MAX_TIMER_DELAY_MS } from "@deepseek-ai/dsh-timeout";
 import { assertNever } from "@deepseek-ai/dsh-util-values";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
+import { appendFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 import { isImageAdmissionError } from "@deepseek-ai/dsh-attachment";
 import { assertSupportedJsonSchema } from "@deepseek-ai/dsh-tools";
+/** Root-hidden symbol used by cordis 4.1 to expose the root context. */
+const ROOT_CONTEXT = Symbol.for("cordis.root");
+/**
+* Resolve the root context across cordis versions.
+*
+* cordis 4.1 mounts the root under `Symbol.for("cordis.root")` and its context proxy rejects
+* the former `ctx.root` string property ("cannot get property \"root\" without inject"). Reading
+* the string first threw on every mount, which surfaced only as "connected" with zero tools.
+*/
+function rootContext(ctx) {
+	const bySymbol = ctx?.[ROOT_CONTEXT];
+	if (bySymbol) return bySymbol;
+	try {
+		if (ctx.root) return ctx.root;
+	} catch {
+		/* cordis 4.1 throws for the legacy string property */
+	}
+	return ctx;
+}
 //#region lib/types/transport.js
 /**
 * Transport factory: creates the appropriate MCP transport based on the
@@ -128,6 +149,9 @@ function publicToolName(serverName, rawName) {
 async function syncTools(client, ctx, opts, previous) {
 	const definitions = /* @__PURE__ */ new Map();
 	const response = client.getServerCapabilities()?.tools === void 0 ? { tools: [] } : await client.listTools(void 0, { cacheMode: "refresh" });
+	if (response.tools.length === 0) {
+		recordToolSync(opts.serverName, "empty-listing", client.getServerCapabilities()?.tools === void 0 ? "server advertises no tools capability" : "server listed 0 tools");
+	}
 	const summaries = response.tools.map(tool => ({ name: tool.name, description: tool.description ?? "" }));
 	for (const tool of response.tools) {
 		const publicName = publicToolName(opts.serverName, tool.name);
@@ -156,10 +180,29 @@ async function syncTools(client, ctx, opts, previous) {
 	} catch (error) {
 		for (const dispose of disposers.values()) dispose();
 		ctx.logger.error(`mcp-client(${opts.serverName}): tool registration failed, no tools registered: ${String(error)}`);
+		recordToolSync(opts.serverName, "register-failed", `${definitions.size} definitions; ${String(error)}; ${error?.stack ? error.stack.split("\n").slice(0, 4).join(" <- ") : "no stack"}`);
 		if (opts.registrationFailure === "throw") throw error;
 		return { disposers: /* @__PURE__ */ new Map(), tools: [] };
 	}
+	recordToolSync(opts.serverName, "registered", `${definitions.size} tools`);
 	return { disposers, tools: summaries };
+}
+/**
+* Append one tool-sync outcome to a durable file.
+*
+* The Host keeps no runtime log of `ctx.logger` output, so a registration
+* failure that rolls a server's whole tool generation back is invisible: the
+* transport stays connected and the plugin stays running. Writing the outcome
+* here is what makes that state diagnosable.
+*/
+function recordToolSync(serverName, outcome, detail) {
+	try {
+		const home = process.env.DSH_HOME || join(process.env.USERPROFILE ?? ".", ".dsh");
+		mkdirSync(home, { recursive: true });
+		appendFileSync(join(home, "mcp-tool-sync.log"), `${new Date().toISOString()} ${outcome} ${serverName} ${detail}\n`);
+	} catch {
+		/* diagnostics must never break the bridge */
+	}
 }
 /** Keep a supported advertised schema; unsupported MCP vocabulary falls back to JsonValue. */
 function supportedOutputSchema(candidate) {
@@ -534,7 +577,10 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 			toolSummaries = next.tools;
 			publish(connectedAt === void 0 ? "connecting" : "connected");
 		});
-		syncChain = run.catch(() => {});
+		// The chain must keep running after a failure, but the failure itself must not vanish:
+		// without this record a failed fetch phase leaves the server connected with no tools and
+		// no trace anywhere the Host persists.
+		syncChain = run.catch(error => { recordToolSync(opts.serverName, "sync-failed", String(error)); });
 		return run;
 	}
 	/** One disconnect decision per generation: the isCurrent guard makes racing close/error signals idempotent. */
@@ -679,6 +725,7 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 		} catch (error) {
 			if (firstAttemptError === void 0) firstAttemptError = error;
 			if (isCurrent(generation)) ctx.logger.warn(`${label}: connection attempt failed: ${String(error)}`);
+			recordToolSync(config.serverName, "connect-failed", String(error));
 			const quiesced = await closeGeneration();
 			attemptSettled = true;
 			settleFailedGeneration(generation, quiesced);
@@ -984,7 +1031,7 @@ const Config = z.union([z.object({
 * @returns startup readiness after connection and initial tool discovery settle.
 */
 async function apply(ctx, config) {
-	const status = statusCatalog(ctx.root).register({
+	const status = statusCatalog(rootContext(ctx)).register({
 		serverName: config.serverName,
 		transport: config.transport,
 		source: statusSource(config),
@@ -995,7 +1042,7 @@ async function apply(ctx, config) {
 	ctx.effect(() => status.dispose, "mcp-client.status");
 	const reconnect = resolveReconnectPolicy(config.reconnect, `mcp-client(${config.serverName}): reconnect`);
 	ctx.effect(() => {
-		const owner = scopeOf(ctx) ?? ctx.root;
+		const owner = scopeOf(ctx) ?? rootContext(ctx);
 		let names = activeServerNames.get(owner);
 		if (!names) {
 			names = /* @__PURE__ */ new Set();
