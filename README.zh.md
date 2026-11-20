@@ -3,7 +3,7 @@ description: "可选 bundle，通过 profile patch 添加和管理 MCP 服务。
 kind: "package-bundle"
 ---
 
-<p align="center"><img src="assets/icon.png" width="88" height="88" alt="@tinyforge/dsh-mcp-settings 图标"></p>
+<p align="center"><img src="assets/icon.webp" width="88" height="88" alt="@tinyforge/dsh-mcp-settings 图标"></p>
 
 # `@tinyforge/dsh-mcp-settings`
 

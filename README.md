@@ -3,7 +3,7 @@ description: "Optional bundle for adding and managing MCP servers through profil
 kind: "package-bundle"
 ---
 
-<p align="center"><img src="assets/icon.png" width="88" height="88" alt="@tinyforge/dsh-mcp-settings icon"></p>
+<p align="center"><img src="assets/icon.webp" width="88" height="88" alt="@tinyforge/dsh-mcp-settings icon"></p>
 
 # `@tinyforge/dsh-mcp-settings`
 
