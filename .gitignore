@@ -4,3 +4,7 @@ node_modules/
 # Generated package archives and local backups
 *.tgz
 backups/
+
+# Local agent records (not published, not tracked)
+AGENTS.md
+MEMORY.md

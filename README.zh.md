@@ -7,6 +7,12 @@ kind: "package-bundle"
 
 # `@tinyforge/dsh-mcp-settings`
 
+[![许可证：MIT](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-MIT-3B82F6?style=flat-square)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@tinyforge%2Fdsh-mcp-settings?style=flat-square)](https://www.npmjs.com/package/@tinyforge/dsh-mcp-settings)
+[![npm 下载量](https://img.shields.io/npm/dm/@tinyforge%2Fdsh-mcp-settings?style=flat-square&label=%E4%B8%8B%E8%BD%BD%E9%87%8F)](https://www.npmjs.com/package/@tinyforge/dsh-mcp-settings)
+[![DSH Web Plugin](https://img.shields.io/badge/DSH-Web%20Plugin-4B5563?style=flat-square)](https://www.npmjs.com/package/@tinyforge/dsh-mcp-settings)
+[![DSH 支持至 0.2.2-rc.5](https://img.shields.io/badge/DSH%20%E6%94%AF%E6%8C%81%E8%87%B3-0.2.2--rc.5-4B5563?style=flat-square)](https://www.npmjs.com/package/@deepseek-ai/dsh)
+
 [English](README.md) | 中文
 
 一个可选的 DSH bundle，可在 DSH 设置中配置 Streamable HTTP 和 stdio MCP 服务。

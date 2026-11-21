@@ -3,29 +3,26 @@
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write ../dsh-mcp/README.md
 /:
-  en: fb30b50e8b6e4519
-  zh: 2d52851d5cdfaa98
-/deepseek-ai-dsh-mcp-settings:
-  en: 7bc3d1076fc23548
-  zh: ab52e2961043b8b6
-/deepseek-ai-dsh-mcp-settings/summary:
-  en: 1aa5609c24f699a6
-  zh: 399ac092cc23b0e5
-/deepseek-ai-dsh-mcp-settings/compatibility:
-  en: 1eb867838233abd4
-  zh: 5ac156a7df4dde2e
-/deepseek-ai-dsh-mcp-settings/configure-mcp-servers:
-  en: a6646abc3c7a225a
-  zh: 235e5e418913655c
-/deepseek-ai-dsh-mcp-settings/understand-the-implementation:
-  en: 73ee8674a020f485
-  zh: ca4c9c9b158bde94
-/deepseek-ai-dsh-mcp-settings/model-experience:
-  en: 47c01fe4d1ca852c
-  zh: d4c2967c9b3af7e6
-/deepseek-ai-dsh-mcp-settings/known-limitations:
-  en: 4daeedfa955b7d03
-  zh: 7edb854e339816ac
-/deepseek-ai-dsh-mcp-settings/vendored-packages:
-  en: 2a54701bea463e0e
-  zh: 79028cef5543dde0
+  en: cb3f91d54eee30e5
+  zh: cb3f91d54eee30e5
+/description-optional-bundle-for-adding-and-managing-mcp-servers-through-profile-patches-kind-package-bundle:
+  en: 6a6415eb9d71ad3a
+  zh: 16f5a8f97d915594
+/tinyforge-dsh-mcp-settings:
+  en: 8694b3da123107e1
+  zh: b9bb7fcac229af97
+/tinyforge-dsh-mcp-settings/quick-start:
+  en: 418636c3a26f6483
+  zh: e5a635470af624fe
+/tinyforge-dsh-mcp-settings/features:
+  en: 57d0c88a1309d9cc
+  zh: a6bb5760c2a968c5
+/tinyforge-dsh-mcp-settings/runtime-behavior:
+  en: 027a7e95cc2e68b8
+  zh: 0852c74aa6e0e4cc
+/tinyforge-dsh-mcp-settings/compatibility-and-implementation:
+  en: 6914a5970fa9e719
+  zh: 77fa69c049ee8324
+/tinyforge-dsh-mcp-settings/import-limitation:
+  en: 0650275bac873c66
+  zh: 402e7a369c85ba44

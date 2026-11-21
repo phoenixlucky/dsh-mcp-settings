@@ -7,6 +7,12 @@ kind: "package-bundle"
 
 # `@tinyforge/dsh-mcp-settings`
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-3B82F6?style=flat-square)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@tinyforge%2Fdsh-mcp-settings?style=flat-square)](https://www.npmjs.com/package/@tinyforge/dsh-mcp-settings)
+[![npm downloads](https://img.shields.io/npm/dm/@tinyforge%2Fdsh-mcp-settings?style=flat-square)](https://www.npmjs.com/package/@tinyforge/dsh-mcp-settings)
+[![DSH Web Plugin](https://img.shields.io/badge/DSH-Web%20Plugin-4B5563?style=flat-square)](https://www.npmjs.com/package/@tinyforge/dsh-mcp-settings)
+[![DSH supported through 0.2.2-rc.5](https://img.shields.io/badge/DSH-supported%20through%200.2.2--rc.5-4B5563?style=flat-square)](https://www.npmjs.com/package/@deepseek-ai/dsh)
+
 English | [中文](README.zh.md)
 
 An optional DSH bundle for configuring Streamable HTTP and stdio MCP servers from DSH Settings.
