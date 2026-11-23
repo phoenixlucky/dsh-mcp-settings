@@ -10,6 +10,53 @@ import { McpCardSettings } from './McpCardSettings.tsx'
 import { McpConnectionsPage } from './McpConnectionsPage.tsx'
 import type { McpCardAppearance } from './mcpCardAppearance.ts'
 import { en, zh } from './locales.ts'
+import classes from './mcp-settings.module.css'
+import rawStylesheet from './mcp-settings.module.css?inline'
+
+/** Attribute marking the style element this plugin installs for itself. */
+const STYLE_ATTRIBUTE = 'data-dsh-mcp-settings-styles'
+
+/**
+ * Scope an inline module stylesheet with the module's own class map.
+ *
+ * `?inline` returns the compiled text with unscoped selectors (`.connections`), while components
+ * apply the hashed names from the module import (`oetn4G_connections`). Applying the map keeps the
+ * injected rules matching the rendered markup without a second hand-written stylesheet.
+ * @param text - Compiled stylesheet text from the `?inline` import.
+ * @param map - The same file's CSS-module class map.
+ * @returns Stylesheet text whose selectors carry the hashed class names.
+ */
+function scopeStylesheet(text: string, map: Readonly<Record<string, string>>): string {
+  return Object.entries(map).reduce(
+    (result, [name, hashed]) => result.replace(
+      new RegExp(`\\.${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`, 'g'),
+      `.${hashed}`,
+    ),
+    text,
+  )
+}
+
+const STYLESHEET = scopeStylesheet(rawStylesheet, classes)
+
+/**
+ * Install the compiled stylesheet into the current document.
+ *
+ * Client bundles used to carry their CSS as a module-scope string that the bundle injected itself.
+ * The current bundler instead exposes stylesheet text through module metadata for the renderer to
+ * install, which leaves the page unstyled on hosts whose renderer does not consume that metadata.
+ * Installing the same compiled text here works on both, and the attribute keeps repeated `apply`
+ * calls (hot replacement) from stacking duplicate sheets.
+ * @param document - Document that owns the settings page.
+ * @returns Disposer that removes the style element this call installed.
+ */
+function installStyles(document: Document): () => void {
+  if (document.querySelector(`style[${STYLE_ATTRIBUTE}]`) !== null) return () => {}
+  const element = document.createElement('style')
+  element.setAttribute(STYLE_ATTRIBUTE, '')
+  element.textContent = STYLESHEET
+  document.head.append(element)
+  return () => { element.remove() }
+}
 
 interface ManagedSettings { servers?: import('@deepseek-ai/dsh-mcp-client').ManagedMcpServer[] }
 interface AppearanceSettings { servers?: Readonly<Record<string, McpCardAppearance>> }
@@ -40,6 +87,7 @@ function remoteNamespace(ctx: ClientContext, namespace: string): unknown {
 export async function apply(ctx: ClientContext): Promise<() => Promise<void>> {
   const unmountRemote = await ctx.remote.$mount(mcpRemote)
   const t = ctx.locale.bind(NS)
+  ctx.effect(() => installStyles(document), 'ui-settings-mcp: stylesheet')
   ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'ui-settings-mcp: dictionaries')
   ctx.effect(() => ctx.configForms.whileServed(['mcp-server-manager'], () => {
     let stopSection: (() => void) | undefined

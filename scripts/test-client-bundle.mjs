@@ -193,6 +193,12 @@ const statusApi = {
 
 await exports.apply(ctx);
 check('registers settings.mcp dictionaries', dictionaries['settings.mcp'] !== undefined);
+const styleElement = win.document.head.querySelector('style[data-dsh-mcp-settings-styles]');
+check('installs its own stylesheet', styleElement !== null);
+const sheetText = styleElement?.textContent ?? '';
+check('stylesheet text is non-trivial', sheetText.length > 2000, `${sheetText.length} chars`);
+// Every class the page applies must exist in the installed sheet, or it renders unstyled.
+const sheetClasses = new Set([...sheetText.matchAll(/\.(oetn4G_[A-Za-z0-9_]+)/g)].map((match) => match[1]));
 const pageSection = sections.find((section) => section.id === 'mcp');
 check('registers the managed connections section', typeof pageSection?.component === 'function', sections.map((s) => s.id).join(', '));
 check('registers the appearance section too', sections.some((section) => section.id === 'mcp-card-appearance'));
@@ -232,6 +238,13 @@ check('page renders a 2-token estimate', text.includes('2 token'), text.slice(0,
 check('section label resolves', /MCP/.test(String(pageSection.label)), pageSection.label);
 const costFragment = text.match(/[^ ]+ B · [^·]+token/);
 console.log(`      rendered cost line: ${costFragment?.[0] ?? '(not found)'}`);
+
+const pageClasses = [...win.document.querySelectorAll('[class]')]
+  .flatMap((element) => String(element.getAttribute('class')).split(/\s+/))
+  .filter((name) => name.startsWith('oetn4G_'));
+const missingRules = pageClasses.filter((name) => !sheetClasses.has(name));
+check('page applies at least one module class', pageClasses.length > 0, String(pageClasses.length));
+check('every rendered class has a rule', missingRules.length === 0, [...new Set(missingRules)].slice(0, 5).join(', '));
 
 await act(async () => { root.unmount(); });
 
