@@ -8,3 +8,6 @@ backups/
 # Local agent records (not published, not tracked)
 AGENTS.md
 MEMORY.md
+
+# Audit records written by `node scripts/mcp-audit.mjs --json`
+.audit/

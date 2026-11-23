@@ -1,8 +1,8 @@
 /**
  * Regression test for managed MCP credential handling.
  *
- * Exercises the real `checkManagedMcpServer` path (transport + SDK + headers)
- * against a live modern-only endpoint, so it needs no model call.
+ * Exercises the real `checkManagedMcpServer` path (transport + SDK + headers) against a live
+ * modern-only endpoint, so it needs no model call.
  *
  * Covers:
  *   1. a bare token stored in an `Authorization` reference (legacy form)
@@ -10,29 +10,47 @@
  *   3. a profile with no credential provider at all, for a row with no secret
  *   4. a profile with no credential provider, for a row that references one
  *
- * Usage: node scripts/test-managed-auth.mjs
+ * When the endpoint is not listening the run reports SKIP and exits 0: an offline service is not
+ * evidence that credential handling regressed.
+ *
+ * Usage: node scripts/test-managed-auth.mjs [profileDir]
  */
-import { readFileSync } from 'node:fs';
 import { checkManagedMcpServer } from '../vendor/dsh-mcp-client/lib/managed.js';
+import { DEFAULT_PROFILE_DIR, readProfileRefs } from './lib/mcp-profile.mjs';
 
-const CREDENTIALS = 'C:/Users/Administrator/.dsh/.credentials.yaml';
+/** Live modern-only endpoint used as the fixture. */
 const ENDPOINT = 'http://127.0.0.1:12306/mcp-new';
 
-/** Read the flat `refs:` map of the credentials document. */
-function readRefs(text) {
-  const refs = {};
-  let inRefs = false;
-  for (const line of text.split(/\r?\n/)) {
-    if (/^refs:\s*$/.test(line)) { inRefs = true; continue; }
-    if (/^[A-Za-z0-9_]+:\s*$/.test(line)) { inRefs = false; continue; }
-    if (!inRefs) continue;
-    const match = line.match(/^\s+([A-Za-z0-9_]+):\s*(.+?)\s*$/);
-    if (match) refs[match[1]] = match[2].replace(/^['"]|['"]$/g, '');
+/**
+ * Check that the fixture endpoint is actually serving an MCP route right now.
+ *
+ * A closed port and a stale route both look like "connection failed" to the code under test, but
+ * neither says anything about credential handling. Only a live route runs the cases.
+ * @param {string} url - Endpoint to probe.
+ * @returns {Promise<{ready: true} | {ready: false, reason: string}>} probe verdict.
+ */
+async function probeFixture(url) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'ping' }),
+      signal: AbortSignal.timeout(1500),
+    });
+    if (response.status === 404) return { ready: false, reason: 'endpoint answers 404; the MCP route is not served' };
+    return { ready: true };
+  } catch (error) {
+    return { ready: false, reason: `endpoint unreachable (${String(error?.cause?.code ?? error?.name ?? error)})` };
   }
-  return refs;
 }
 
-const stored = readRefs(readFileSync(CREDENTIALS, 'utf8'));
+const fixture = await probeFixture(ENDPOINT);
+if (!fixture.ready) {
+  console.log(`SKIP  ${ENDPOINT}: ${fixture.reason}. Start a modern MCP server there and rerun.`);
+  process.exit(0);
+}
+
+const stored = readProfileRefs(process.argv[2] ?? DEFAULT_PROFILE_DIR);
 const bare = (stored.DSH_CHROME_MCP_TOKEN ?? '').replace(/^Bearer\s+/iu, '');
 const bearer = `Bearer ${bare}`;
 

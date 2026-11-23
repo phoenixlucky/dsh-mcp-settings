@@ -53,6 +53,24 @@ The default server list is empty. Installing the bundle does not preconfigure or
 
 This release requires DSH `0.2.2-alpha.2` or a later stable `0.2.x` release. The MCP client runtime is included under `vendor/`. The bundle disables the built-in MCP settings page, adds the managed server manager, and exports Host Typert metadata for connection checks, resource browsing, and per-server reconnects. Resource reads are user initiated, limited to 512 KiB of serialized response data, and never persisted or passed into model context. The base MCP client provides live connection status and the resource connection handle.
 
+## Auditing a server profile
+
+Every MCP server publishes its tool definitions into model context before the first question is asked. `scripts/mcp-audit.mjs` measures that cost and the negotiation behind it, without calling a single tool:
+
+```sh
+node scripts/mcp-audit.mjs                                  # profile: ~/.dsh/profiles/web
+node scripts/mcp-audit.mjs C:/Users/me/.dsh/profiles/web --json .audit/mcp-audit.json
+```
+
+The audit connects with the same SDK and automatic version negotiation the runtime uses, then reports per server:
+
+- the negotiated protocol revision, the server identity it announced, its declared capabilities, and the size of its attributed instructions;
+- the standing cost of every tool definition (`name`, `description`, `inputSchema`, `outputSchema`) as UTF-8 bytes plus a `bytes / 4` token estimate, and the largest definitions by name;
+- the model-facing names that the `mcp__<server>__<tool>` contract had to rewrite (character replacement, or truncation with a hash suffix);
+- fixed check results for transport (`tls`, `loopback`, `private`, `plaintext-remote`), credential binding, naming, and context budget, plus resource and prompt counts when the server declares those capabilities.
+
+Connection failures are classified as `failed`, `timed-out`, or `authorization-required`. Checks that depend on Host runtime policy, such as result truncation, are reported as `unverifiable` instead of being passed. No tool is called, no secret value is printed, and stdio rows are skipped unless you pass `--allow-stdio`. Use `--strict` to fail the run on warnings as well.
+
 ## Import limitation
 
 JSON import accepts Streamable HTTP entries in an `mcpServers` object or managed server entries in a `servers` array. Add stdio servers from the settings form or import them in the managed format. Entries with duplicate names are skipped.

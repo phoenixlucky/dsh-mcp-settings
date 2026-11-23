@@ -53,6 +53,24 @@ pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings
 
 此版本要求 DSH `0.2.2-alpha.2` 或后续稳定版 `0.2.x`。MCP client 运行时包含在 `vendor/` 中。bundle 会停用内置 MCP 设置页、添加托管服务管理器，并导出连接检查、资源浏览和单服务重连所需的 Host Typert 描述。资源读取由用户主动触发，序列化响应限制为 512 KiB，不会持久化，也不会进入模型上下文。实时连接状态和资源连接句柄由基础 MCP client 提供。
 
+## 接入体检
+
+每个 MCP 服务在提问之前就把工具定义注入了模型上下文。`scripts/mcp-audit.mjs` 在不调用任何工具的前提下，量出这份成本与它背后的协商结果：
+
+```sh
+node scripts/mcp-audit.mjs                                  # profile: ~/.dsh/profiles/web
+node scripts/mcp-audit.mjs C:/Users/me/.dsh/profiles/web --json .audit/mcp-audit.json
+```
+
+体检使用与运行时相同的 SDK 与自动版本协商建立连接，逐服务报告：
+
+- 协商到的协议修订版、服务端自报身份、已声明能力，以及归属 instructions 的字节数；
+- 每个工具定义（`name`、`description`、`inputSchema`、`outputSchema`）以 UTF-8 字节计的常驻成本、`字节 / 4` 的粗估 token，以及占用最大的几个定义；
+- 被 `mcp__<server>__<tool>` 契约改写过的模型侧名称（字符被替换，或截断后加哈希）；
+- 传输方式（`tls`、`loopback`、`private`、`plaintext-remote`）、凭据绑定、命名与上下文预算的固定检查结果；服务声明了对应能力时，另附资源与提示的条目数。
+
+连接失败会归类为 `failed`、`timed-out` 或 `authorization-required`。依赖 Host 运行时策略的检查（如结果截断）标为 `unverifiable`，不冒充通过。体检不调用工具、不打印任何秘密值；stdio 行默认跳过，需显式传 `--allow-stdio`。加 `--strict` 时出现告警即判定失败。
+
 ## 导入限制
 
 JSON 导入支持 `mcpServers` 对象中的 Streamable HTTP 条目，以及 `servers` 数组中的托管服务条目。stdio 服务可从设置表单添加，或使用托管格式导入。重复名称会被跳过。
