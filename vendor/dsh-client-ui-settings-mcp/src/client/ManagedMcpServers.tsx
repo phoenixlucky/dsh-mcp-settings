@@ -762,6 +762,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
           ? status.tools
           : undefined
         const inventory = liveTools ?? (probe?.state === 'ready' ? probe.tools : undefined)
+        const cost = inventory === undefined || inventory.length === 0 ? undefined : standingCost(inventory)
         const restarting = restartingIds.has(server.id)
         const resourcesConnected = server.enabled && server.purpose !== 'project-memory' && state === 'connected' && !restarting
         const resourcesOpen = resourcesConnected && resourceOpenIds.has(server.id)
@@ -780,6 +781,12 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
                 {t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')}
                 <span className={css.separator} aria-hidden="true">·</span>
                 {t('managed.toolCountInline').replace('{count}', String(status?.toolCount ?? 0))}
+                {cost !== undefined && <>
+                  <span className={css.separator} aria-hidden="true">·</span>
+                  {t('managed.costInline')
+                    .replace('{bytes}', cost.bytes.toLocaleString())
+                    .replace('{tokens}', cost.tokens.toLocaleString())}
+                </>}
               </p>
             </div>
           </div>
@@ -815,6 +822,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
           {resourcesOpen && <McpResourcesPanel key={resourcesRevision} server={server} managerApi={managerApi} connected={resourcesConnected} panelId={resourcesPanelId} onClose={() => { toggleResourceBrowser(server.id) }} t={t} />}
           {restartResults[server.id] !== undefined && restartResults[server.id] !== 'pending' && <p className={restartResults[server.id] === 'connected' ? css.status : css.statusProblem} role="status">{t(`managed.restart.${restartResults[server.id]}` as never)}</p>}
           {toolsExpanded && <section className={css.toolInventory} aria-label={`${server.serverName} ${t('managed.tools.title')}`}>
+            {inventory !== undefined && inventory.length > 0 && <p>{t('managed.tools.namesHint')}</p>}
             {inventory !== undefined
               ? inventory.length === 0
                 ? <p>{t('managed.tools.empty')}</p>
@@ -833,6 +841,24 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
 
     {servers.length > 0 && <p className={css.exportHint}>{t('managed.export.notice')}</p>}
   </section>
+}
+
+/** Shared UTF-8 encoder for the standing-cost estimate. */
+const utf8 = new TextEncoder()
+/** Rough token estimate denominator, shared with `scripts/mcp-audit.mjs`. */
+const BYTES_PER_TOKEN = 4
+
+/**
+ * Standing context cost of one tool list as the live status reports it.
+ *
+ * The status summary carries each tool's name and description but not its parameter schema, so
+ * this is a lower bound on what the definitions cost per request; the audit script measures the
+ * full definition separately.
+ */
+function standingCost(tools: readonly { name: string, description: string }[]): { bytes: number, tokens: number } {
+  let bytes = 0
+  for (const tool of tools) bytes += utf8.encode(`${tool.name}${tool.description}`).length
+  return { bytes, tokens: Math.ceil(bytes / BYTES_PER_TOKEN) }
 }
 
 function isAllowedEndpoint(input: string): boolean {

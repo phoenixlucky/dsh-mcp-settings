@@ -36,6 +36,7 @@ pnpm dsh plugin --profile <profile> add file:./dsh-mcp-settings
 - 配置 Streamable HTTP 和 stdio MCP 服务。
 - 从 `mcpServers` JSON 对象导入 Streamable HTTP 服务。
 - 按名称、连接状态和传输方式搜索筛选服务；连接成功时可查看工具名称和描述。
+- 无需展开工具清单，服务卡片即显示该服务的常驻上下文成本——按已上报的名称与描述统计的字节数，以及粗估 token。
 - 浏览已连接 `model-tools` 服务的资源及资源模板元数据，并按需读取选中的资源。文本仅临时显示，二进制内容不会传回页面。
 - 在服务器卡片中单独重连某个已启用服务，并查看重连后的连接状态。
 - 导入前预览 JSON；需要时可单独显示某个密钥输入框。

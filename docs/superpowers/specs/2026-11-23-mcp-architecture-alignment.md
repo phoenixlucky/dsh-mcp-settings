@@ -33,7 +33,8 @@ The map splits responsibilities across Host, Client, and Server. This bundle is 
 - `scripts/lib/mcp-profile.mjs` (new) — single reader for a profile's patch rows and credential references; the audit and the credential regression test both use it.
 - `scripts/test-managed-auth.mjs` — uses the shared reader, and reports `SKIP` with a reason when its fixture endpoint is closed or its MCP route is gone.
 - `scripts/verify-mcp-servers.mjs` — deleted; the audit supersedes it and imports the runtime's real `publicToolName()` instead of copying it.
-- `README.md` / `README.zh.md` — a paired "Auditing a server profile" / "接入体检" section; `README.i18n.yaml` re-recorded.
+- `README.md` / `README.zh.md` — a paired "Auditing a server profile" / "接入体检" section and a features bullet for the card cost line; `README.i18n.yaml` re-recorded.
+- Settings page (version 1.2.0) — each connected server card now states its standing cost as `{bytes} B · ≈{tokens} tok standing`, computed from the names and descriptions the live status already reports; the tool inventory gained one hint line stating that names are upstream names, that the model calls `mcp__<server>__<tool>` (long names are truncated with a hash suffix), and that the count excludes parameter schemas. Two locale keys were added to both dictionaries. The Client bundle was rebuilt with the repository's own build command, which also moved it to the current bundler output (148,028 → 112,757 bytes).
 
 ## Verification
 
@@ -59,10 +60,17 @@ Observed on 2026-11-23:
 ## Non-goals
 
 - No change to the managed runtime's protocol behavior, tool registration, timeouts, or credential storage.
-- No settings-page change: adding cost or model-facing-name display requires rebuilding the Client bundle and verifying it in a live profile, which cannot be validated from this repository alone.
 - No OAuth, Code Mode, prompt browser, or per-call audit store.
+- The page does not compute model-facing tool names. `McpToolSummary` reports upstream names only, and the naming rule lives in the runtime; copying it into the Client would recreate the very duplication this change removed. The card shows a static hint instead.
+
+## Why the runtime field was not added
+
+The obvious fix — publish `publicName` in `McpToolSummary` — cannot be built from the current toolchain: the pinned vendor snapshot is `@deepseek-ai/dsh-mcp-client@0.2.2-alpha.2`, while the sibling checkout `E:\home\deepseek-harness` now carries `0.2.2-rc.4`, where the managed-server status surface this bundle vendors no longer exists (no `managed.ts`/`chrome.ts`, no `McpToolSummary`). Rebuilding artifacts from that checkout would produce a different runtime, not a patched one, and hand-editing the pinned compiled bundles would be lost on the next re-vendor. The cost line therefore uses the fields the pinned snapshot actually publishes, and states that schema bytes are excluded.
+
+Newer DSH already ships the map's context-economics answer for the runtime side: `packages/mcp/mcp-client/src/tool-loading.ts` keeps a server's tools out of the registry and registers only the ones an agent loads through that server's `load_tools` loader. Re-vendoring this bundle onto such a runtime is the real follow-up, and it is a compatibility task of its own.
 
 ## Open items
 
-- The Client UI still shows raw upstream tool names while the model sees `mcp__<server>__<tool>`. The audit exposes the mapping; showing it in the page needs a UI build plus live verification.
-- The local `web` profile installs `@tinyforge/dsh-mcp-settings@1.0.41` from a pinned tarball while this repository is at 1.1.1, so UI behavior verified here is not necessarily what that profile runs.
+- The Client UI still shows upstream tool names only. Showing the model-facing name needs a runtime field, which in turn needs either a re-vendored runtime or an upstream change.
+- The local `web` profile installs `@tinyforge/dsh-mcp-settings` from a pinned tarball; the 1.2.0 tarball was built but the profile is upgraded only when its dependency and install are updated.
+- `README.i18n.yaml` is still packed: npm and pnpm always include files whose name starts with `readme`, and a `!README.i18n.yaml` entry in `files` does not exclude it. Only renaming would.

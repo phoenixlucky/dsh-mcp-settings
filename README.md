@@ -36,6 +36,7 @@ Then open **Settings → MCP Servers** to add a server or import a configuration
 - Configure Streamable HTTP and stdio MCP servers.
 - Import Streamable HTTP entries from an `mcpServers` JSON object.
 - Search and filter servers by name, connection state, and transport; inspect tool names and descriptions while connected.
+- See each connected server's standing context cost on its card — definition bytes and a rough token estimate for the reported names and descriptions — before opening its tool list.
 - Browse resource and resource-template metadata for connected `model-tools` servers, then explicitly read selected resources. Text is shown transiently; binary contents are omitted.
 - Reconnect one enabled server from its settings card and see its resulting connection state.
 - Preview JSON imports before saving, and reveal individual secret fields only when needed.
