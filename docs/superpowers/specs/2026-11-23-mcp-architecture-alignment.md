@@ -73,4 +73,4 @@ Newer DSH already ships the map's context-economics answer for the runtime side:
 
 - The Client UI still shows upstream tool names only. Showing the model-facing name needs a runtime field, which in turn needs either a re-vendored runtime or an upstream change.
 - The local `web` profile installs `@tinyforge/dsh-mcp-settings` from a pinned tarball; the 1.2.0 tarball was built but the profile is upgraded only when its dependency and install are updated.
-- `README.i18n.yaml` is still packed: npm and pnpm always include files whose name starts with `readme`, and a `!README.i18n.yaml` entry in `files` does not exclude it. Only renaming would.
+- `README.i18n.yaml` is resolved for packing: npm and pnpm always include files whose name starts with `readme`, so `node scripts/pack.mjs` stages the git-tracked tree minus that record and packs there. Plain `pnpm pack` still ships it; the pairing tool derives the record path from the README, so the record cannot be renamed or moved to escape inclusion.

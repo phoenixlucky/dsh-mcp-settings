@@ -11,3 +11,6 @@ MEMORY.md
 
 # Audit records written by `node scripts/mcp-audit.mjs --json`
 .audit/
+
+# Staging copy used by `node scripts/pack.mjs`
+.pack-staging/
