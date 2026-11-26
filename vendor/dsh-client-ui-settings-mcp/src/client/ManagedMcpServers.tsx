@@ -38,6 +38,8 @@ interface ToolProbe {
   signature: string
   tools?: readonly { name: string, description: string }[]
   toolCount?: number
+  /** Classified check result when the probe failed, so the panel can name the reason. */
+  reason?: ManagedMcpCheck
 }
 /** One Remote call result as the Client facade returns it. */
 interface RemoteReply<T> { ok: boolean; value?: T; error?: { message?: string } }
@@ -167,6 +169,8 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   const [draft, setDraft] = useState<Draft>(emptyDraft)
   const [activeEditorId, setActiveEditorId] = useState<string>()
   const [busy, setBusy] = useState(false)
+  /** Intent of a toggle press whose Host write has not settled yet, keyed by server id. */
+  const [pendingEnabled, setPendingEnabled] = useState<Readonly<Record<string, boolean>>>({})
   const [failure, setFailure] = useState<'save' | 'credential' | 'check' | 'invalid' | 'import-invalid'>()
   const [importFailure, setImportFailure] = useState<'save' | 'credential' | 'import-invalid'>()
   const [checkState, setCheckState] = useState<string>()
@@ -225,14 +229,22 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     setProbed(measured)
   }
   const saveServers = async (next: ManagedMcpServer[]) => {
-    const accepted = await form.set('servers', next)
+    let accepted = await form.set('servers', next)
+    if (!accepted) {
+      // A refusal is normally a stale revision fence: the form has just re-read the
+      // Host document, so one retry on the fresh fence is safe for this whole-list,
+      // idempotent write. A second refusal is a real rejection and surfaces as one.
+      accepted = await form.set('servers', next)
+    }
     if (!accepted) throw new Error('settings refused')
     const nextById = new Map(next.map(server => [server.id, server]))
     for (const previous of servers) {
       const updated = nextById.get(previous.id)
       if (updated === undefined || JSON.stringify(updated) !== JSON.stringify(previous)) invalidateToolProbe(previous.id)
     }
-    await refreshStatuses()
+    // The write is settled; the status poll must not keep every control disabled
+    // while it reconnects to servers that are slow to answer.
+    void refreshStatuses()
   }
   const invalidateToolProbe = (id: string) => {
     toolProbeRequestIds.current.set(id, (toolProbeRequestIds.current.get(id) ?? 0) + 1)
@@ -374,8 +386,29 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   }
   const toggle = async (server: ManagedMcpServer, enabled: boolean) => {
     setBusy(true); setFailure(undefined)
-    try { await saveServers(servers.map(current => current.id === server.id ? { ...current, enabled } : current)) }
-    catch { setFailure('save') } finally { setBusy(false) }
+    setPendingEnabled(current => ({ ...current, [server.id]: enabled }))
+    try {
+      const index = servers.findIndex(current => current.id === server.id)
+      if (index === -1) throw new Error('settings refused')
+      // One field, not one section: a wholesale write restates every other server
+      // from this client's view, and the Host refuses writes it cannot reconcile.
+      // The whole-list write stays as the fallback for a Host that refuses paths.
+      const settled = await form.mutate([{ op: 'set', path: ['servers', String(index), 'enabled'], value: enabled }])
+        || await form.set('servers', servers.map(current => current.id === server.id ? { ...current, enabled } : current))
+      if (!settled) throw new Error('settings refused')
+      invalidateToolProbe(server.id)
+      void refreshStatuses()
+    }
+    catch { setFailure('save') }
+    finally {
+      setPendingEnabled(current => {
+        if (!(server.id in current)) return current
+        const next = { ...current }
+        delete next[server.id]
+        return next
+      })
+      setBusy(false)
+    }
   }
   const exportServers = () => {
     const exportableServers = servers.map(server => {
@@ -573,7 +606,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
       const value = reply.ok ? reply.value : undefined
       setToolProbes(current => ({ ...current, [server.id]: value?.state === 'ready'
         ? { state: 'ready', signature, tools: value.tools, toolCount: value.toolCount }
-        : { state: 'failed', signature } }))
+        : { state: 'failed', signature, ...(value === undefined ? {} : { reason: value }) } }))
     } catch {
       if (toolProbeRequestIds.current.get(server.id) === requestId) setToolProbes(current => ({ ...current, [server.id]: { state: 'failed', signature } }))
     }
@@ -599,8 +632,17 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
       if (!pending) setRestartingIds(current => { const next = new Set(current); next.delete(server.id); return next })
     }
   }
+  /**
+   * Whether a server counts as enabled for rendering.
+   *
+   * A toggle press paints its intent immediately, so the switch never looks dead
+   * while the Host write is in flight; the write clears (or reverts) it.
+   * @param server - one managed server row.
+   * @returns the intended state while a write is pending, else the stored one.
+   */
+  const enabledFor = (server: ManagedMcpServer): boolean => pendingEnabled[server.id] ?? server.enabled
   const stateFor = (server: ManagedMcpServer): ServerState => {
-    if (!server.enabled) return 'disabled'
+    if (!enabledFor(server)) return 'disabled'
     return statusFor(server)?.state ?? 'unknown'
   }
   const query = searchQuery.trim().toLocaleLowerCase()
@@ -697,7 +739,6 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
           <Button variant="outline" disabled={busy} onClick={() => { void checkDraft() }}>{busy ? t('checking') : t('check')}</Button>
         </div>
         {checkState !== undefined && <p className={css.status} role="status">{checkState}</p>}
-        {failure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, failure)}</p>}
       </footer>
     </section>
   )
@@ -766,6 +807,11 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     </div>
 
     {statusProblem !== undefined && probed.length === 0 && <p className={css.statusProblem} role="status" title={statusProblem}>{t('managed.status.unavailable')}</p>}
+
+    {/* A write that the Host refuses has to be visible where it happened: the switch
+        reverts, and without this line the page would look simply unresponsive. */}
+    {failure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, failure)}</p>}
+    {snapshot.status === 'ready' && !snapshot.writable && <p className={css.statusProblem} role="status">{t('managed.readOnly')}</p>}
 
     {importOpen && <section className={css.importPanel} aria-label={t('managed.import')}>
       <h4 className={css.fieldGroupTitle}>{t('managed.import')}</h4>
@@ -836,7 +882,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
             <div className={css.serverIdentity}>
               <div className={css.serverNameRow}>
                 <strong className={css.serverName}>{server.serverName}</strong>
-                <span className={css.statePill} data-state={state}>{managedStateLabel(t, state)}</span>
+                <span className={css.statePill} data-state={state} title={state === 'connected' ? t('managed.state.connectedHint') : undefined}>{managedStateLabel(t, state)}</span>
               </div>
               <p className={css.serverFacts}>
                 <span className={css.metaItem}>{t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')}</span>
@@ -862,7 +908,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
               </p>
             </div>
             <div className={css.serverControls}>
-              <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
+              <Switch checked={enabledFor(server)} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
               <details className={css.serverMore}>
                 <summary>{t('managed.more')}</summary>
                 <div className={css.serverMoreActions}>
@@ -907,7 +953,11 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
                 ? t('managed.tools.unavailable')
                 : probe?.state === 'loading'
                   ? t('managed.tools.loading')
-                  : t('managed.tools.unknown')}</p>}
+                  : probe?.reason !== undefined
+                    // The check classified why it failed (auth, timeout, refused); say that
+                    // instead of the generic "connected but unreadable" line.
+                    ? managedCheckLabel(t, probe.reason)
+                    : t('managed.tools.unknown')}</p>}
           </section>}
           {activeEditorId === server.id && editor}
         </article>

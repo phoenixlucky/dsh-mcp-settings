@@ -87,7 +87,11 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 /** UI primitives are host modules; render plain elements so text stays assertable. */
 const primitives = {
   Button: ({ children, ...rest }) => react.createElement('button', { type: 'button', ...rest }, children),
-  Switch: () => react.createElement('input', { type: 'checkbox', readOnly: true }),
+  // Mirror the host Switch contract: a button that reports the state the click asks for.
+  Switch: ({ checked, onChange, label, disabled }) => react.createElement('input', {
+    type: 'checkbox', checked, readOnly: true, disabled, 'aria-label': label,
+    onClick: () => { onChange(!checked) },
+  }),
   IconApiOutlineRegular: () => react.createElement('svg', { 'aria-hidden': 'true' }),
 };
 
@@ -324,10 +328,15 @@ check(
   negotiationText.includes(zhDict['managed.negotiation.revision'].replace('{revision}', '2025-11-25')),
   negotiationText.slice(0, 240),
 );
-check(
-  'the card states the declared extension',
+check('the card states the declared extension',
   negotiationText.includes(zhDict['managed.negotiation.extensions'].replace('{list}', 'skills')),
   negotiationText.slice(0, 240),
+);
+const connectedPill = win.document.querySelector('[data-state="connected"][title]');
+check(
+  'the connected pill says what it does not promise',
+  connectedPill?.getAttribute('title') === zhDict['managed.state.connectedHint'],
+  String(connectedPill?.getAttribute('title')),
 );
 check('no skills request before the disclosure is opened', skillsCalls.length === 0, String(skillsCalls.length));
 
@@ -393,6 +402,109 @@ check('the example names the accepted transport', exampleServer?.type === 'strea
 check('the example shows where credentials go', exampleServer?.headers?.Authorization === 'Bearer <token>');
 check('the example points at a replaceable endpoint', typeof exampleServer?.url === 'string' && exampleServer.url.includes('example.com'));
 await act(async () => { importRoot.unmount(); });
+
+// ---------------------------------------------------------------------------------------------
+// 6. Toggling a server: one retry on a refused write, then a visible failure.
+// ---------------------------------------------------------------------------------------------
+/** Mutable form stand-in: records writes, refuses the first N, publishes accepted values. */
+const makeForm = ({ refusals = 0, writable = true } = {}) => {
+  let rows = [{ id: 'server-1', serverName: 'demo', enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: 'http://127.0.0.1:9/mcp', headers: {}, headerRefs: {} }];
+  let snapshot = { status: 'ready', writable, revision: 1, base: undefined, user: undefined, value: { servers: rows } };
+  const listeners = new Set();
+  const publish = () => {
+    snapshot = { ...snapshot, revision: snapshot.revision + 1, value: { servers: rows } };
+    for (const listener of listeners) listener();
+  };
+  return {
+    calls: [],
+    refusals,
+    getSnapshot: () => snapshot,
+    subscribe: (listener) => { listeners.add(listener); return () => { listeners.delete(listener) } },
+    async set(field, value) {
+      this.calls.push(['set', field, value]);
+      if (this.refusals > 0) { this.refusals -= 1; return false }
+      rows = value;
+      publish();
+      return true;
+    },
+    async mutate(ops) {
+      this.calls.push(['mutate', ops]);
+      if (this.refusals > 0) { this.refusals -= 1; return false }
+      for (const op of ops) {
+        if (op.op !== 'set' || op.path[0] !== 'servers' || op.path[2] === undefined) continue;
+        rows = rows.map((row, index) => index === Number(op.path[1]) ? { ...row, [op.path[2]]: op.value } : row);
+      }
+      publish();
+      return true;
+    },
+  };
+};
+const renderPage = async (form, manager) => {
+  const mount = createRoot(win.document.getElementById('root'));
+  await act(async () => {
+    mount.render(react.createElement(pageSection.component, {
+      managedForm: form, remote: ctx.remote, statusApi, managerApi: manager, t, locale: 'settings.mcp',
+    }));
+  });
+  await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
+  return mount;
+};
+/** Press the card's enable switch; the stub mirrors the host's `onChange(!checked)`. */
+const pressSwitch = async () => {
+  const toggleInput = win.document.querySelector('input[aria-label="' + zhDict['managed.enabled'] + '"]');
+  if (toggleInput === null) return undefined;
+  await act(async () => { toggleInput.dispatchEvent(new win.MouseEvent('click', { bubbles: true })); });
+  await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
+  return win.document.querySelector('input[aria-label="' + zhDict['managed.enabled'] + '"]');
+};
+
+const happyForm = makeForm();
+const happyRoot = await renderPage(happyForm);
+const happySwitch = await pressSwitch();
+check('a toggle writes the single field, not the whole section', happyForm.calls.length === 1 && happyForm.calls[0][0] === 'mutate', JSON.stringify(happyForm.calls.map((call) => call[0])));
+check('the path write names the server index and field', JSON.stringify(happyForm.calls[0]?.[1]) === JSON.stringify([{ op: 'set', path: ['servers', '0', 'enabled'], value: false }]), JSON.stringify(happyForm.calls[0]?.[1]));
+check('a settled toggle turns the server off', happySwitch?.checked === false, String(happySwitch?.checked));
+await act(async () => { happyRoot.unmount(); });
+
+const retryForm = makeForm({ refusals: 1 });
+const retryRoot = await renderPage(retryForm);
+const retriedSwitch = await pressSwitch();
+check('a refused write is retried once', retryForm.calls.length === 2, JSON.stringify(retryForm.calls.length));
+check('the retried write turns the server off', retriedSwitch?.checked === false, String(retriedSwitch?.checked));
+check('the retried write leaves no error behind', !win.document.body.textContent.includes(zhDict['managed.error.save']));
+await act(async () => { retryRoot.unmount(); });
+
+const refusingForm = makeForm({ refusals: 2 });
+const refusingRoot = await renderPage(refusingForm);
+const refusedSwitch = await pressSwitch();
+check('two refusals stop at two attempts', refusingForm.calls.length === 2, JSON.stringify(refusingForm.calls.length));
+check('a refused toggle reverts the switch', refusedSwitch?.checked === true, String(refusedSwitch?.checked));
+check('a refused toggle says so', win.document.body.textContent.includes(zhDict['managed.error.save']));
+await act(async () => { refusingRoot.unmount(); });
+
+const readOnlyRoot = await renderPage(makeForm({ writable: false }));
+check('a read-only document explains itself', win.document.body.textContent.includes(zhDict['managed.readOnly']));
+await act(async () => { readOnlyRoot.unmount(); });
+
+// A tool probe that the Host classifies as timed-out must say so, not fall back to the generic
+// "connected but unreadable" line.
+statusApi.list = async () => ({
+  ok: true,
+  value: [{
+    id: 'status-probe', managedServerId: 'server-1', serverName: 'demo', transport: 'streamable-http',
+    state: 'connected', toolCount: 3,
+  }],
+});
+const timedOutManager = { check: async () => ({ ok: true, value: { state: 'timed-out' } }) };
+const probeRoot = await renderPage(makeForm(), timedOutManager);
+await press(zhDict['managed.tools.show']);
+await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
+check(
+  'a failed tool probe names the classified reason',
+  win.document.body.textContent.includes(zhDict['managed.check.timed-out']),
+  win.document.body.textContent.slice(-260),
+);
+await act(async () => { probeRoot.unmount(); });
 
 console.log(`\n${failures.length === 0 ? 'all assertions passed' : `${failures.length} assertion(s) failed`}`);
 process.exitCode = failures.length === 0 ? 0 : 1;
