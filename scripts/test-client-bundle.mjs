@@ -443,8 +443,9 @@ const makeForm = ({ writable = true, hostRevision = 1, snapshotRevision = hostRe
   };
 };
 /** Host describe face: reports the document revision a write must fence against. */
-const describeApi = (revision) => ({
+const describeApi = (revision, mutate) => ({
   describe: async () => ({ ok: true, value: { writable: true, namespaces: [{ ns: 'mcp-server-manager', revision }] } }),
+  mutate: mutate ?? (async () => ({ ok: false, error: { message: 'configuration entry is no longer active' } })),
 });
 const renderPage = async (form, manager, settings) => {
   const mount = createRoot(win.document.getElementById('root'));
@@ -493,7 +494,24 @@ check(
   win.document.body.textContent.includes(zhDict['managed.error.fence'].replace('{form}', '1').replace('{host}', '1').replace('{writable}', 'true')),
   win.document.body.textContent.slice(0, 200),
 );
+check(
+  'a refused toggle reports what the Host said',
+  win.document.body.textContent.includes(zhDict['managed.error.reason'].replace('{reason}', 'configuration entry is no longer active')),
+  win.document.body.textContent.slice(0, 300),
+);
 await act(async () => { refusingRoot.unmount(); });
+
+// When the form refuses but the raw face accepts, the edit must land and no error may show.
+const rawCalls = [];
+const rawFallback = describeApi(1, async (namespace, ops, revision) => {
+  rawCalls.push([namespace, ops, revision]);
+  return { ok: true };
+});
+const rawRoot = await renderPage(makeForm({ rejectAll: true }), undefined, rawFallback);
+await pressSwitch();
+check('a refused form is retried on the raw settings face', rawCalls.length === 1 && rawCalls[0][0] === 'mcp-server-manager', JSON.stringify(rawCalls.map((call) => call[0])));
+check('the raw fallback leaves no error behind', !win.document.body.textContent.includes(zhDict['managed.error.save']), win.document.body.textContent.slice(0, 200));
+await act(async () => { rawRoot.unmount(); });
 
 const readOnlyRoot = await renderPage(makeForm({ writable: false }), undefined, describeApi(1));
 check('a read-only document explains itself', win.document.body.textContent.includes(zhDict['managed.readOnly']));
