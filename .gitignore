@@ -14,3 +14,6 @@ MEMORY.md
 
 # Staging copy used by `node scripts/pack.mjs`
 .pack-staging/
+
+# Scratch directory for one-off probes (never published)
+.tmp/

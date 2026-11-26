@@ -5,7 +5,7 @@ import type {
   TypertRemoteMethod,
 } from '@deepseek-ai/dsh-typert-protocol'
 import type { ChromeConnectionCheck, ManagedMcpCheck, ManagedMcpServer, McpServerStatus } from '@deepseek-ai/dsh-mcp-client/types'
-import type { ManagedMcpResourceContent, ManagedMcpResourceResult, ManagedMcpResourceSummary, ManagedMcpResourceTemplateSummary, ManagedMcpRestartResult } from '@deepseek-ai/dsh-mcp-client/managed'
+import type { ManagedMcpResourceContent, ManagedMcpResourceResult, ManagedMcpResourceSummary, ManagedMcpResourceTemplateSummary, ManagedMcpRestartResult, ManagedMcpSkillSummary } from '@deepseek-ai/dsh-mcp-client/managed'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$6368726f6d654d6370 {
@@ -19,6 +19,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     listResources: (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resources: readonly ManagedMcpResourceSummary[]; nextCursor?: string }>>>
     listResourceTemplates: (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>>
     readResource: (serverId: string, uri: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>>
+    listSkills: (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ skills: readonly ManagedMcpSkillSummary[]; nextCursor?: string }>>>
     restart: (serverId: string) => Promise<RemoteResult<ManagedMcpRestartResult>>
   }
   interface TypertRemoteMap {
@@ -28,6 +29,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'mcpServerManager/listResources': (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resources: readonly ManagedMcpResourceSummary[]; nextCursor?: string }>>>
     'mcpServerManager/listResourceTemplates': (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>>
     'mcpServerManager/readResource': (serverId: string, uri: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>>
+    'mcpServerManager/listSkills': (serverId: string, cursor?: string) => Promise<RemoteResult<ManagedMcpResourceResult<{ skills: readonly ManagedMcpSkillSummary[]; nextCursor?: string }>>>
     'mcpServerManager/restart': (serverId: string) => Promise<RemoteResult<ManagedMcpRestartResult>>
   }
   interface TypertRemoteNamespaceMap {
@@ -44,6 +46,7 @@ export declare const TYPERT_REMOTE: TypertRemoteInfo<{
   readonly 'mcpServerManager/listResources': TypertRemoteMethod<{ readonly 'serverId': string; readonly 'cursor'?: string }, ManagedMcpResourceResult<{ resources: readonly ManagedMcpResourceSummary[]; nextCursor?: string }>>
   readonly 'mcpServerManager/listResourceTemplates': TypertRemoteMethod<{ readonly 'serverId': string; readonly 'cursor'?: string }, ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>
   readonly 'mcpServerManager/readResource': TypertRemoteMethod<{ readonly 'serverId': string; readonly 'uri': string }, ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>
+  readonly 'mcpServerManager/listSkills': TypertRemoteMethod<{ readonly 'serverId': string; readonly 'cursor'?: string }, ManagedMcpResourceResult<{ skills: readonly ManagedMcpSkillSummary[]; nextCursor?: string }>>
   readonly 'mcpServerManager/restart': TypertRemoteMethod<{ readonly 'serverId': string }, ManagedMcpRestartResult>
 }>
 export default TYPERT_REMOTE

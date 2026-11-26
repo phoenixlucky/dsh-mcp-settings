@@ -4,7 +4,8 @@ import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
 import type { McpServerStatus } from './types.ts';
 import type { ToolExecution } from '@deepseek-ai/dsh-tools';
 
-export type ManagedMcpResourceRequest = { method: 'resources/list' | 'resources/templates/list'; cursor?: string }
+/** One connection-scoped request the manager may route to a live managed server. */
+export type ManagedMcpResourceRequest = { method: 'resources/list' | 'resources/templates/list' | 'skills/list'; cursor?: string }
   | { method: 'resources/read'; uri: string }
 export interface ManagedMcpResourceProvider {
     request(request: ManagedMcpResourceRequest, execution: ToolExecution): Promise<unknown>
@@ -30,7 +31,7 @@ export declare class McpClientStatusCatalog extends TypertRemoteService {
      * @returns Functions that update or remove the registered row.
      */
     register(input: Omit<McpServerStatus, 'id'>, managedServerId?: string): {
-        update(patch: Pick<McpServerStatus, 'state' | 'toolCount' | 'tools'>): void;
+        update(patch: Pick<McpServerStatus, 'state' | 'toolCount' | 'tools' | 'protocolRevision' | 'serverVersion' | 'capabilities' | 'extensions'>): void;
         setResourceProvider(provider: ManagedMcpResourceProvider | undefined): void;
         dispose(): void;
     };

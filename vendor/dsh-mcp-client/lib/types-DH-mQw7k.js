@@ -12,6 +12,18 @@ import { appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { isImageAdmissionError } from "@deepseek-ai/dsh-attachment";
 import { assertSupportedJsonSchema } from "@deepseek-ai/dsh-tools";
+import { declaresSkills, summarizeNegotiation } from "./negotiation.js";
+/** Standard Schema validator for one `skills/list` result from the server. */
+const skillsListResultSchema = {
+	"~standard": {
+		version: 1,
+		vendor: "dsh-mcp-client",
+		validate(value) {
+			if (typeof value !== "object" || value === null || Array.isArray(value) || !Array.isArray(value.skills)) return { issues: [{ message: "skills/list result must carry a skills array" }] };
+			return { value };
+		}
+	}
+};
 /** Root-hidden symbol used by cordis 4.1 to expose the root context. */
 const ROOT_CONTEXT = Symbol.for("cordis.root");
 /**
@@ -521,7 +533,7 @@ function resolveReconnectPolicy(config, path) {
 * @param ctx - Cordis context providing the `tools` registry and logger.
 * @param config - Resolved plugin config selecting the transport and server identity.
 * @param policy - Resolved reconnect policy from {@link resolveReconnectPolicy}.
-* @param publishStatus - Receives connection state and tool-count updates.
+* @param publishStatus - Receives connection state, tool count, and the negotiated summary.
 * @returns Handle with a `ready` promise for startup-await and a `dispose` for teardown.
 */
 function startConnection(ctx, config, policy, publishStatus = () => {}) {
@@ -553,8 +565,10 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 	let connectedAt;
 	/** The real error from the first connection attempt, for startup-await diagnostics. */
 	let firstAttemptError;
+	/** What the current generation negotiated; cleared whenever that generation goes away. */
+	let negotiationFacts;
 	function publish(state) {
-		publishStatus(state, disposers.size, state === "connected" ? toolSummaries : []);
+		publishStatus(state, disposers.size, state === "connected" ? toolSummaries : [], state === "connected" ? negotiationFacts : void 0);
 	}
 	/** A generation may act only while it is the current one on a live plugin. */
 	const isCurrent = (generation) => !disposed && client === generation;
@@ -588,6 +602,7 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 		if (!isCurrent(generation)) return;
 		client = void 0;
 		closeClient = void 0;
+		negotiationFacts = void 0;
 		publish("disconnected");
 		scheduleReconnect();
 	}
@@ -718,6 +733,13 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 				if (!await closeGeneration()) ctx.logger.error(incompleteDisposalMessage);
 				return;
 			}
+			// Record what this generation negotiated before the tool sync, so the status row can
+			// publish the revision and declared extensions together with the connected state.
+			negotiationFacts = summarizeNegotiation({
+				protocolVersion: generation.getNegotiatedProtocolVersion?.(),
+				serverInfo: typeof generation.getServerInfo === "function" ? generation.getServerInfo() : void 0,
+				capabilities: generation.getServerCapabilities()
+			});
 			const serverText = generation.getInstructions()?.trimEnd() ?? "";
 			instructions = serverText ? `### MCP server: ${config.serverName}\n\n${serverText}` : "";
 			if (Buffer.byteLength(instructions) > maxInstructionBytes) throw new Error(`${label}: server instructions exceed maxInstructionBytes (${maxInstructionBytes})`);
@@ -762,13 +784,19 @@ function startConnection(ctx, config, policy, publishStatus = () => {}) {
 				case "resources/list": return await generation.listResources(request.cursor === void 0 ? void 0 : { cursor: request.cursor }, options);
 				case "resources/templates/list": return await generation.listResourceTemplates(request.cursor === void 0 ? void 0 : { cursor: request.cursor }, options);
 				case "resources/read": return await generation.readResource({ uri: request.uri }, options);
-				/* v8 ignore next 2 -- resource requests are the closed, typed tool operation union */
+				/* Skill names are read only after the server declared the extension; a server that never
+				declared it gets no request at all, and the manager reports the row as unavailable. */
+				case "skills/list":
+					if (!declaresSkills(negotiationFacts)) throw new Error(`${label}: server did not declare the skills extension`);
+					return await generation.request({ method: "skills/list", params: request.cursor === void 0 ? {} : { cursor: request.cursor } }, skillsListResultSchema, options);
+				/* v8 ignore next 2 -- connection requests are the closed, typed operation union */
 				default: return assertNever(request);
 			}
 		} },
 		async dispose() {
 			disposed = true;
 			serverInstructions = "";
+			negotiationFacts = void 0;
 			publish("disconnected");
 			if (reconnectTimer !== void 0) {
 				clearTimeout(reconnectTimer);
@@ -1052,11 +1080,17 @@ async function apply(ctx, config) {
 		names.add(config.serverName);
 		return () => void names.delete(config.serverName);
 	}, "mcp-client.serverName");
-	const connection = startConnection(ctx, config, reconnect, (state, toolCount, tools) => {
+	const connection = startConnection(ctx, config, reconnect, (state, toolCount, tools, negotiation) => {
 		status.update({
 			state,
 			toolCount,
-			tools
+			tools,
+			// A reconnect can negotiate a different server entirely, so the summary replaces the
+			// previous one instead of merging with it.
+			protocolRevision: negotiation?.protocolRevision,
+			serverVersion: negotiation?.serverVersion,
+			capabilities: negotiation?.capabilities,
+			extensions: negotiation?.extensions
 		});
 	});
 	status.setResourceProvider(connection.resources);

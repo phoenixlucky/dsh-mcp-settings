@@ -6,6 +6,7 @@ import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
 import type { ManagedMcpCheck, ManagedMcpServer } from '@deepseek-ai/dsh-mcp-client'
 import { McpResourcesPanel } from './McpResources.tsx'
+import { McpSkillsPanel } from './McpSkills.tsx'
 import css from './mcp-settings.module.css'
 
 type Remote = ClientContext['remote']
@@ -22,6 +23,14 @@ interface StatusRow {
   state: Exclude<ServerState, 'disabled' | 'unknown'>
   toolCount: number
   tools?: readonly { name: string, description: string }[]
+  /** Protocol revision the connection negotiated, when the Host reports one. */
+  protocolRevision?: string
+  /** `serverInfo.version` the server announced. */
+  serverVersion?: string
+  /** Declared capability names, excluding extensions. */
+  capabilities?: readonly string[]
+  /** Declared extension identifiers, e.g. `io.modelcontextprotocol/skills`. */
+  extensions?: readonly string[]
 }
 /** One bounded, user-initiated tool inventory probe for a connected row. */
 interface ToolProbe {
@@ -41,6 +50,7 @@ export interface McpManagerApi {
   listResources(serverId: string, cursor?: string): Promise<RemoteReply<{ state: 'ready'; value: { resources: readonly { uri: string; name: string; title?: string; description?: string; mimeType?: string; size?: number }[]; nextCursor?: string } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
   listResourceTemplates(serverId: string, cursor?: string): Promise<RemoteReply<{ state: 'ready'; value: { resourceTemplates: readonly { uriTemplate: string; name: string; title?: string; description?: string; mimeType?: string }[]; nextCursor?: string } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
   readResource(serverId: string, uri: string): Promise<RemoteReply<{ state: 'ready'; value: { contents: readonly ({ kind: 'text'; uri: string; mimeType?: string; text: string } | { kind: 'binary'; uri: string; mimeType?: string; size: number })[] } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
+  listSkills(serverId: string, cursor?: string): Promise<RemoteReply<{ state: 'ready'; value: { skills: readonly { name: string; uri?: string; description: string }[]; nextCursor?: string } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
   restart(serverId: string): Promise<RemoteReply<{ state: 'scheduled' | 'unavailable' }>>
 }
 interface Injected {
@@ -72,6 +82,34 @@ function emptyDraft(): Draft {
 
 function toolProbeSignature(server: ManagedMcpServer, status?: Pick<StatusRow, 'id' | 'connectionRevision'>): string {
   return `${status?.id ?? ''}:${status?.connectionRevision ?? ''}:${JSON.stringify(server)}`
+}
+
+/** Extension identifier for Skills over MCP. */
+const SKILLS_EXTENSION = 'io.modelcontextprotocol/skills'
+
+/**
+ * Short label for one declared extension identifier.
+ *
+ * A server may declare any id, so unknown ones are shown verbatim rather than mapped onto a
+ * guessed capability; the full id stays in the title attribute.
+ * @param id - Extension identifier as the server declared it.
+ * @returns The last path segment, which is the conventional short name.
+ */
+function extensionLabel(id: string): string {
+  const slash = id.lastIndexOf('/')
+  return slash === -1 ? id : id.slice(slash + 1)
+}
+
+/**
+ * Whether one live status row declared Skills over MCP.
+ *
+ * A declaration is only a precondition: the list is still read on demand, and a server that
+ * declared the extension may legitimately publish nothing.
+ * @param row - Live status row for the server, when one exists.
+ * @returns True only when the extension id appears in the declared extensions.
+ */
+function declaresSkills(row: StatusRow | undefined): boolean {
+  return row?.extensions?.includes(SKILLS_EXTENSION) === true
 }
 
 function toDraft(server: ManagedMcpServer): Draft {
@@ -141,6 +179,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   const [transportFilter, setTransportFilter] = useState<TransportFilter>('all')
   const [expandedToolIds, setExpandedToolIds] = useState<ReadonlySet<string>>(() => new Set())
   const [resourceOpenIds, setResourceOpenIds] = useState<ReadonlySet<string>>(() => new Set())
+  const [skillsOpenIds, setSkillsOpenIds] = useState<ReadonlySet<string>>(() => new Set())
   const [toolProbes, setToolProbes] = useState<Readonly<Record<string, ToolProbe>>>({})
   const [restartingIds, setRestartingIds] = useState<ReadonlySet<string>>(() => new Set())
   const [restartResults, setRestartResults] = useState<Readonly<Record<string, 'pending' | 'connected' | 'disconnected' | 'unavailable' | 'failed'>>>({})
@@ -578,6 +617,13 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     else next.add(id)
     return next
   })
+  /** The skills list is likewise a card section with Host-side state only while it is open. */
+  const toggleSkills = (id: string) => setSkillsOpenIds(current => {
+    const next = new Set(current)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    return next
+  })
   const displayedServers = servers.filter(server => matchingServers.includes(server) || server.id === activeEditorId)
   const hasFilters = searchQuery !== '' || stateFilter !== 'all' || transportFilter !== 'all'
   const isEditingExisting = servers.some(server => server.id === draft.id)
@@ -768,6 +814,11 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
         const resourcesOpen = resourcesConnected && resourceOpenIds.has(server.id)
         const resourcesPanelId = `mcp-resources-${server.id}`
         const resourcesRevision = `${status?.id ?? ''}:${status?.connectionRevision ?? ''}`
+        const skillsDeclared = declaresSkills(status)
+        const skillsOpen = resourcesConnected && skillsOpenIds.has(server.id)
+        const skillsPanelId = `mcp-skills-${server.id}`
+        const declaredExtensions = status?.extensions ?? []
+        const declaredCapabilities = status?.capabilities ?? []
         return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
           <div className={css.serverMain}>
             <span className={css.stateDot} data-state={state} aria-hidden="true" />
@@ -788,10 +839,19 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
                     .replace('{tokens}', cost.tokens.toLocaleString())}
                 </>}
               </p>
+              {(status?.protocolRevision !== undefined || declaredExtensions.length > 0) && <p className={css.negotiation}>
+                {status?.protocolRevision !== undefined && <span>{t('managed.negotiation.revision').replace('{revision}', status.protocolRevision)}</span>}
+                {status?.protocolRevision !== undefined && declaredExtensions.length > 0 && <span className={css.separator} aria-hidden="true">·</span>}
+                {declaredExtensions.length > 0 && <span title={declaredExtensions.join('\n')}>
+                  {t('managed.negotiation.extensions').replace('{list}', declaredExtensions.map(extensionLabel).join(', '))}
+                </span>}
+                {declaredCapabilities.length > 0 && <span className={css.srOnly}>{declaredCapabilities.join(', ')}</span>}
+              </p>}
             </div>
           </div>
           <div className={css.serverActions}>
             <Button variant="ghost" size="sm" disabled={!resourcesConnected || managerApi === undefined} aria-expanded={resourcesOpen} aria-controls={resourcesOpen ? resourcesPanelId : undefined} onClick={() => { toggleResourceBrowser(server.id) }}>{t(resourcesOpen ? 'managed.resources.hide' : 'managed.resources.show')}</Button>
+            <Button variant="ghost" size="sm" disabled={!skillsOpen && (!resourcesConnected || managerApi === undefined)} aria-expanded={skillsOpen} aria-controls={skillsOpen ? skillsPanelId : undefined} title={skillsDeclared ? undefined : t('managed.skills.undeclared')} onClick={() => { toggleSkills(server.id) }}>{t(skillsOpen ? 'managed.skills.hide' : 'managed.skills.show')}</Button>
             <Button variant="outline" size="sm" disabled={busy || restarting || !server.enabled || managerApi === undefined} onClick={() => { void restartServer(server) }}>{t(restarting ? 'managed.restart.loading' : 'managed.restart.action')}</Button>
             <Button variant="ghost" size="sm" disabled={busy || status === undefined || state !== 'connected'} aria-expanded={toolsExpanded} onClick={() => {
               const next = new Set(expandedToolIds)
@@ -820,6 +880,7 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
             </details>
           </div>
           {resourcesOpen && <McpResourcesPanel key={resourcesRevision} server={server} managerApi={managerApi} connected={resourcesConnected} panelId={resourcesPanelId} onClose={() => { toggleResourceBrowser(server.id) }} t={t} />}
+          {skillsOpen && <McpSkillsPanel key={`skills:${resourcesRevision}`} server={server} managerApi={managerApi} connected={resourcesConnected} declared={skillsDeclared} panelId={skillsPanelId} onClose={() => { toggleSkills(server.id) }} t={t} />}
           {restartResults[server.id] !== undefined && restartResults[server.id] !== 'pending' && <p className={restartResults[server.id] === 'connected' ? css.status : css.statusProblem} role="status">{t(`managed.restart.${restartResults[server.id]}` as never)}</p>}
           {toolsExpanded && <section className={css.toolInventory} aria-label={`${server.serverName} ${t('managed.tools.title')}`}>
             {inventory !== undefined && inventory.length > 0 && <p>{t('managed.tools.namesHint')}</p>}

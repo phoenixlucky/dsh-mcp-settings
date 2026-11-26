@@ -4,6 +4,7 @@ import { credentialRef } from "@deepseek-ai/dsh-credentials";
 import { Client } from "@modelcontextprotocol/client";
 import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 import z from "@deepseek-ai/schemastery";
+import { declaresSkills, projectSkillsList } from "./negotiation.js";
 //#region lib/types/managed.js
 /** Host manager for configurable Streamable HTTP and stdio MCP servers. */
 var __runInitializers = function(thisArg, initializers, value) {
@@ -113,7 +114,7 @@ let ManagedMcpServerManager = (() => {
 	let _classSuper = TypertRemoteService;
 	let _instanceExtraInitializers = [];
 	let _check_decorators;
-		let _remoteMethods = ["listResources", "listResourceTemplates", "readResource", "restart"];
+		let _remoteMethods = ["listResources", "listResourceTemplates", "readResource", "restart", "listSkills"];
 	return class ManagedMcpServerManager extends _classSuper {
 		static {
 			const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(_classSuper[Symbol.metadata] ?? null) : void 0;
@@ -218,6 +219,26 @@ let ManagedMcpServerManager = (() => {
 		readResource(serverId, uri) {
 			return this.resourceRequest(serverId, { method: "resources/read", uri });
 		}
+		/**
+		* List one page of skills from an enabled, connected server that declared the extension.
+		*
+		* The declaration is checked against the published status row before anything reaches the
+		* wire: skills are an extension, so a server that never declared it is told apart from one
+		* that declared it and published an empty list.
+		* @param serverId - Stable settings identity.
+		* @param cursor - Opaque pagination cursor from a previous page.
+		* @returns A bounded page of skill names and descriptions, or a failure classification.
+		*/
+		listSkills(serverId, cursor) {
+			let row;
+			try {
+				row = this.statusCatalog()?.list?.().find((candidate) => candidate.managedServerId === serverId);
+			} catch {
+				return Promise.resolve({ state: "unavailable" });
+			}
+			if (!declaresSkills(row)) return Promise.resolve({ state: "unavailable" });
+			return this.resourceRequest(serverId, { method: "skills/list", ...cursor === void 0 ? {} : { cursor } });
+		}
 		/** Restart one enabled server and return its observed post-reconcile state. */
 		async restart(serverId) {
 			const servers = configuredServers(this.config);
@@ -242,6 +263,9 @@ let ManagedMcpServerManager = (() => {
 				if (this.active.get(serverId) !== active || after === void 0 || after.state !== "connected" || after.revision !== before.revision) return { state: "unavailable" };
 				if (controller.signal.aborted) return { state: "timed-out" };
 				if (request.method === "resources/read" && serializedBytes(raw) > MAX_RESOURCE_RESPONSE_BYTES) return { state: "too-large" };
+				// A listing is capped too: a server that answers with a huge page is refused before it
+				// reaches the settings page's state.
+				if (request.method === "skills/list" && serializedBytes(raw) > MAX_RESOURCE_RESPONSE_BYTES) return { state: "too-large" };
 				const value = projectResourceResult(request.method, raw);
 				return value === void 0 ? { state: "failed" } : { state: "ready", value };
 			} catch (error) {
@@ -659,7 +683,7 @@ function serializedBytes(value) {
 function isTimeoutError(error) {
 	return typeof error === "object" && error !== null && (error.name === "TimeoutError" || error.code === "ETIMEDOUT");
 }
-/** Keep only the protocol metadata needed by the resource browser. */
+/** Keep only the protocol metadata needed by the resource browser and the skills list. */
 function projectResourceResult(method, value) {
 	if (typeof value !== "object" || value === null || Array.isArray(value)) return void 0;
 	const copyOptional = (source, target, keys) => {
@@ -668,6 +692,11 @@ function projectResourceResult(method, value) {
 			if (typeof item === "string") target[key] = item;
 		}
 	};
+	if (method === "skills/list") {
+		const page = projectSkillsList(value);
+		if (page === void 0) return void 0;
+		return { skills: page.skills, ...page.nextCursor === void 0 ? {} : { nextCursor: page.nextCursor } };
+	}
 	if (method === "resources/list" || method === "resources/templates/list") {
 		const key = method === "resources/list" ? "resources" : "resourceTemplates";
 		if (!Array.isArray(value[key])) return void 0;

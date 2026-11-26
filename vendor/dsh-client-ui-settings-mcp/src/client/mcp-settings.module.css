@@ -317,6 +317,47 @@
   padding-inline: 4px;
 }
 
+/**
+ * What a connection negotiated: revision and declared extensions.
+ *
+ * Kept on its own line under the transport/tool metadata because it describes the protocol
+ * handshake rather than the tools, and a long extension list must wrap instead of pushing the card
+ * meta line.
+ */
+.negotiation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 2px 0 0;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+}
+
+.skillHint {
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+}
+
+.skillList {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skillList > li {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.skillList code {
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+  overflow-wrap: anywhere;
+}
+
 .serverActions {
   display: flex;
   flex-wrap: wrap;

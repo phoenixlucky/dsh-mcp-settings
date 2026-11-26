@@ -18,6 +18,10 @@ const _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema = () => (_d
   'source': z.string().readonly(),
   'state': z.union([z.literal("connecting"), z.literal("connected"), z.literal("reconnecting"), z.literal("disconnected")]).readonly(),
   'toolCount': z.number().readonly(),
+  'protocolRevision': z.string().optional().readonly(),
+  'serverVersion': z.string().optional().readonly(),
+  'capabilities': z.array(z.string()).optional().readonly(),
+  'extensions': z.array(z.string()).optional().readonly(),
   'tools': z.array(z.object({
     'name': z.string().readonly(),
     'description': z.string().readonly(),
@@ -85,6 +89,7 @@ const _deepseek_ai_dsh_mcp_client_mcpServerManager_check_parameter_0_strict$sche
 
 const resourceSummarySchema = () => z.object({ uri: z.string(), name: z.string(), title: z.string().optional(), description: z.string().optional(), mimeType: z.string().optional(), size: z.number().optional() })
 const resourceTemplateSummarySchema = () => z.object({ uriTemplate: z.string(), name: z.string(), title: z.string().optional(), description: z.string().optional(), mimeType: z.string().optional() })
+const skillSummarySchema = () => z.object({ name: z.string(), uri: z.string().optional(), description: z.string() })
 const resourceResultSchema = (value) => z.union([z.object({ state: z.literal('ready'), value }), z.object({ state: z.union([z.literal('unavailable'), z.literal('timed-out'), z.literal('failed'), z.literal('too-large')]) })])
 
 const $remote = createTypertRemoteInfo({
@@ -116,7 +121,7 @@ const $remote = createTypertRemoteInfo({
         typeSymbol: '@deepseek-ai/dsh-mcp-client#mcpClientStatus/list:result',
         create: _deepseek_ai_dsh_mcp_client_mcpClientStatus_list_result$schema,
         description: 'The current server status rows.',
-        jsonSchema: {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"managedServerId":{"type":"string"},"connectionRevision":{"type":"number"},"serverName":{"type":"string"},"transport":{"type":"string","enum":["streamable-http","stdio"]},"source":{"type":"string"},"state":{"type":"string","enum":["connecting","connected","reconnecting","disconnected"]},"toolCount":{"type":"number"},"tools":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"}},"required":["name","description"],"additionalProperties":true}}},"required":["id","serverName","transport","source","state","toolCount","tools"],"additionalProperties":true}},
+        jsonSchema: {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"managedServerId":{"type":"string"},"connectionRevision":{"type":"number"},"serverName":{"type":"string"},"transport":{"type":"string","enum":["streamable-http","stdio"]},"source":{"type":"string"},"state":{"type":"string","enum":["connecting","connected","reconnecting","disconnected"]},"toolCount":{"type":"number"},"protocolRevision":{"type":"string"},"serverVersion":{"type":"string"},"capabilities":{"type":"array","items":{"type":"string"}},"extensions":{"type":"array","items":{"type":"string"}},"tools":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"}},"required":["name","description"],"additionalProperties":true}}},"required":["id","serverName","transport","source","state","toolCount","tools"],"additionalProperties":true}},
       },
       sourceLocation: {"file":"packages/mcp/mcp-client/src/status.ts","line":25,"column":3},
     },
@@ -178,6 +183,15 @@ const $remote = createTypertRemoteInfo({
       ],
       result: { mode: 'strict', typeSymbol: '@deepseek-ai/dsh-mcp-client/managed#ManagedMcpResourceResult', create: () => resourceResultSchema(z.object({ contents: z.array(z.union([z.object({ kind: z.literal('text'), uri: z.string(), mimeType: z.string().optional(), text: z.string() }), z.object({ kind: z.literal('binary'), uri: z.string(), mimeType: z.string().optional(), size: z.number() })])) })), description: 'Text content or binary metadata with payload omitted.', jsonSchema: { oneOf: [{ type: 'object', properties: { state: { const: 'ready' }, value: { type: 'object', properties: { contents: { type: 'array', items: { type: 'object' } } }, required: ['contents'] } }, required: ['state', 'value'] }, { type: 'object', properties: { state: { enum: ['unavailable', 'timed-out', 'failed', 'too-large'] } }, required: ['state'] }] } },
       sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":156,"column":3},
+    },
+    'mcpServerManager/listSkills': {
+      service: 'mcpServerManager', description: 'List one page of skill names and descriptions from a server that declared the skills extension.', invocation: { kind: 'direct' },
+      parameters: [
+        { name: 'serverId', description: 'Stable settings identity.', source: 'json', codec: { mode: 'strict', typeSymbol: 'string', create: () => z.string() }, strictCodec: { mode: 'strict', typeSymbol: 'string', create: () => z.string() } },
+        { name: 'cursor', description: 'Opaque pagination cursor.', source: 'json', optional: true, codec: { mode: 'strict', typeSymbol: 'string | undefined', create: () => z.string().optional() }, strictCodec: { mode: 'strict', typeSymbol: 'string | undefined', create: () => z.string().optional() } },
+      ],
+      result: { mode: 'strict', typeSymbol: '@deepseek-ai/dsh-mcp-client/managed#ManagedMcpResourceResult', create: () => resourceResultSchema(z.object({ skills: z.array(skillSummarySchema()), nextCursor: z.string().optional() })), description: 'Skill names and descriptions with the next page cursor.', jsonSchema: { oneOf: [{ type: 'object', properties: { state: { const: 'ready' }, value: { type: 'object', properties: { skills: { type: 'array', items: { type: 'object' } }, nextCursor: { type: 'string' } }, required: ['skills'] } }, required: ['state', 'value'] }, { type: 'object', properties: { state: { enum: ['unavailable', 'timed-out', 'failed', 'too-large'] } }, required: ['state'] }] } },
+      sourceLocation: {"file":"packages/mcp/mcp-client/src/managed.ts","line":162,"column":3},
     },
     'mcpServerManager/restart': {
       service: 'mcpServerManager', description: 'Restart one enabled managed server.', invocation: { kind: 'direct' },

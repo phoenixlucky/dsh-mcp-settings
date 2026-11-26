@@ -7,6 +7,13 @@ export interface McpToolSummary {
     readonly name: string;
     readonly description: string;
 }
+/** Credential-safe summary of one skill a server declared and listed. */
+export interface McpSkillSummary {
+    readonly name: string;
+    /** Skill identity the server publishes alongside the name, when it has one. */
+    readonly uri?: string;
+    readonly description: string;
+}
 /** Credential-safe information displayed on an MCP server card. */
 export interface McpServerStatus {
     readonly id: string;
@@ -20,6 +27,14 @@ export interface McpServerStatus {
     readonly state: McpConnectionState;
     readonly toolCount: number;
     readonly tools: readonly McpToolSummary[];
+    /** Protocol revision this connection negotiated; absent when the server reported none. */
+    readonly protocolRevision?: string;
+    /** `serverInfo.version` the server announced. */
+    readonly serverVersion?: string;
+    /** Sorted capability names the server declared, excluding `extensions`. */
+    readonly capabilities?: readonly string[];
+    /** Sorted extension identifiers the server declared, e.g. `io.modelcontextprotocol/skills`. */
+    readonly extensions?: readonly string[];
 }
 /** Streamable HTTP server settings; secret header values remain in credentials. */
 export interface ManagedHttpServer {

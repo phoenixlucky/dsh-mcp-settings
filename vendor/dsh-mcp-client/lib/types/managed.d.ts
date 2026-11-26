@@ -47,6 +47,12 @@ export interface ManagedMcpResourceTemplateSummary {
     description?: string;
     mimeType?: string;
 }
+/** Names and descriptions of one skill the server listed; bodies are never read here. */
+export interface ManagedMcpSkillSummary {
+    name: string;
+    uri?: string;
+    description: string;
+}
 /** Resource content projected for the settings UI; binary payloads are omitted. */
 export type ManagedMcpResourceContent =
     | { kind: 'text'; uri: string; mimeType?: string; text: string }
@@ -108,6 +114,12 @@ export declare class ManagedMcpServerManager extends TypertRemoteService {
     listResourceTemplates(serverId: string, cursor?: string): Promise<ManagedMcpResourceResult<{ resourceTemplates: readonly ManagedMcpResourceTemplateSummary[]; nextCursor?: string }>>;
     /** Read one resource, omitting binary payload data and raw transport errors. */
     readResource(serverId: string, uri: string): Promise<ManagedMcpResourceResult<{ contents: readonly ManagedMcpResourceContent[] }>>;
+    /** List one page of skills from a server that declared the skills extension.
+     * @param serverId - Stable settings identity.
+     * @param cursor - Opaque pagination cursor from a previous page.
+     * @returns Bounded skill names and descriptions, or a failure classification.
+     */
+    listSkills(serverId: string, cursor?: string): Promise<ManagedMcpResourceResult<{ skills: readonly ManagedMcpSkillSummary[]; nextCursor?: string }>>;
     /** Restart one enabled managed server and return its observed state. */
     restart(serverId: string): Promise<ManagedMcpRestartResult>;
     /** Tell upgrade shims whether a managed row now owns this name.

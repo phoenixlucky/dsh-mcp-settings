@@ -89,6 +89,15 @@ export function readManagedServers(text) {
     const item = line.match(/^(\s*)-\s+(.*?)\s*$/);
     if (item) {
       const indent = item[1].length;
+      // A `- value` line under an open `key:` section is a list element of that key, not a new
+      // server row: `args:` serializes that way, and dropping those elements silently changed which
+      // command an audit spawned. A `key: value` pair still starts a row, and a Windows-style drive
+      // prefix (`E:/path`) is not a pair because a pair needs whitespace after the colon.
+      if (section !== null && indent > sectionIndent && !/^[A-Za-z_][\w-]*:\s/.test(item[2])) {
+        if (!Array.isArray(current[section])) current[section] = [];
+        current[section].push(item[2].replace(/^['"]|['"]$/g, ''));
+        continue;
+      }
       current = {};
       servers.push(current);
       section = null;

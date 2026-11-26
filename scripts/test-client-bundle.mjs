@@ -268,5 +268,111 @@ check('cost follows a 4 B tool list', secondText.includes('4 B'), secondText.sli
 check('previous estimate is gone', !secondText.includes('7 B'), secondText.slice(0, 240));
 await act(async () => { secondRoot.unmount(); });
 
+// ---------------------------------------------------------------------------------------------
+// 4. Negotiated revision, declared extensions, and the skills list.
+// ---------------------------------------------------------------------------------------------
+const zhDict = dictionaries['settings.mcp']?.zh ?? {};
+const enDict = dictionaries['settings.mcp']?.en ?? {};
+for (const key of ['managed.negotiation.revision', 'managed.negotiation.extensions', 'managed.skills.show', 'managed.skills.namesHint', 'managed.skills.undeclared']) {
+  check(`en has ${key}`, Object.hasOwn(enDict, key));
+  check(`zh has ${key}`, Object.hasOwn(zhDict, key));
+}
+
+/** The status row the page reads in this round; swapped between the two renders below. */
+let negotiationRow = {
+  id: 'status-2',
+  managedServerId: 'server-1',
+  serverName: 'demo',
+  transport: 'streamable-http',
+  state: 'connected',
+  toolCount: 0,
+  tools: [],
+  protocolRevision: '2025-11-25',
+  serverVersion: '1.4.2',
+  capabilities: ['resources', 'tools'],
+  extensions: ['io.modelcontextprotocol/skills'],
+};
+statusApi.list = async () => ({ ok: true, value: [negotiationRow] });
+
+/** Recorded skills requests; the page must ask only while its disclosure is open. */
+const skillsCalls = [];
+const skillsManager = {
+  check: async () => ({ ok: true, value: { state: 'timed-out' } }),
+  listSkills: async (serverId, cursor) => {
+    skillsCalls.push([serverId, cursor]);
+    return cursor === undefined
+      ? { ok: true, value: { state: 'ready', value: { skills: [{ name: 'code-review', description: 'Review a diff against the checklist.' }], nextCursor: 'page-2' } } }
+      : { ok: true, value: { state: 'ready', value: { skills: [{ name: 'invoice-audit', description: 'Check expense claims against policy.' }] } } };
+  },
+};
+
+const skillsRoot = createRoot(win.document.getElementById('root'));
+const renderWithManager = (manager) => react.createElement(Page, {
+  managedForm: settingsPage,
+  remote: ctx.remote,
+  statusApi,
+  managerApi: manager,
+  t,
+  locale: 'settings.mcp',
+});
+await act(async () => { skillsRoot.render(renderWithManager(skillsManager)); });
+await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
+
+const negotiationText = win.document.body.textContent.replace(/\s+/g, ' ');
+check(
+  'the card states the negotiated revision',
+  negotiationText.includes(zhDict['managed.negotiation.revision'].replace('{revision}', '2025-11-25')),
+  negotiationText.slice(0, 240),
+);
+check(
+  'the card states the declared extension',
+  negotiationText.includes(zhDict['managed.negotiation.extensions'].replace('{list}', 'skills')),
+  negotiationText.slice(0, 240),
+);
+check('no skills request before the disclosure is opened', skillsCalls.length === 0, String(skillsCalls.length));
+
+/** Press one button by its exact rendered label. */
+const press = async (label) => {
+  const button = [...win.document.querySelectorAll('button')].find(candidate => candidate.textContent === label);
+  if (button === undefined) return false;
+  await act(async () => { button.dispatchEvent(new win.MouseEvent('click', { bubbles: true })); });
+  await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
+  return true;
+};
+
+const opened = await press(zhDict['managed.skills.show']);
+check('the skills disclosure can be opened', opened);
+const skillsText = win.document.body.textContent.replace(/\s+/g, ' ');
+check('the panel asks the manager for the first page', skillsCalls.length === 1 && skillsCalls[0][0] === 'server-1' && skillsCalls[0][1] === undefined, JSON.stringify(skillsCalls));
+check('the first page lists the skill name', skillsText.includes('code-review'), skillsText.slice(0, 300));
+check('the first page lists the skill description', skillsText.includes('Review a diff against the checklist.'), skillsText.slice(0, 300));
+check('the panel states that bodies are not loaded', skillsText.includes(zhDict['managed.skills.namesHint']), skillsText.slice(0, 300));
+
+await press(zhDict['managed.skills.more']);
+check('the next page requests the reported cursor', skillsCalls.length === 2 && skillsCalls[1][1] === 'page-2', JSON.stringify(skillsCalls));
+check('the second page appends its skill', win.document.body.textContent.includes('invoice-audit'));
+
+await act(async () => { skillsRoot.unmount(); });
+
+// Negative control: a row that never declared the extension must show no extension line and must
+// not ask the manager for anything.
+skillsCalls.length = 0;
+negotiationRow = {
+  id: 'status-3', managedServerId: 'server-1', serverName: 'demo', transport: 'streamable-http',
+  state: 'connected', toolCount: 0, tools: [], protocolRevision: '2024-11-05',
+};
+const plainRoot = createRoot(win.document.getElementById('root'));
+await act(async () => { plainRoot.render(renderWithManager(skillsManager)); });
+await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
+const plainText = win.document.body.textContent.replace(/\s+/g, ' ');
+check('an older revision is still reported', plainText.includes('2024-11-05'), plainText.slice(0, 240));
+check('no extension line without a declaration', !plainText.includes(zhDict['managed.negotiation.extensions'].replace('{list}', 'skills')));
+const undeclaredButton = [...win.document.querySelectorAll('button')].find(candidate => candidate.textContent === zhDict['managed.skills.show']);
+check('the skills button explains the missing declaration', undeclaredButton?.getAttribute('title') === zhDict['managed.skills.undeclared'], String(undeclaredButton?.getAttribute('title')));
+await press(zhDict['managed.skills.show']);
+check('an undeclared server is not asked for skills', skillsCalls.length === 0, JSON.stringify(skillsCalls));
+check('the panel states that nothing was requested', win.document.body.textContent.includes(zhDict['managed.skills.undeclared']));
+await act(async () => { plainRoot.unmount(); });
+
 console.log(`\n${failures.length === 0 ? 'all assertions passed' : `${failures.length} assertion(s) failed`}`);
 process.exitCode = failures.length === 0 ? 0 : 1;

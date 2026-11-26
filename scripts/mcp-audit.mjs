@@ -34,6 +34,7 @@ import { dirname, resolve } from 'node:path';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import { publicToolName } from '../vendor/dsh-mcp-client/lib/types/tools.js';
+import { SKILLS_EXTENSION, declaresSkills, projectSkillsList } from '../vendor/dsh-mcp-client/lib/negotiation.js';
 import { DEFAULT_PROFILE_DIR, profilePaths, readProfileRefs, readProfileServers } from './lib/mcp-profile.mjs';
 
 /** Rough token estimate denominator: UTF-8 bytes per token. */
@@ -139,6 +140,34 @@ async function countPages(list, key, limit = 5) {
   return { total, names };
 }
 
+/** Standard Schema validator for one `skills/list` result, shared with the runtime's shape. */
+const skillsResultSchema = {
+  '~standard': {
+    version: 1,
+    vendor: 'dsh-mcp-audit',
+    validate(value) {
+      if (typeof value !== 'object' || value === null || !Array.isArray(value.skills)) return { issues: [{ message: 'skills/list must return a skills array' }] };
+      return { value };
+    },
+  },
+};
+
+/** Count skills across pages, projecting each payload the way the settings page does. */
+async function countSkills(request, limit = 5) {
+  let cursor;
+  let total = 0;
+  const names = [];
+  for (let page = 0; page < limit; page += 1) {
+    const projected = projectSkillsList(await request(cursor));
+    if (projected === undefined) throw new Error('skills/list returned a payload without a skills array');
+    total += projected.skills.length;
+    for (const skill of projected.skills) names.push(skill.name);
+    cursor = projected.nextCursor;
+    if (cursor === undefined) break;
+  }
+  return { total, names };
+}
+
 /**
  * Audit one managed server row. Never throws: every failure becomes a status.
  * @param {Record<string, unknown>} row - Managed settings row.
@@ -159,8 +188,10 @@ async function auditServer(row, refs) {
     checks: [],
     tools: { count: 0, bytes: 0, estimateTokens: 0, rewritten: [], largest: [] },
     capabilities: [],
+    extensions: [],
     resources: undefined,
     prompts: undefined,
+    skills: undefined,
   };
   const check = (id, status, detail) => record.checks.push({ id, status, detail });
 
@@ -249,6 +280,28 @@ async function auditServer(row, refs) {
     const capabilities = client.getServerCapabilities() ?? {};
     record.capabilities = Object.keys(capabilities);
     check('capabilities', 'info', record.capabilities.length === 0 ? 'server declared no capabilities' : record.capabilities.join(', '));
+    // Extensions are declared separately from capabilities, and a declaration is not content: the
+    // list below is read from the server rather than inferred from the flag.
+    record.extensions = Object.keys(capabilities.extensions ?? {}).sort();
+    const skillsDeclared = declaresSkills({ extensions: record.extensions });
+    check('extensions', 'info', record.extensions.length === 0
+      ? 'server declared no extensions'
+      : `${record.extensions.join(', ')}${skillsDeclared ? ' (skills over MCP)' : ''}`);
+    if (skillsDeclared) {
+      try {
+        const skills = await withDeadline(
+          countSkills((cursor) => client.request({ method: 'skills/list', params: cursor === undefined ? {} : { cursor } }, skillsResultSchema)),
+          timeoutMs,
+        );
+        record.skills = { count: skills.total, names: skills.names.slice(0, 8) };
+        check('skills', skills.total === 0 ? 'info' : 'pass', skills.total === 0
+          ? `declares ${SKILLS_EXTENSION} but lists no skills`
+          : `${skills.total} skill(s): ${skills.names.slice(0, 8).join(', ')}`);
+      } catch (error) {
+        record.skills = { error: String(error?.message ?? error).slice(0, 160) };
+        check('skills', 'warn', `declares ${SKILLS_EXTENSION} but skills/list failed: ${record.skills.error}`);
+      }
+    }
     if (record.protocol.instructionsBytes > 8192) {
       check('instructions', 'warn', `${record.protocol.instructionsBytes} B of server instructions are attributed into every request`);
     } else if (record.protocol.instructionsBytes > 0) {
@@ -360,6 +413,10 @@ for (const record of records) {
     const share = totalBytes === 0 || connected.length < 2 ? '' : `, ${Math.round((record.tools.bytes / totalBytes) * 100)}% of total`;
     console.log(`  tools=${record.tools.count} definition=${record.tools.bytes} B (~${record.tools.estimateTokens} tok${share})`);
     console.log(`  server: ${record.capabilities.length === 0 ? 'no capabilities' : record.capabilities.join(', ')}${record.protocol.instructionsBytes > 0 ? ` · ${record.protocol.instructionsBytes} B instructions` : ''}`);
+    if (record.extensions.length > 0) console.log(`  extensions: ${record.extensions.join(', ')}`);
+    if (record.skills !== undefined) {
+      console.log(`  skills=${record.skills.error === undefined ? `${record.skills.count}${record.skills.names.length === 0 ? '' : ` (${record.skills.names.join(', ')})`}` : 'error'}`);
+    }
     if (record.tools.largest.length > 0) {
       console.log(`  largest: ${record.tools.largest.map((item) => `${item.publicName} ${item.bytes} B`).join(', ')}`);
     }
