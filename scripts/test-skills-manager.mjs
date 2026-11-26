@@ -136,6 +136,25 @@ test('a project-memory row never exposes skills', async () => {
   return (await manager.listSkills('fixture')).state === 'unavailable'
 })
 
+test('a SEP-2640 page reaches the page with its frontmatter names intact', async () => {
+  const { manager } = harness({
+    provide: () => ({
+      skills: [{
+        uri: 'skill://chrome-browser/SKILL.md',
+        frontmatter: { name: 'chrome-browser', description: 'Observe and verify browser tasks.' },
+        resources: [{ uri: 'skill://chrome-browser/SKILL.md', digest: 'sha256:bba32a6f', size: 2046 }],
+      }],
+      ttlMs: 300000,
+      cacheScope: 'public',
+    }),
+  })
+  const result = await manager.listSkills('fixture')
+  return result.state === 'ready'
+    && result.value.skills.length === 1
+    && result.value.skills[0].name === 'chrome-browser'
+    && result.value.skills[0].uri === 'skill://chrome-browser/SKILL.md'
+})
+
 let failures = 0
 for (const { label, check } of cases) {
   let passed = false

@@ -47,9 +47,18 @@ function skillsPage(params) {
   if (mode === 'garbage') return { items: [{ name: 'nested-wrong-key' }] }
   if (mode === 'empty') return { skills: [] }
   if (typeof params?.cursor === 'string') return { skills: [] }
+  // Page one carries both published shapes on purpose: the first entry mirrors SEP-2640
+  // (`frontmatter` plus an entry-level manifest), the second is the flat shape an earlier
+  // draft used. A projection that only reads one of them silently loses half the page.
   return {
     skills: [
-      { name: 'code-review', description: 'Review a diff against the project checklist.' },
+      {
+        uri: 'skill://code-review/SKILL.md',
+        frontmatter: { name: 'code-review', description: 'Review a diff against the project checklist.' },
+        resources: [
+          { uri: 'skill://code-review/SKILL.md', digest: 'sha256:0000000000000000000000000000000000000000000000000000000000000001', size: 512 },
+        ],
+      },
       { name: 'invoice-audit', description: 'Check expense claims against policy.', uri: 'skill://invoice-audit' },
     ],
     nextCursor: 'page-2',

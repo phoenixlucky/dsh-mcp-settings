@@ -114,6 +114,28 @@ function trimBytes(value, budget) {
 }
 
 /**
+ * Read one skill entry's label fields from either published shape.
+ *
+ * SEP-2640 publishes the name and description inside `frontmatter`, with the skill
+ * manifest at entry level (`uri`, `resources`); earlier drafts and some servers put a
+ * flat `name`/`description` on the entry itself. Both are read here because the
+ * settings page must not show a declared skill as "no skills": `frontmatter` wins when
+ * an entry carries both, since it is the normative record.
+ * @param entry - One record of a `skills/list` page.
+ * @returns The three display fields, each undefined when the entry omits it.
+ */
+function skillEntryFields(entry) {
+  const frontmatter = typeof entry?.frontmatter === 'object' && entry.frontmatter !== null
+    ? entry.frontmatter
+    : undefined
+  return {
+    name: text(frontmatter?.name) ?? text(entry?.name),
+    description: text(frontmatter?.description) ?? text(entry?.description),
+    uri: text(entry?.uri),
+  }
+}
+
+/**
  * Project one `skills/list` payload into the settings page's vocabulary.
  *
  * Names and descriptions only: a skill body is a separate, explicitly authorized
@@ -129,13 +151,14 @@ export function projectSkillsList(raw) {
   const skills = []
   for (const entry of entries) {
     if (skills.length >= SKILLS_PAGE_LIMIT) break
-    const name = text(entry?.name)
+    const fields = skillEntryFields(entry)
+    const name = fields.name
     if (name === undefined) continue
     const trimmed = trimBytes(name, SKILL_NAME_BYTES)
     if (seen.has(trimmed)) continue
     seen.add(trimmed)
-    const description = text(entry?.description)
-    const uri = text(entry?.uri)
+    const description = fields.description
+    const uri = fields.uri
     const skill = { name: trimmed }
     if (uri !== undefined) skill.uri = trimBytes(uri, SKILL_DESCRIPTION_BYTES)
     skill.description = description === undefined ? '' : trimBytes(description, SKILL_DESCRIPTION_BYTES)

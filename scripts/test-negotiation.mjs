@@ -110,6 +110,49 @@ test('an entry without a string name is dropped rather than shown blank', () => 
   return page.skills.length === 1 && page.skills[0].name === 'kept'
 })
 
+test('a SEP-2640 entry is read from frontmatter, not only from flat fields', () => {
+  const page = projectSkillsList({
+    skills: [{
+      uri: 'skill://chrome-browser/SKILL.md',
+      frontmatter: { name: 'chrome-browser', description: 'Observe and verify browser tasks.' },
+      resources: [{ uri: 'skill://chrome-browser/SKILL.md', digest: 'sha256:bba32a6f', size: 2046 }],
+    }],
+    ttlMs: 300000,
+    cacheScope: 'public',
+  })
+  return JSON.stringify(page) === JSON.stringify({
+    skills: [{ name: 'chrome-browser', uri: 'skill://chrome-browser/SKILL.md', description: 'Observe and verify browser tasks.' }],
+  })
+})
+
+test('frontmatter wins over flat fields when an entry carries both', () => {
+  const page = projectSkillsList({ skills: [{ name: 'flat-name', description: 'flat', frontmatter: { name: 'spec-name', description: 'spec' } }] })
+  return page.skills.length === 1 && page.skills[0].name === 'spec-name' && page.skills[0].description === 'spec'
+})
+
+test('a frontmatter entry without a name is still dropped', () => {
+  const page = projectSkillsList({ skills: [{ frontmatter: { description: 'nameless' } }, { frontmatter: { name: 'kept' } }] })
+  return page.skills.length === 1 && page.skills[0].name === 'kept' && page.skills[0].description === ''
+})
+
+test('a frontmatter name longer than the budget is trimmed like a flat one', () => {
+  const name = '检查'.repeat(80)
+  const page = projectSkillsList({ skills: [{ frontmatter: { name } }] })
+  const bytes = encoder.encode(page.skills[0].name).length
+  return bytes <= SKILL_NAME_BYTES && page.skills[0].name.endsWith('…')
+})
+
+test('both shapes in one page keep their own names, and a repeated one is deduped', () => {
+  const page = projectSkillsList({
+    skills: [
+      { frontmatter: { name: 'from-frontmatter' } },
+      { name: 'from-flat' },
+      { frontmatter: { name: 'from-flat' } },
+    ],
+  })
+  return JSON.stringify(page.skills.map(skill => skill.name)) === JSON.stringify(['from-frontmatter', 'from-flat'])
+})
+
 test('duplicate names keep the first occurrence', () => {
   const page = projectSkillsList({ skills: [{ name: 'same', description: 'first' }, { name: 'same', description: 'second' }] })
   return page.skills.length === 1 && page.skills[0].description === 'first'

@@ -32,7 +32,9 @@ const skillsListSchema = {
       if (!Array.isArray(value.skills)) return { issues: [{ message: 'result.skills must be an array' }] }
       const issues = []
       value.skills.forEach((entry, index) => {
-        if (typeof entry?.name !== 'string') issues.push({ message: `skills[${index}].name must be a string` })
+        // SEP-2640 names a skill inside `frontmatter`; the flat field is the earlier draft's shape.
+        const named = typeof entry?.name === 'string' || typeof entry?.frontmatter?.name === 'string'
+        if (!named) issues.push({ message: `skills[${index}] has neither name nor frontmatter.name` })
       })
       return issues.length > 0 ? { issues } : { value }
     },
@@ -110,6 +112,8 @@ assert('negotiation reports a revision for a server that answers initialize', ty
 assert('the skills extension is visible on the negotiated capabilities', declaresSkills(declaredSummary), JSON.stringify(declaredSummary.extensions))
 assert('declared capabilities are published in sorted order', JSON.stringify(declaredSummary.capabilities) === JSON.stringify(['resources', 'tools']), JSON.stringify(declaredSummary.capabilities))
 assert('the first page carries both skills with descriptions', pageOne?.skills.length === 2 && pageOne.skills[1].description.includes('expense'), JSON.stringify(pageOne?.skills.map(skill => skill.name)))
+assert('the SEP-2640 frontmatter entry keeps its name', pageOne?.skills[0]?.name === 'code-review', JSON.stringify(pageOne?.skills[0]))
+assert('the frontmatter entry keeps its entry-level uri', pageOne?.skills[0]?.uri === 'skill://code-review/SKILL.md', String(pageOne?.skills[0]?.uri))
 assert('the optional skill uri survives the projection', pageOne?.skills[1].uri === 'skill://invoice-audit')
 assert('a next cursor is reported when the server pages', pageOne?.nextCursor === 'page-2', String(pageOne?.nextCursor))
 assert('the second page is a real empty page, not an undefined answer', Array.isArray(pageTwo?.skills) && pageTwo.skills.length === 0 && pageTwo.nextCursor === undefined)
