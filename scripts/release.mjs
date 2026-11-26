@@ -14,6 +14,7 @@
  * Usage:
  *   node scripts/release.mjs                 # do whatever is still missing
  *   node scripts/release.mjs --dry-run       # probe and print the plan, change nothing
+ *   node scripts/release.mjs --verify        # only re-check the published artifact against this checkout
  *   node scripts/release.mjs --notes <file>  # Release body from a file (default: generated)
  *   node scripts/release.mjs --title <text>  # Release title (default: "v<version>")
  *   node scripts/release.mjs --skip-tests    # skip the suite (only for a docs-only version)
@@ -50,6 +51,7 @@ const optionValue = (name, fallback) => {
 }
 
 const dryRun = hasFlag('--dry-run')
+const verifyOnly = hasFlag('--verify')
 const skipTests = hasFlag('--skip-tests')
 const skipAudit = hasFlag('--skip-audit')
 const notesFile = optionValue('--notes', undefined)
@@ -76,8 +78,8 @@ const refuse = (message) => {
 const packageJson = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'))
 const { name: packageName, version } = packageJson
 const tagName = `v${version}`
-/** npm strips the scope from the tarball filename. */
-const tarballName = `${packageName.replace(/^@[^/]+\//, '')}-${version}.tgz`
+/** pnpm keeps the scope in the filename: `@tinyforge/foo` becomes `tinyforge-foo-<version>.tgz`. */
+const tarballName = `${packageName.replace('@', '').replace('/', '-')}-${version}.tgz`
 const tarballPath = join(repoRoot, tarballName)
 
 // ---------------------------------------------------------------------------------------------
@@ -88,12 +90,13 @@ step(`plan for ${packageName}@${version} (${tagName})`)
 const status = capture('git status --porcelain')
 if (status.status !== 0) refuse(`git status failed: ${(status.stderr ?? '').trim()}`)
 const dirty = (status.stdout ?? '').split('\n').map((line) => line.trim()).filter((line) => line !== '')
-if (dirty.length > 0) {
+// `--verify` writes nothing, so a dirty worktree is not its concern; the mutating steps do care.
+if (!verifyOnly && dirty.length > 0) {
   refuse(`the worktree has uncommitted changes; commit them first so the tag matches what ships:\n  ${dirty.join('\n  ')}`)
 }
 
 const branch = (capture('git rev-parse --abbrev-ref HEAD').stdout ?? '').trim()
-if (branch !== 'main') refuse(`releases are cut from main, not ${branch || '(unknown)'}`)
+if (!verifyOnly && branch !== 'main') refuse(`releases are cut from main, not ${branch || '(unknown)'}`)
 
 const head = (capture('git rev-parse HEAD').stdout ?? '').trim()
 const remoteHead = (capture('git ls-remote origin refs/heads/main').stdout ?? '').trim().split(/\s+/)[0]
@@ -117,7 +120,7 @@ const plan = [
 for (const line of plan) log(`  - ${line}`)
 
 const anythingToDo = needsPush || needsTag || needsTagPush || needsRelease || needsPublish
-if (!anythingToDo) {
+if (!anythingToDo && !verifyOnly) {
   log(`\nrelease: ${packageName}@${version} is already fully released — nothing to do`)
   process.exit(0)
 }
@@ -125,11 +128,14 @@ if (dryRun) {
   log('\nrelease: dry run, nothing was changed')
   process.exit(0)
 }
+/** `--verify` never mutates: it re-checks the published artifact against this checkout. */
+const execute = !verifyOnly
+if (verifyOnly) log('\nrelease: --verify, checking the published artifact only')
 
 // ---------------------------------------------------------------------------------------------
 // Gates: the shipped code is tested, and the standing context cost is measured before a release.
 // ---------------------------------------------------------------------------------------------
-if (needsPublish && !skipTests) {
+if (execute && needsPublish && !skipTests) {
   step('tests')
   for (const file of TEST_FILES) {
     const result = capture(`node scripts/${file}`)
@@ -140,7 +146,7 @@ if (needsPublish && !skipTests) {
   }
 }
 
-if (needsPublish && !skipAudit) {
+if (execute && needsPublish && !skipAudit) {
   step('mcp audit (informational — a stopped local endpoint is not a release blocker)')
   const audit = capture('node scripts/mcp-audit.mjs')
   const tail = ((audit.stdout ?? '') + (audit.stderr ?? '')).trim().split('\n')
@@ -150,7 +156,7 @@ if (needsPublish && !skipAudit) {
 // ---------------------------------------------------------------------------------------------
 // Pack, then read the tarball back: this is the artifact that ships.
 // ---------------------------------------------------------------------------------------------
-if (needsPublish) {
+if (execute && needsPublish) {
   step(`pack ${tarballName}`)
   const pack = stream('node scripts/pack.mjs')
   if (pack.status !== 0) refuse('pack failed')
@@ -196,21 +202,21 @@ const waitForVersion = async (budgetMs) => {
   return undefined
 }
 
-if (needsPush) {
+if (execute && needsPush) {
   step('push origin main')
   if (stream('git push origin main').status !== 0) refuse('push failed')
 }
 
-if (needsTag) {
+if (execute && needsTag) {
   step(`tag ${tagName}`)
   if (stream(`git tag ${tagName}`).status !== 0) refuse('could not create the tag')
 }
-if (needsTagPush) {
+if (execute && needsTagPush) {
   step(`push tag ${tagName}`)
   if (stream(`git push origin ${tagName}`).status !== 0) refuse('could not push the tag')
 }
 
-if (needsRelease) {
+if (execute && needsRelease) {
   step(`GitHub Release ${tagName}`)
   const title = titleOverride ?? tagName
   const notes = notesFile === undefined ? '--generate-notes' : `--notes-file "${notesFile}"`
@@ -219,7 +225,7 @@ if (needsRelease) {
   }
 }
 
-if (needsPublish) {
+if (execute && needsPublish) {
   step(`publish ${tarballName}`)
   const publish = stream(`pnpm publish ./${tarballName} --no-git-checks --access public`)
   if (publish.status !== 0) {
