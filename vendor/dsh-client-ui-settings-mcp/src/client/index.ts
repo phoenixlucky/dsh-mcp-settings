@@ -5,7 +5,10 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type {} from '@deepseek-ai/dsh-mcp-client/remote'
-import mcpRemote from '@deepseek-ai/dsh-mcp-client/remote'
+// The mounted model must be this bundle's own copy: the Host publishes the endpoints from
+// `vendor/dsh-mcp-client`, so a model resolved from the build workspace can lag behind it (it has no
+// `mcpServerManager/listSkills`), and the facade would then lack a method the page calls.
+import mcpRemote from '../../../dsh-mcp-client/lib/typert.remote-client.js'
 import { McpCardSettings } from './McpCardSettings.tsx'
 import { McpConnectionsPage } from './McpConnectionsPage.tsx'
 import type { McpCardAppearance } from './mcpCardAppearance.ts'

@@ -10,6 +10,8 @@
  *
  * Usage: node scripts/test-typert-metadata.mjs
  */
+import { readFileSync } from 'node:fs'
+
 const cases = []
 /**
  * Register one assertion.
@@ -116,6 +118,55 @@ test('the published status json schema advertises the new fields', () => {
   const descriptor = publishedInvocations.get('mcpClientStatus/list')
   const text = JSON.stringify(descriptor?.result?.jsonSchema ?? {})
   return ['protocolRevision', 'serverVersion', 'capabilities', 'extensions'].every(field => text.includes(`"${field}"`))
+})
+
+/**
+ * Replica of the Host gate `assertExactArguments` (`packages/api/gateway/src/index.ts`).
+ *
+ * The gateway rejects a call whose args omit a descriptor field unless that parameter declares
+ * `acceptsUndefined`; `optional` is not read. A first page of resources or skills is always sent
+ * with only the server id, so this gate decides whether those panels can work at all.
+ * @param args - Wire arguments a Client sends.
+ * @param descriptor - Published invocation descriptor.
+ * @returns True when the Host would accept the call.
+ */
+function hostGateAccepts(args, descriptor) {
+  const expected = new Set((descriptor?.parameters ?? []).map(parameter => parameter.wire))
+  const actual = Object.keys(args)
+  const extra = actual.filter(key => !expected.has(key))
+  const acceptsMissing = (descriptor?.parameters ?? [])
+    .filter(parameter => parameter.source === 'json' && (parameter.acceptsUndefined === true || parameter.codec?.mode === 'src-json'))
+    .map(parameter => parameter.wire)
+  const missing = [...expected].filter(key => !Object.hasOwn(args, key) && !acceptsMissing.includes(key))
+  return extra.length === 0 && missing.length === 0
+}
+
+test('the Host gate accepts a first resource page that omits the cursor', () => {
+  return hostGateAccepts({ serverId: 'row-1' }, publishedInvocations.get('mcpServerManager/listResources'))
+})
+
+test('the Host gate accepts a first skills page that omits the cursor', () => {
+  return hostGateAccepts({ serverId: 'row-1' }, publishedInvocations.get('mcpServerManager/listSkills'))
+})
+
+test('the Host gate still refuses an unexpected argument', () => {
+  return hostGateAccepts({ serverId: 'row-1', surprise: true }, publishedInvocations.get('mcpServerManager/listSkills')) === false
+})
+
+test('every published optional JSON parameter declares that it accepts absence', () => {
+  const offenders = [...publishedInvocations.values()].flatMap(invocation => (invocation.parameters ?? [])
+    .filter(parameter => parameter.source === 'json' && parameter.optional === true && parameter.acceptsUndefined !== true)
+    .map(parameter => `${invocation.namespace}/${invocation.method}:${parameter.name}`))
+  return offenders.length === 0
+})
+
+test('the built Client bundle declares every endpoint this bundle publishes', () => {
+  const bundle = readFileSync(new URL('../vendor/dsh-client-ui-settings-mcp/lib/client.js', import.meta.url), 'utf8')
+  const missing = [...publishedInvocations.values()]
+    .filter(invocation => !bundle.includes(`${invocation.namespace}/${invocation.method}`))
+    .map(invocation => `${invocation.namespace}/${invocation.method}`)
+  if (missing.length > 0) console.log(`      missing from the Client bundle: ${missing.join(', ')} — rebuild it (AGENTS.md #13)`)
+  return missing.length === 0
 })
 
 let failures = 0
