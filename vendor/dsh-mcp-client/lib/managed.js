@@ -4,7 +4,7 @@ import { credentialRef } from "@deepseek-ai/dsh-credentials";
 import { Client } from "@modelcontextprotocol/client";
 import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 import z from "@deepseek-ai/schemastery";
-import { declaresSkills, projectSkillsList } from "./negotiation.js";
+import { declaresSkills, isRevisionEnvelopeViolation, projectSkillsList, skillsListResultSchema } from "./negotiation.js";
 //#region lib/types/managed.js
 /** Host manager for configurable Streamable HTTP and stdio MCP servers. */
 var __runInitializers = function(thisArg, initializers, value) {
@@ -237,7 +237,88 @@ let ManagedMcpServerManager = (() => {
 				return Promise.resolve({ state: "unavailable" });
 			}
 			if (!declaresSkills(row)) return Promise.resolve({ state: "unavailable" });
-			return this.resourceRequest(serverId, { method: "skills/list", ...cursor === void 0 ? {} : { cursor } });
+			return this.skillsPage(serverId, cursor);
+		}
+		/**
+		* Read one skills page, falling back to an `initialize`-only connection.
+		*
+		* A server may advertise the 2026-07-28 revision through `server/discover` while answering
+		* extension methods in the earlier shape: taexpr (rmcp 3.6.0) omits the `resultType` envelope
+		* field, and the SDK then rejects the whole page as an invalid result — not as a failure of the
+		* server, but of the revision the connection claims. The same bytes are valid under the
+		* revision `initialize` negotiates, so one bounded retry reads them there; the page is the
+		* server's own answer either way and nothing is invented. Everything else is reported as before.
+		* @param serverId - Stable settings identity.
+		* @param cursor - Opaque pagination cursor from a previous page.
+		* @returns A bounded page, or the same failure classification the live connection produced.
+		*/
+		async skillsPage(serverId, cursor) {
+			const page = await this.resourceRequest(serverId, {
+				method: "skills/list",
+				...cursor === void 0 ? {} : { cursor }
+			}, { keepCause: true });
+			if (page.state !== "failed" || !isRevisionEnvelopeViolation(page.cause)) return withoutCause(page);
+			const compat = await this.readSkillsCompat(serverId, cursor);
+			if (compat.state === "ready") this.ctx.logger.info("mcp-server-manager: read a skills page over an initialize-only connection (the server's result omits the %s envelope field)", "resultType");
+			return compat;
+		}
+		/**
+		* Read one skills page over a fresh, bounded connection that negotiates with `initialize` only.
+		* @param serverId - Stable settings identity.
+		* @param cursor - Opaque pagination cursor from a previous page.
+		* @returns A bounded page, or a failure classification.
+		*/
+		async readSkillsCompat(serverId, cursor) {
+			let checked;
+			try {
+				checked = validateManagedServers([configuredServers(this.config).find((candidate) => candidate.id === serverId)])[0];
+			} catch {
+				return { state: "unavailable" };
+			}
+			const controller = new AbortController();
+			const timeout = setTimeout(() => controller.abort(), this.tuning.toolCallTimeoutMs);
+			timeout.unref();
+			let client;
+			const closed = Promise.withResolvers();
+			try {
+				const runtime = await raceAbort(resolveClientConfig(this.credentials, checked, this.tuning), controller.signal);
+				if (controller.signal.aborted) return { state: "timed-out" };
+				client = new Client({
+					name: "dsh-mcp-settings-skills-compat",
+					version: "0.0.1"
+				}, {
+					capabilities: {},
+					listChanged: { tools: {
+						autoRefresh: false,
+						debounceMs: 0,
+						onChanged: () => {}
+					} }
+				});
+				client.onclose = () => closed.resolve();
+				await client.connect(createTransport(runtime), { signal: controller.signal });
+				const raw = await client.request({
+					method: "skills/list",
+					params: cursor === void 0 ? {} : { cursor }
+				}, skillsListResultSchema, {
+					signal: controller.signal,
+					timeout: this.tuning.toolCallTimeoutMs
+				});
+				if (controller.signal.aborted) return { state: "timed-out" };
+				if (serializedBytes(raw) > MAX_RESOURCE_RESPONSE_BYTES) return { state: "too-large" };
+				const value = projectResourceResult("skills/list", raw);
+				return value === void 0 ? { state: "failed" } : { state: "ready", value };
+			} catch (error) {
+				if (controller.signal.aborted || isTimeoutError(error)) return { state: "timed-out" };
+				return { state: "failed" };
+			} finally {
+				clearTimeout(timeout);
+				if (client !== undefined) {
+					try {
+						await client.close();
+						await waitForClose(closed.promise);
+					} catch {}
+				}
+			}
 		}
 		/** Restart one enabled server and return its observed post-reconcile state. */
 		async restart(serverId) {
@@ -247,8 +328,14 @@ let ManagedMcpServerManager = (() => {
 			await this.reconcile(servers, new Set([serverId]));
 			return this.active.has(serverId) ? { state: "scheduled" } : { state: "unavailable" };
 		}
-		/** Route a resource request through the exact current managed generation. */
-		async resourceRequest(serverId, request) {
+		/**
+		* Route a resource request through the exact current managed generation.
+		* @param serverId - Stable settings identity.
+		* @param request - Wire request for the live generation.
+		* @param options - `keepCause` hands the thrown error back to an internal caller; the value is
+		* never part of a Remote reply.
+		*/
+		async resourceRequest(serverId, request, options = {}) {
 			const server = configuredServers(this.config).find((candidate) => candidate.id === serverId);
 			if (server === void 0 || !server.enabled || (server.purpose ?? "model-tools") !== "model-tools") return { state: "unavailable" };
 			const active = this.active.get(serverId);
@@ -271,7 +358,8 @@ let ManagedMcpServerManager = (() => {
 			} catch (error) {
 				const after = catalog?.getManagedResourceHandle(serverId);
 				if (this.active.get(serverId) !== active || after === void 0 || after.state !== "connected" || after.revision !== before.revision) return { state: "unavailable" };
-				return controller.signal.aborted || isTimeoutError(error) ? { state: "timed-out" } : { state: "failed" };
+				const state = controller.signal.aborted || isTimeoutError(error) ? "timed-out" : "failed";
+				return options.keepCause === true ? { state, cause: error } : { state };
 			} finally {
 				clearTimeout(timeout);
 			}
@@ -682,6 +770,12 @@ function serializedBytes(value) {
 /** Recognize timeout classes without exposing their messages. */
 function isTimeoutError(error) {
 	return typeof error === "object" && error !== null && (error.name === "TimeoutError" || error.code === "ETIMEDOUT");
+}
+/** Drop an internal cause before a value can reach a Remote reply. */
+function withoutCause(page) {
+	if (typeof page !== "object" || page === null || !("cause" in page)) return page;
+	const { cause: _cause, ...rest } = page;
+	return rest;
 }
 /** Keep only the protocol metadata needed by the resource browser and the skills list. */
 function projectResourceResult(method, value) {

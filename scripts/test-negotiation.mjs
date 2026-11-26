@@ -15,6 +15,7 @@ import {
   SKILLS_PAGE_LIMIT,
   declaresExtension,
   declaresSkills,
+  isRevisionEnvelopeViolation,
   projectSkillsList,
   summarizeNegotiation,
 } from '../vendor/dsh-mcp-client/lib/negotiation.js'
@@ -190,6 +191,21 @@ test('the next cursor is carried only when it is a non-empty string', () => {
 test('an empty skills list is a real answer and stays distinct from undefined', () => {
   const page = projectSkillsList({ skills: [] })
   return Array.isArray(page.skills) && page.skills.length === 0
+})
+
+test('the SDK revision-envelope rejection is recognized by its violation tag', () => {
+  const error = Object.assign(new Error('Invalid result for skills/list: missing required resultType'), {
+    name: 'SdkError',
+    code: 'INVALID_RESULT',
+    data: { method: 'skills/list', violation: 'missing-resultType' },
+  })
+  return isRevisionEnvelopeViolation(error) === true
+})
+
+test('a plain failure is not mistaken for a revision-envelope rejection', () => {
+  return isRevisionEnvelopeViolation(new Error('boom')) === false
+    && isRevisionEnvelopeViolation({ code: 'INVALID_RESULT', data: { violation: 'other' } }) === false
+    && isRevisionEnvelopeViolation(undefined) === false
 })
 
 let failures = 0

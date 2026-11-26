@@ -12,6 +12,26 @@
 /** Extension identifier for Skills over MCP. */
 export const SKILLS_EXTENSION = 'io.modelcontextprotocol/skills'
 
+/**
+ * Standard Schema validator for one `skills/list` result.
+ *
+ * Shared by the live connection and by the `initialize`-only compatibility read so a page is
+ * accepted or refused in exactly one place. It checks the envelope only — the projection below
+ * decides which entries are renderable.
+ */
+export const skillsListResultSchema = {
+  '~standard': {
+    version: 1,
+    vendor: 'dsh-mcp-client',
+    validate(value) {
+      if (typeof value !== 'object' || value === null || Array.isArray(value) || !Array.isArray(value.skills)) {
+        return { issues: [{ message: 'skills/list result must carry a skills array' }] }
+      }
+      return { value }
+    },
+  },
+}
+
 /** Most skills one page may carry before the projection stops listing them. */
 export const SKILLS_PAGE_LIMIT = 200
 
@@ -133,6 +153,25 @@ function skillEntryFields(entry) {
     description: text(frontmatter?.description) ?? text(entry?.description),
     uri: text(entry?.uri),
   }
+}
+
+/**
+ * Whether an error is the SDK's "this result does not fit the negotiated revision" rejection.
+ *
+ * The 2026-07-28 era requires a `resultType` envelope field on every result. A server that
+ * advertises that revision through `server/discover` while still answering extension methods in
+ * the earlier shape gets its whole page rejected here — the payload itself is intact and readable
+ * under the revision `initialize` negotiates.
+ * @param error - Error thrown while reading a result.
+ * @returns True only for that specific envelope violation.
+ */
+export function isRevisionEnvelopeViolation(error) {
+  if (typeof error !== 'object' || error === null) return false
+  const data = error.data
+  if (typeof data === 'object' && data !== null && data.violation === 'missing-resultType') return true
+  return error.code === 'INVALID_RESULT'
+    && typeof error.message === 'string'
+    && error.message.includes('missing required resultType')
 }
 
 /**

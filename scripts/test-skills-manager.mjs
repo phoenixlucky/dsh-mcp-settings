@@ -155,6 +155,61 @@ test('a SEP-2640 page reaches the page with its frontmatter names intact', async
     && result.value.skills[0].uri === 'skill://chrome-browser/SKILL.md'
 })
 
+/** The SDK's rejection of a result that omits the 2026-07-28 `resultType` envelope field. */
+function revisionViolation() {
+  return Object.assign(new Error('Invalid result for skills/list: missing required resultType'), {
+    name: 'SdkError',
+    code: 'INVALID_RESULT',
+    data: { method: 'skills/list', violation: 'missing-resultType' },
+  })
+}
+
+test('a result that omits the revision envelope is re-read over an initialize-only connection', async () => {
+  const { manager } = harness({ provide: () => { throw revisionViolation() } })
+  const compatCalls = []
+  manager.readSkillsCompat = async (serverId, cursor) => {
+    compatCalls.push([serverId, cursor])
+    return { state: 'ready', value: { skills: [{ name: 'daily-holdings-review', description: '每日持仓复盘' }] } }
+  }
+  const result = await manager.listSkills('fixture')
+  return result.state === 'ready'
+    && result.value.skills[0]?.name === 'daily-holdings-review'
+    && compatCalls.length === 1
+    && compatCalls[0][0] === 'fixture'
+})
+
+test('the compatibility read receives the cursor it must forward', async () => {
+  const { manager } = harness({ provide: () => { throw revisionViolation() } })
+  let seenCursor = 'unset'
+  manager.readSkillsCompat = async (_serverId, cursor) => {
+    seenCursor = cursor
+    return { state: 'ready', value: { skills: [] } }
+  }
+  await manager.listSkills('fixture', 'page-7')
+  return seenCursor === 'page-7'
+})
+
+test('an ordinary failure is not retried on a second connection', async () => {
+  const { manager } = harness({ provide: () => { throw new Error('boom') } })
+  let compatCalls = 0
+  manager.readSkillsCompat = async () => { compatCalls += 1; return { state: 'ready', value: { skills: [] } } }
+  const result = await manager.listSkills('fixture')
+  return result.state === 'failed' && compatCalls === 0
+})
+
+test('a failed compatibility read reports its own classification', async () => {
+  const { manager } = harness({ provide: () => { throw revisionViolation() } })
+  manager.readSkillsCompat = async () => ({ state: 'timed-out' })
+  return (await manager.listSkills('fixture')).state === 'timed-out'
+})
+
+test('the live failure cause never reaches the reply', async () => {
+  const { manager } = harness({ provide: () => { throw revisionViolation() } })
+  manager.readSkillsCompat = async () => ({ state: 'unavailable' })
+  const result = await manager.listSkills('fixture')
+  return result.state === 'unavailable' && !('cause' in result)
+})
+
 let failures = 0
 for (const { label, check } of cases) {
   let passed = false
