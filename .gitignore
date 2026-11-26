@@ -17,3 +17,7 @@ MEMORY.md
 
 # Scratch directory for one-off probes (never published)
 .tmp/
+
+# Generated card previews and the headless browser profiles used to shoot them
+docs/preview/
+.preview-chrome*/

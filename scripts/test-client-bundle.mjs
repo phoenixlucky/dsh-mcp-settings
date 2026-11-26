@@ -374,5 +374,25 @@ check('an undeclared server is not asked for skills', skillsCalls.length === 0, 
 check('the panel states that nothing was requested', win.document.body.textContent.includes(zhDict['managed.skills.undeclared']));
 await act(async () => { plainRoot.unmount(); });
 
+// ---------------------------------------------------------------------------------------------
+// 5. The import panel prints the payload shape it accepts.
+// ---------------------------------------------------------------------------------------------
+const importRoot = createRoot(win.document.getElementById('root'));
+await act(async () => { importRoot.render(renderWithManager(skillsManager)); });
+await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
+const importButton = [...win.document.querySelectorAll('button')].find((candidate) => candidate.textContent === zhDict['managed.import']);
+check('the import panel can be opened', importButton !== undefined);
+await act(async () => { importButton?.dispatchEvent(new win.MouseEvent('click', { bubbles: true })); });
+const exampleText = win.document.querySelector('pre')?.textContent ?? '';
+check('the import panel labels the example', win.document.body.textContent.includes(zhDict['managed.import.example']));
+let examplePayload;
+try { examplePayload = JSON.parse(exampleText); } catch { examplePayload = undefined; }
+const exampleServer = examplePayload?.mcpServers?.['my-server'];
+check('the example is valid JSON', examplePayload !== undefined, exampleText.slice(0, 60));
+check('the example names the accepted transport', exampleServer?.type === 'streamable-http');
+check('the example shows where credentials go', exampleServer?.headers?.Authorization === 'Bearer <token>');
+check('the example points at a replaceable endpoint', typeof exampleServer?.url === 'string' && exampleServer.url.includes('example.com'));
+await act(async () => { importRoot.unmount(); });
+
 console.log(`\n${failures.length === 0 ? 'all assertions passed' : `${failures.length} assertion(s) failed`}`);
 process.exitCode = failures.length === 0 ? 0 : 1;

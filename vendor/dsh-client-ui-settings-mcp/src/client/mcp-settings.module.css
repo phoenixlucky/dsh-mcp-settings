@@ -49,30 +49,47 @@
   font: var(--dsw-font-s-14);
 }
 
-/* Filter/action toolbar. */
+/* Filter rail: the search field takes the slack, the two selects keep a fixed
+   measure, so the three controls hold one line down to the narrowest pane. */
 .toolbar {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) 8.5rem 8.5rem;
   align-items: center;
-  gap: var(--mcp-gap-sm);
+  gap: 8px;
 }
 
+/* Commands and the result count share their own row; letting the search field
+   grow used to push them onto a second row and strand them against the right
+   edge with an empty half-line beside them. */
 .toolbarEnd {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--mcp-gap-sm);
-  margin-inline-start: auto;
+  justify-content: space-between;
+  gap: 8px;
+  grid-column: 1 / -1;
+}
+
+.toolbarActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbarMeta {
+  margin: 0;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+  white-space: nowrap;
 }
 
 .searchField {
-  flex: 1 1 14rem;
   min-width: 10rem;
 }
 
 .filterField {
-  flex: 0 1 auto;
-  min-width: 8.5rem;
+  min-width: 0;
 }
 
 .srOnly {
@@ -170,6 +187,35 @@
   margin: 0;
 }
 
+/* The accepted payload belongs in the panel, where the shape has to be legible;
+   a link to documentation one click away is not the same thing. */
+.importExample {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.importExampleLabel {
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+}
+
+.importExampleCode {
+  max-height: 14rem;
+  margin: 0;
+  padding: 10px 12px;
+  overflow: auto;
+  border: 1px solid var(--dsw-alias-settings-card-stroke);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-xs-13);
+  font-family: var(--ds-font-family-code, 'SF Mono', Consolas, monospace);
+  line-height: 1.55;
+  tab-size: 2;
+  white-space: pre;
+}
+
 .importPreview ul {
   display: grid;
   gap: 6px;
@@ -211,34 +257,35 @@
   text-align: center;
 }
 
+/* One server per card: an identity head (state, name, facts), the live switch,
+   then a command band. Commands used to share the head's line, which squeezed the
+   facts until "8,042 B · ≈2,011 token" broke in the middle of a number. */
 .serverCard {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 4px 12px;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 8px;
   min-width: 0;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid var(--dsw-alias-settings-card-stroke);
   border-radius: var(--dsw-radius-lg);
   background: var(--dsw-alias-settings-card-fill);
   transition: border-color 140ms ease, background-color 140ms ease;
 }
 
-.serverCard:not(.serverCardEditing):hover {
-  border-color: color-mix(in srgb, var(--dsw-alias-label-primary) 16%, var(--dsw-alias-settings-card-stroke));
-}
-
-.serverMain {
+.serverHead {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   min-width: 0;
 }
 
+/* State reads as a dot against the name, not a second label competing with it. */
 .stateDot {
   flex: none;
   width: 8px;
   height: 8px;
+  margin-top: 7px;
   border-radius: 999px;
   background: var(--dsw-alias-label-secondary);
 }
@@ -249,21 +296,16 @@
 .stateDot[data-state='disconnected'] { background: var(--dsw-alias-state-error-primary); }
 .stateDot[data-state='disabled'] { background: color-mix(in srgb, var(--dsw-alias-label-secondary) 45%, transparent); }
 
-.serverIcon {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--dsw-radius-md);
-  background: color-mix(in srgb, var(--dsw-alias-label-secondary) 10%, transparent);
-  color: var(--dsw-alias-label-secondary);
+/* Hover only lifts the border; the card already carries fill and a command rule. */
+.serverCard:not(.serverCardEditing):hover {
+  border-color: color-mix(in srgb, var(--dsw-alias-label-primary) 16%, var(--dsw-alias-settings-card-stroke));
 }
 
 .serverIdentity {
   display: grid;
+  flex: 1 1 auto;
   min-width: 0;
-  gap: 2px;
+  gap: 4px;
 }
 
 .serverNameRow {
@@ -307,30 +349,40 @@
   color: var(--dsw-alias-state-error-primary);
 }
 
-.serverMeta {
+/* Measured facts, each an unbreakable unit: the gap separates them, so no
+   separator glyph is left dangling at a line end. */
+.serverFacts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  min-width: 0;
   margin: 0;
   color: var(--dsw-alias-label-secondary);
   font: var(--dsw-font-xs-13);
 }
 
-.separator {
-  padding-inline: 4px;
+.metaItem {
+  white-space: nowrap;
 }
 
-/**
- * What a connection negotiated: revision and declared extensions.
- *
- * Kept on its own line under the transport/tool metadata because it describes the protocol
- * handshake rather than the tools, and a long extension list must wrap instead of pushing the card
- * meta line.
- */
-.negotiation {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: 2px 0 0;
+/* The one number worth reading twice: standing cost, stated without shouting. */
+.costTag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--dsw-alias-label-secondary) 8%, transparent);
   color: var(--dsw-alias-label-secondary);
-  font: var(--dsw-font-xs-13);
+  white-space: nowrap;
+}
+
+/* Declared extensions can be long, so this item wraps inside its own box. */
+.metaItemWrap {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.separator {
+  padding-inline: 4px;
 }
 
 .skillHint {
@@ -358,12 +410,25 @@
   overflow-wrap: anywhere;
 }
 
-.serverActions {
+/* Enable/disable and overflow stay on the identity line: they act on the server
+   itself, while the command band below acts on its contents. */
+.serverControls {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  margin-top: -2px;
+}
+
+/* Command band. The hairline marks a boundary the eye can hold: identity above,
+   verbs below, one reading order per card. */
+.serverActionRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--dsw-alias-settings-card-stroke) 60%, transparent);
 }
 
 .serverMore {
@@ -371,13 +436,18 @@
 }
 
 .serverMore > summary {
-  min-height: 32px;
-  padding: 7px 10px;
-  border-radius: var(--dsw-radius-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 4px 8px;
+  border-radius: var(--dsw-radius-sm);
   color: var(--dsw-alias-label-secondary);
   cursor: pointer;
   font: var(--dsw-font-xs-13);
   list-style: none;
+  user-select: none;
+  white-space: nowrap;
 }
 
 .serverMore > summary::-webkit-details-marker { display: none; }
@@ -393,16 +463,25 @@
 
 .serverMoreActions {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   inset-inline-end: 0;
-  top: calc(100% + 4px);
-  display: flex;
-  gap: 4px;
-  padding: 6px;
+  top: calc(100% + 6px);
+  display: grid;
+  gap: 2px;
+  min-width: 9.5rem;
+  padding: 4px;
   border: 1px solid var(--dsw-alias-settings-card-stroke);
   border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-1);
-  box-shadow: var(--dsw-shadow-md, 0 4px 14px rgb(0 0 0 / 12%));
+  box-shadow: var(--dsw-shadow-md, 0 6px 18px rgb(0 0 0 / 14%));
+}
+
+/* Items own the panel width: a two-character label must not wrap into a
+   vertical stack the way the old shrink-to-fit flex row forced it to. */
+.serverMoreActions > button {
+  justify-content: flex-start;
+  width: 100%;
+  white-space: nowrap;
 }
 
 /* Expanded tool inventory */
@@ -658,16 +737,20 @@
 }
 
 @container (max-width: 34rem) {
-  .serverCard {
+  /* Too narrow for one filter row: controls stack, and the switch drops below the
+     facts where it still reads as belonging to this card. */
+  .toolbar {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .serverActions {
-    justify-content: flex-start;
+  .serverHead {
+    flex-wrap: wrap;
   }
 
-  .toolbarEnd {
-    margin-inline-start: 0;
+  .serverControls {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 0;
   }
 }
 

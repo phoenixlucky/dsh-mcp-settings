@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { Button, IconApiOutlineRegular, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
+import { Button, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
@@ -752,9 +752,16 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
         </select>
       </label>
       <div className={css.toolbarEnd}>
-        {hasFilters && <Button variant="ghost" onClick={() => { setSearchQuery(''); setStateFilter('all'); setTransportFilter('all') }}>{t('managed.filter.clear')}</Button>}
-        <Button variant="ghost" disabled={busy} onClick={() => { void refreshStatuses() }}>{t('managed.refresh')}</Button>
-        <Button variant="outline" aria-expanded={importOpen} onClick={() => { setImportOpen(!importOpen); setImportPreview(undefined) }}>{t('managed.import')}</Button>
+        <div className={css.toolbarActions}>
+          <Button variant="ghost" disabled={busy} onClick={() => { void refreshStatuses() }}>{t('managed.refresh')}</Button>
+          <Button variant="outline" aria-expanded={importOpen} onClick={() => { setImportOpen(!importOpen); setImportPreview(undefined) }}>{t('managed.import')}</Button>
+        </div>
+        <div className={css.toolbarActions}>
+          {hasFilters && <Button variant="ghost" onClick={() => { setSearchQuery(''); setStateFilter('all'); setTransportFilter('all') }}>{t('managed.filter.clear')}</Button>}
+          <p className={css.toolbarMeta} role="status">{t('managed.filter.shown')
+            .replace('{shown}', String(matchingServers.length))
+            .replace('{total}', String(servers.length))}</p>
+        </div>
       </div>
     </div>
 
@@ -771,6 +778,10 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
           }} placeholder={t('managed.import.placeholder')} />
         </label>
         <small>{t('managed.import.hint')}</small>
+        <div className={css.importExample}>
+          <span className={css.importExampleLabel}>{t('managed.import.example')}</span>
+          <pre className={css.importExampleCode}>{IMPORT_EXAMPLE}</pre>
+        </div>
         <div className={css.actions}>
           <Button variant="outline" disabled={busy || !snapshot.writable || importJson.trim() === ''} onClick={previewImport}>{t('managed.import.previewAction')}</Button>
         </div>
@@ -820,39 +831,59 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
         const declaredExtensions = status?.extensions ?? []
         const declaredCapabilities = status?.capabilities ?? []
         return <article className={`${css.serverCard} ${activeEditorId === server.id ? css.serverCardEditing : ''}`} key={server.id}>
-          <div className={css.serverMain}>
+          <div className={css.serverHead}>
             <span className={css.stateDot} data-state={state} aria-hidden="true" />
-            <span className={css.serverIcon} aria-hidden="true"><IconApiOutlineRegular size={18} /></span>
             <div className={css.serverIdentity}>
               <div className={css.serverNameRow}>
                 <strong className={css.serverName}>{server.serverName}</strong>
                 <span className={css.statePill} data-state={state}>{managedStateLabel(t, state)}</span>
               </div>
-              <p className={css.serverMeta}>
-                {t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')}
-                <span className={css.separator} aria-hidden="true">·</span>
-                {t('managed.toolCountInline').replace('{count}', String(status?.toolCount ?? 0))}
+              <p className={css.serverFacts}>
+                <span className={css.metaItem}>{t(server.transport === 'stdio' ? 'transport.stdio' : 'transport.streamable-http')}</span>
+                <span className={css.srOnly}>{', '}</span>
+                <span className={css.metaItem}>{t('managed.toolCountInline').replace('{count}', String(status?.toolCount ?? 0))}</span>
                 {cost !== undefined && <>
-                  <span className={css.separator} aria-hidden="true">·</span>
-                  {t('managed.costInline')
+                  <span className={css.srOnly}>{', '}</span>
+                  <span className={css.costTag}>{t('managed.costInline')
                     .replace('{bytes}', cost.bytes.toLocaleString())
-                    .replace('{tokens}', cost.tokens.toLocaleString())}
+                    .replace('{tokens}', cost.tokens.toLocaleString())}</span>
                 </>}
-              </p>
-              {(status?.protocolRevision !== undefined || declaredExtensions.length > 0) && <p className={css.negotiation}>
-                {status?.protocolRevision !== undefined && <span>{t('managed.negotiation.revision').replace('{revision}', status.protocolRevision)}</span>}
-                {status?.protocolRevision !== undefined && declaredExtensions.length > 0 && <span className={css.separator} aria-hidden="true">·</span>}
-                {declaredExtensions.length > 0 && <span title={declaredExtensions.join('\n')}>
-                  {t('managed.negotiation.extensions').replace('{list}', declaredExtensions.map(extensionLabel).join(', '))}
-                </span>}
+                {status?.protocolRevision !== undefined && <>
+                  <span className={css.srOnly}>{', '}</span>
+                  <span className={css.metaItem}>{t('managed.negotiation.revision').replace('{revision}', status.protocolRevision)}</span>
+                </>}
+                {declaredExtensions.length > 0 && <>
+                  <span className={css.srOnly}>{', '}</span>
+                  <span className={css.metaItemWrap} title={declaredExtensions.join('\n')}>
+                    {t('managed.negotiation.extensions').replace('{list}', declaredExtensions.map(extensionLabel).join(', '))}
+                  </span>
+                </>}
                 {declaredCapabilities.length > 0 && <span className={css.srOnly}>{declaredCapabilities.join(', ')}</span>}
-              </p>}
+              </p>
+            </div>
+            <div className={css.serverControls}>
+              <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
+              <details className={css.serverMore}>
+                <summary>{t('managed.more')}</summary>
+                <div className={css.serverMoreActions}>
+                  <Button variant="outline" size="sm" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
+                    if (activeEditorId === server.id) closeEditor()
+                    else {
+                      setDraft(toDraft(server))
+                      setActiveEditorId(server.id)
+                    }
+                    setFailure(undefined)
+                    setCheckState(undefined)
+                  }}>{t('managed.edit')}</Button>
+                  <Button variant="ghost" size="sm" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id) }}>{t('managed.delete')}</Button>
+                </div>
+              </details>
             </div>
           </div>
-          <div className={css.serverActions}>
+          <div className={css.serverActionRow}>
             <Button variant="ghost" size="sm" disabled={!resourcesConnected || managerApi === undefined} aria-expanded={resourcesOpen} aria-controls={resourcesOpen ? resourcesPanelId : undefined} onClick={() => { toggleResourceBrowser(server.id) }}>{t(resourcesOpen ? 'managed.resources.hide' : 'managed.resources.show')}</Button>
             <Button variant="ghost" size="sm" disabled={!skillsOpen && (!resourcesConnected || managerApi === undefined)} aria-expanded={skillsOpen} aria-controls={skillsOpen ? skillsPanelId : undefined} title={skillsDeclared ? undefined : t('managed.skills.undeclared')} onClick={() => { toggleSkills(server.id) }}>{t(skillsOpen ? 'managed.skills.hide' : 'managed.skills.show')}</Button>
-            <Button variant="outline" size="sm" disabled={busy || restarting || !server.enabled || managerApi === undefined} onClick={() => { void restartServer(server) }}>{t(restarting ? 'managed.restart.loading' : 'managed.restart.action')}</Button>
+            <Button variant="ghost" size="sm" disabled={busy || restarting || !server.enabled || managerApi === undefined} onClick={() => { void restartServer(server) }}>{t(restarting ? 'managed.restart.loading' : 'managed.restart.action')}</Button>
             <Button variant="ghost" size="sm" disabled={busy || status === undefined || state !== 'connected'} aria-expanded={toolsExpanded} onClick={() => {
               const next = new Set(expandedToolIds)
               if (next.has(server.id)) next.delete(server.id)
@@ -862,22 +893,6 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
               }
               setExpandedToolIds(next)
             }}>{t(toolsExpanded ? 'managed.tools.hide' : 'managed.tools.show')}</Button>
-            <Switch checked={server.enabled} label={t('managed.enabled')} disabled={busy || !snapshot.writable} onChange={(value) => { void toggle(server, value) }} />
-            <details className={css.serverMore}>
-              <summary>{t('managed.more')}</summary>
-              <div className={css.serverMoreActions}>
-                <Button variant="outline" size="sm" disabled={busy || !snapshot.writable} aria-expanded={activeEditorId === server.id} onClick={() => {
-                  if (activeEditorId === server.id) closeEditor()
-                  else {
-                    setDraft(toDraft(server))
-                    setActiveEditorId(server.id)
-                  }
-                  setFailure(undefined)
-                  setCheckState(undefined)
-                }}>{t('managed.edit')}</Button>
-                <Button variant="ghost" size="sm" disabled={busy || !snapshot.writable} onClick={() => { void remove(server.id) }}>{t('managed.delete')}</Button>
-              </div>
-            </details>
           </div>
           {resourcesOpen && <McpResourcesPanel key={resourcesRevision} server={server} managerApi={managerApi} connected={resourcesConnected} panelId={resourcesPanelId} onClose={() => { toggleResourceBrowser(server.id) }} t={t} />}
           {skillsOpen && <McpSkillsPanel key={`skills:${resourcesRevision}`} server={server} managerApi={managerApi} connected={resourcesConnected} declared={skillsDeclared} panelId={skillsPanelId} onClose={() => { toggleSkills(server.id) }} t={t} />}
@@ -908,6 +923,23 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
 const utf8 = new TextEncoder()
 /** Rough token estimate denominator, shared with `scripts/mcp-audit.mjs`. */
 const BYTES_PER_TOKEN = 4
+
+/**
+ * The payload shape the import panel accepts, printed in the panel itself.
+ *
+ * It has to stay valid for `previewImport` — `mcpServers`, transport `streamable-http`, `url`, and
+ * an `Authorization` header that the importer moves into the credential store — so a copy that is
+ * edited in place previews without a validation error.
+ */
+const IMPORT_EXAMPLE = `{
+  "mcpServers": {
+    "my-server": {
+      "type": "streamable-http",
+      "url": "https://mcp.example.com/mcp",
+      "headers": { "Authorization": "Bearer <token>" }
+    }
+  }
+}`
 
 /**
  * Standing context cost of one tool list as the live status reports it.
