@@ -404,32 +404,35 @@ check('the example points at a replaceable endpoint', typeof exampleServer?.url 
 await act(async () => { importRoot.unmount(); });
 
 // ---------------------------------------------------------------------------------------------
-// 6. Toggling a server: one retry on a refused write, then a visible failure.
+// 6. Toggling a server: single-field write, fence recovery, and a visible failure.
 // ---------------------------------------------------------------------------------------------
-/** Mutable form stand-in: records writes, refuses the first N, publishes accepted values. */
-const makeForm = ({ refusals = 0, writable = true } = {}) => {
+/**
+ * Mutable form stand-in. A write is accepted only when its fence matches the document's own
+ * revision, which is how the Host behaves; `rejectAll` models a refusal that no fence can fix.
+ */
+const makeForm = ({ writable = true, hostRevision = 1, snapshotRevision = hostRevision, rejectAll = false } = {}) => {
   let rows = [{ id: 'server-1', serverName: 'demo', enabled: true, purpose: 'model-tools', transport: 'streamable-http', url: 'http://127.0.0.1:9/mcp', headers: {}, headerRefs: {} }];
-  let snapshot = { status: 'ready', writable, revision: 1, base: undefined, user: undefined, value: { servers: rows } };
+  let snapshot = { status: 'ready', writable, revision: snapshotRevision, base: undefined, user: undefined, value: { servers: rows } };
   const listeners = new Set();
   const publish = () => {
     snapshot = { ...snapshot, revision: snapshot.revision + 1, value: { servers: rows } };
     for (const listener of listeners) listener();
   };
+  const accepts = (expected) => !rejectAll && (expected === undefined ? snapshot.revision === hostRevision : expected === hostRevision);
   return {
     calls: [],
-    refusals,
     getSnapshot: () => snapshot,
     subscribe: (listener) => { listeners.add(listener); return () => { listeners.delete(listener) } },
     async set(field, value) {
       this.calls.push(['set', field, value]);
-      if (this.refusals > 0) { this.refusals -= 1; return false }
+      if (!accepts(undefined)) return false;
       rows = value;
       publish();
       return true;
     },
-    async mutate(ops) {
-      this.calls.push(['mutate', ops]);
-      if (this.refusals > 0) { this.refusals -= 1; return false }
+    async mutate(ops, expected) {
+      this.calls.push(['mutate', ops, expected]);
+      if (!accepts(expected)) return false;
       for (const op of ops) {
         if (op.op !== 'set' || op.path[0] !== 'servers' || op.path[2] === undefined) continue;
         rows = rows.map((row, index) => index === Number(op.path[1]) ? { ...row, [op.path[2]]: op.value } : row);
@@ -439,11 +442,15 @@ const makeForm = ({ refusals = 0, writable = true } = {}) => {
     },
   };
 };
-const renderPage = async (form, manager) => {
+/** Host describe face: reports the document revision a write must fence against. */
+const describeApi = (revision) => ({
+  describe: async () => ({ ok: true, value: { writable: true, namespaces: [{ ns: 'mcp-server-manager', revision }] } }),
+});
+const renderPage = async (form, manager, settings) => {
   const mount = createRoot(win.document.getElementById('root'));
   await act(async () => {
     mount.render(react.createElement(pageSection.component, {
-      managedForm: form, remote: ctx.remote, statusApi, managerApi: manager, t, locale: 'settings.mcp',
+      managedForm: form, remote: ctx.remote, statusApi, managerApi: manager, settingsApi: settings, t, locale: 'settings.mcp',
     }));
   });
   await act(async () => { await new Promise((done) => { setTimeout(done, 30); }); });
@@ -459,30 +466,36 @@ const pressSwitch = async () => {
 };
 
 const happyForm = makeForm();
-const happyRoot = await renderPage(happyForm);
+const happyRoot = await renderPage(happyForm, undefined, describeApi(1));
 const happySwitch = await pressSwitch();
 check('a toggle writes the single field, not the whole section', happyForm.calls.length === 1 && happyForm.calls[0][0] === 'mutate', JSON.stringify(happyForm.calls.map((call) => call[0])));
 check('the path write names the server index and field', JSON.stringify(happyForm.calls[0]?.[1]) === JSON.stringify([{ op: 'set', path: ['servers', '0', 'enabled'], value: false }]), JSON.stringify(happyForm.calls[0]?.[1]));
 check('a settled toggle turns the server off', happySwitch?.checked === false, String(happySwitch?.checked));
 await act(async () => { happyRoot.unmount(); });
 
-const retryForm = makeForm({ refusals: 1 });
-const retryRoot = await renderPage(retryForm);
-const retriedSwitch = await pressSwitch();
-check('a refused write is retried once', retryForm.calls.length === 2, JSON.stringify(retryForm.calls.length));
-check('the retried write turns the server off', retriedSwitch?.checked === false, String(retriedSwitch?.checked));
-check('the retried write leaves no error behind', !win.document.body.textContent.includes(zhDict['managed.error.save']));
-await act(async () => { retryRoot.unmount(); });
+// The mirror says revision 9 while the document is at 11: the first write is refused, and the
+// retry has to carry the revision `describe` reported, not the mirror's.
+const staleForm = makeForm({ hostRevision: 11, snapshotRevision: 9 });
+const staleRoot = await renderPage(staleForm, undefined, describeApi(11));
+const staleSwitch = await pressSwitch();
+check('a stale fence is retried against the described revision', staleForm.calls.length === 2 && staleForm.calls[1][0] === 'mutate' && staleForm.calls[1][2] === 11, JSON.stringify(staleForm.calls.map((call) => [call[0], call[2]])));
+check('the fence retry turns the server off', staleSwitch?.checked === false, String(staleSwitch?.checked));
+check('the fence retry leaves no error behind', !win.document.body.textContent.includes(zhDict['managed.error.save']));
+await act(async () => { staleRoot.unmount(); });
 
-const refusingForm = makeForm({ refusals: 2 });
-const refusingRoot = await renderPage(refusingForm);
+const refusingForm = makeForm({ rejectAll: true });
+const refusingRoot = await renderPage(refusingForm, undefined, describeApi(1));
 const refusedSwitch = await pressSwitch();
-check('two refusals stop at two attempts', refusingForm.calls.length === 2, JSON.stringify(refusingForm.calls.length));
 check('a refused toggle reverts the switch', refusedSwitch?.checked === true, String(refusedSwitch?.checked));
 check('a refused toggle says so', win.document.body.textContent.includes(zhDict['managed.error.save']));
+check(
+  'a refused toggle reports the fence it was refused with',
+  win.document.body.textContent.includes(zhDict['managed.error.fence'].replace('{form}', '1').replace('{host}', '1').replace('{writable}', 'true')),
+  win.document.body.textContent.slice(0, 200),
+);
 await act(async () => { refusingRoot.unmount(); });
 
-const readOnlyRoot = await renderPage(makeForm({ writable: false }));
+const readOnlyRoot = await renderPage(makeForm({ writable: false }), undefined, describeApi(1));
 check('a read-only document explains itself', win.document.body.textContent.includes(zhDict['managed.readOnly']));
 await act(async () => { readOnlyRoot.unmount(); });
 

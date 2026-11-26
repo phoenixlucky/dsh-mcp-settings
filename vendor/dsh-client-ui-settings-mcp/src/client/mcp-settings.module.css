@@ -683,6 +683,24 @@
   font: var(--dsw-font-xs-13);
 }
 
+/* A refused write: the sentence, then what the Host reported about it. */
+.failure {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.failure > .error {
+  grid-column: auto;
+}
+
+.errorDetail {
+  margin: 0;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+  overflow-wrap: anywhere;
+}
+
 .exportHint {
   margin: 0;
   color: var(--dsw-alias-label-secondary);

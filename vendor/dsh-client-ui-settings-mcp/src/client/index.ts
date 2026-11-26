@@ -99,6 +99,8 @@ export async function apply(ctx: ClientContext): Promise<() => Promise<void>> {
         remote: ctx.remote,
         statusApi: remoteNamespace(ctx, 'mcpClientStatus'),
         managerApi: remoteNamespace(ctx, 'mcpServerManager'),
+        // Read-only describe face: the page re-reads the Host revision when a write is refused.
+        settingsApi: remoteNamespace(ctx, 'settings'),
       }),
     }, McpConnectionsPage))
     return () => stopSection?.()

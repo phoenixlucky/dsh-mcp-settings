@@ -55,11 +55,23 @@ export interface McpManagerApi {
   listSkills(serverId: string, cursor?: string): Promise<RemoteReply<{ state: 'ready'; value: { skills: readonly { name: string; uri?: string; description: string }[]; nextCursor?: string } } | { state: 'unavailable' | 'timed-out' | 'failed' | 'too-large' }>>
   restart(serverId: string): Promise<RemoteReply<{ state: 'scheduled' | 'unavailable' }>>
 }
+/**
+ * Read-only face of `remote.settings`, used when a write is refused: the form's own fence can be
+ * stale, and the Host's current revision is the only way to write past a mirror that fell behind.
+ */
+export interface McpSettingsApi {
+  describe?(): Promise<RemoteReply<{
+    writable?: boolean
+    hasDocument?: boolean
+    namespaces?: readonly { ns: string, revision?: number }[]
+  }>>
+}
 interface Injected {
   form: ConfigForm<{ servers?: ManagedMcpServer[] }>
   remote: Remote
   statusApi?: McpStatusApi
   managerApi?: McpManagerApi
+  settingsApi?: McpSettingsApi
 }
 interface SecretRow { id: string; name: string; ref: string; value: string; visible: boolean }
 interface HeaderRow { name: string; value: string }
@@ -160,7 +172,7 @@ async function probeServers(managerApi: McpManagerApi | undefined, servers: read
 }
 
 /** Edit multiple host-managed MCP servers and check their connection state. */
-export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: Injected & PropsLocale<'settings.mcp'>) {
+export function ManagedMcpServers({ form, remote, statusApi, managerApi, settingsApi, t }: Injected & PropsLocale<'settings.mcp'>) {
   const snapshot = useSyncExternalStore(form.subscribe.bind(form), form.getSnapshot.bind(form))
   const servers = snapshot.value?.servers ?? []
   const [statuses, setStatuses] = useState<readonly StatusRow[]>([])
@@ -172,6 +184,8 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
   /** Intent of a toggle press whose Host write has not settled yet, keyed by server id. */
   const [pendingEnabled, setPendingEnabled] = useState<Readonly<Record<string, boolean>>>({})
   const [failure, setFailure] = useState<'save' | 'credential' | 'check' | 'invalid' | 'import-invalid'>()
+  /** What the Host's describe said when a write was refused, so the alert can name the fence. */
+  const [failureDetail, setFailureDetail] = useState<string>()
   const [importFailure, setImportFailure] = useState<'save' | 'credential' | 'import-invalid'>()
   const [checkState, setCheckState] = useState<string>()
   const [importJson, setImportJson] = useState('')
@@ -228,15 +242,40 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     if (requestId !== statusRequestId.current) return
     setProbed(measured)
   }
+  /**
+   * Read the Host's own revision for this namespace.
+   *
+   * The form's fence comes from a shared mirror; when that mirror is behind, every write is
+   * refused as stale. `describe` is the only channel that answers with the revision the write
+   * needs, so a refusal is retried exactly once against it.
+   * @returns Host revision, or undefined when the describe face is unavailable.
+   */
+  const hostRevision = async (): Promise<number | undefined> => {
+    try {
+      const reply = await settingsApi?.describe?.()
+      if (reply?.ok !== true) return undefined
+      return reply.value?.namespaces?.find(row => row.ns === 'mcp-server-manager')?.revision
+    } catch { return undefined }
+  }
+  /** Describe the refusal for the alert: the fence the form used and the document's own. */
+  const refuseWithDetail = async () => {
+    const revision = await hostRevision()
+    const formRevision = form.getSnapshot().revision
+    const writable = form.getSnapshot().writable
+    setFailureDetail(revision === undefined
+      ? undefined
+      : t('managed.error.fence').replace('{form}', String(formRevision ?? '?')).replace('{host}', String(revision)).replace('{writable}', String(writable)))
+  }
   const saveServers = async (next: ManagedMcpServer[]) => {
     let accepted = await form.set('servers', next)
     if (!accepted) {
-      // A refusal is normally a stale revision fence: the form has just re-read the
-      // Host document, so one retry on the fresh fence is safe for this whole-list,
-      // idempotent write. A second refusal is a real rejection and surfaces as one.
-      accepted = await form.set('servers', next)
+      // A refusal is normally a stale revision fence: retry once against the Host's own
+      // revision for this idempotent whole-list write. A second refusal surfaces as one.
+      const revision = await hostRevision()
+      if (revision !== undefined) accepted = await form.mutate([{ op: 'set', path: ['servers'], value: next }], revision)
     }
     if (!accepted) throw new Error('settings refused')
+    setFailureDetail(undefined)
     const nextById = new Map(next.map(server => [server.id, server]))
     for (const previous of servers) {
       const updated = nextById.get(previous.id)
@@ -385,21 +424,31 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
     catch { setFailure('save') } finally { setBusy(false) }
   }
   const toggle = async (server: ManagedMcpServer, enabled: boolean) => {
-    setBusy(true); setFailure(undefined)
+    setBusy(true); setFailure(undefined); setFailureDetail(undefined)
     setPendingEnabled(current => ({ ...current, [server.id]: enabled }))
     try {
       const index = servers.findIndex(current => current.id === server.id)
       if (index === -1) throw new Error('settings refused')
       // One field, not one section: a wholesale write restates every other server
       // from this client's view, and the Host refuses writes it cannot reconcile.
-      // The whole-list write stays as the fallback for a Host that refuses paths.
-      const settled = await form.mutate([{ op: 'set', path: ['servers', String(index), 'enabled'], value: enabled }])
-        || await form.set('servers', servers.map(current => current.id === server.id ? { ...current, enabled } : current))
+      const op = { op: 'set' as const, path: ['servers', String(index), 'enabled'], value: enabled }
+      let settled = await form.mutate([op])
+      if (!settled) {
+        // The refusal is usually a fence the mirror never caught up with; retry once
+        // against the revision the Host itself reports, then fall back to the section.
+        const revision = await hostRevision()
+        if (revision !== undefined) settled = await form.mutate([op], revision)
+      }
+      if (!settled) settled = await form.set('servers', servers.map(current => current.id === server.id ? { ...current, enabled } : current))
       if (!settled) throw new Error('settings refused')
+      setFailureDetail(undefined)
       invalidateToolProbe(server.id)
       void refreshStatuses()
     }
-    catch { setFailure('save') }
+    catch {
+      setFailure('save')
+      await refuseWithDetail()
+    }
     finally {
       setPendingEnabled(current => {
         if (!(server.id in current)) return current
@@ -810,7 +859,10 @@ export function ManagedMcpServers({ form, remote, statusApi, managerApi, t }: In
 
     {/* A write that the Host refuses has to be visible where it happened: the switch
         reverts, and without this line the page would look simply unresponsive. */}
-    {failure !== undefined && <p className={css.error} role="alert">{managedFailureLabel(t, failure)}</p>}
+    {failure !== undefined && <div className={css.failure} role="alert">
+      <p className={css.error}>{managedFailureLabel(t, failure)}</p>
+      {failureDetail !== undefined && <p className={css.errorDetail}>{failureDetail}</p>}
+    </div>}
     {snapshot.status === 'ready' && !snapshot.writable && <p className={css.statusProblem} role="status">{t('managed.readOnly')}</p>}
 
     {importOpen && <section className={css.importPanel} aria-label={t('managed.import')}>
